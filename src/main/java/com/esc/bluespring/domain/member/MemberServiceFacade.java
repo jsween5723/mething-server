@@ -1,0 +1,63 @@
+package com.esc.bluespring.domain.member;
+
+import com.esc.bluespring.domain.auth.service.emailCode.EmailAuthenticationService;
+import com.esc.bluespring.domain.member.entity.Member;
+import com.esc.bluespring.domain.member.entity.Student;
+import com.esc.bluespring.domain.member.exception.MemberException.DuplicateEmailException;
+import com.esc.bluespring.domain.member.exception.MemberException.MemberNotFoundException;
+import com.esc.bluespring.domain.member.student.StudentService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+public class MemberServiceFacade implements UserDetailsService {
+
+    private final EmailAuthenticationService emailAuthenticationService;
+    private final MemberRepository repository;
+    private final StudentService studentService;
+    private final PasswordEncoder passwordEncoder;
+
+    @Transactional
+    public Member join(Member member) {
+        validForm(member);
+        String encoded = passwordEncoder.encode(member.getPassword());
+        member.changePassword(encoded);
+        if (member instanceof Student student) {
+            emailAuthenticationService.isAuthenticated(student.getEmail());
+            return studentService.join(student);
+        }
+        return repository.save(member);
+    }
+
+    @Transactional(readOnly = true)
+    public Member find(Long id) {
+        return repository.findById(id).orElseThrow(MemberNotFoundException::new);
+    }
+
+    private void validForm(Member entity) {
+        if (repository.existsByEmail(entity.getEmail())) {
+            throw new DuplicateEmailException();
+        }
+    }
+
+    @Transactional
+    public void requestFriendship(Member user, Member target, String message) {
+        if (user instanceof Student studentUser && target instanceof Student targetStudent) {
+            studentUser.friendshipRequestTo(targetStudent, message);
+        }
+    }
+
+    public void resign(Member member) {
+        repository.delete(member);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) {
+        return repository.findByEmail(username).orElseThrow(MemberNotFoundException::new);
+    }
+}

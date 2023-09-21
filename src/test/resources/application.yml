@@ -1,0 +1,10 @@
+spring:
+  profiles:
+    active: test
+  application:
+    name: meeting-test
+  config:
+    import: configserver:${SCHEME}://${ESC_CONFIG}:${ESC_CONFIG_PORT}
+  cloud:
+    config:
+      name: meeting, naver-sms, aws
