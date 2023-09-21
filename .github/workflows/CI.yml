@@ -1,0 +1,61 @@
+name: PR CI
+
+on:
+  pull_request:
+    branches: [ "dev" ]
+
+permissions:
+  checks: write
+  contents: read
+  pull-requests: write
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Get Github Actions IP
+        id: ip
+        run: |
+          echo "ipv4=`dig TXT +short o-o.myaddr.l.google.com @ns1.google.com`" >> "$GITHUB_OUTPUT"
+
+      - name: Setup Java JDK
+        uses: actions/setup-java@v1.4.4
+        with:
+          java-version: 17
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2
+
+      - name: Add Github Actions IP to Security group
+        run: |
+          aws ec2 authorize-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 5723 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+
+      - name: Build the server
+        run: |
+          ./enable_environment.sh
+          ./gradlew build
+
+      - name: Remove Github Actions IP From Security Group
+        continue-on-error: true
+        run: |
+          aws ec2 revoke-security-group-ingress --group-id ${{ secrets.AWS_SG_ID }} --protocol tcp --port 5723 --cidr ${{ steps.ip.outputs.ipv4 }}/32
+
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          files: '**/build/test-results/test/TEST-*.xml'
+
+
+      - name: Add comments to a pull request
+        uses: mikepenz/action-junit-report@v3
+        if: always()
+        with:
+          report_paths: '**/build/test-results/test/TEST-*.xml'
