@@ -1,13 +1,15 @@
 package com.esc.bluespring.domain.member;
 
+import com.esc.bluespring.domain.auth.exception.AuthException.LoginFailedException;
 import com.esc.bluespring.domain.auth.service.emailCode.EmailAuthenticationService;
+import com.esc.bluespring.domain.member.classes.MemberDto.Login;
 import com.esc.bluespring.domain.member.entity.Member;
 import com.esc.bluespring.domain.member.entity.Student;
 import com.esc.bluespring.domain.member.exception.MemberException.DuplicateEmailException;
 import com.esc.bluespring.domain.member.exception.MemberException.MemberNotFoundException;
 import com.esc.bluespring.domain.member.student.StudentService;
+import javax.security.auth.login.LoginException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -57,7 +59,19 @@ public class MemberServiceFacade implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) {
+    public Member loadUserByUsername(String username) {
         return repository.findByEmail(username).orElseThrow(MemberNotFoundException::new);
+    }
+
+    public Member login(Login dto) {
+        try {
+            Member userDetails = loadUserByUsername(dto.email());
+            if (!passwordEncoder.matches(dto.password(), userDetails.getPassword())) {
+                throw new LoginException();
+            }
+            return userDetails;
+        } catch (Exception e) {
+            throw new LoginFailedException();
+        }
     }
 }

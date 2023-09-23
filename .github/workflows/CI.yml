@@ -30,7 +30,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_ACCESS_KEY }}
           aws-region: ap-northeast-2
 
       - name: Add Github Actions IP to Security group
@@ -39,7 +39,6 @@ jobs:
 
       - name: Build the server
         run: |
-          ./enable_environment.sh
           ./gradlew build
 
       - name: Remove Github Actions IP From Security Group
