@@ -16,10 +16,10 @@ public record MemberDto() {
 
     public record Join(@RequestPart("profileImage") MultipartFile profileImage,
                        @NotBlank @Length(min = 2, max = 10, message = "닉네임은 2~10 글자입니다.") @NotNull String nickname,
-                       @NotNull @NotBlank String name, @NotNull @Email String email,
+                       @NotNull @NotBlank String name,
                        @NotNull @NotBlank String password,
                        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyMMdd", timezone = "Asia/Seoul") LocalDateTime birthday,
-                       @NotNull Long majorId, @NotNull @Email String schoolEmail,
+                       @NotNull Long majorId, @NotNull @Email String email,
                        @RequestPart("studentCertificationImageUrl") MultipartFile studentCertificationImage,
                        @NotNull Gender gender, @NotNull MBTI mbti) {
 

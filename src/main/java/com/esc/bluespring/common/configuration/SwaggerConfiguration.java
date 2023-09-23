@@ -17,7 +17,7 @@ public class SwaggerConfiguration {
   @Bean
   public OpenAPI customOpenAPI() {
     Server server = new Server();
-    server.setUrl("http://api.bluespring-esc.com:8080");
+    server.setUrl("https://api.meething.me");
     return new OpenAPI().servers(List.of(server));
   }
 }

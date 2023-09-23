@@ -1,6 +1,6 @@
 package com.esc.bluespring.common.configuration;
 
-import com.esc.bluespring.common.resolver.MeResolver;
+import com.esc.bluespring.common.resolver.AuthenticationResolver;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 @RequiredArgsConstructor
 public class WebConfiguration implements WebMvcConfigurer {
-  private final MeResolver meResolver;
+  private final AuthenticationResolver authenticationResolver;
   @Override
   public void addCorsMappings(CorsRegistry registry) {
     registry.addMapping("/api/**")
@@ -25,6 +25,6 @@ public class WebConfiguration implements WebMvcConfigurer {
   @Override
   public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
     WebMvcConfigurer.super.addArgumentResolvers(resolvers);
-    resolvers.add(meResolver);
+    resolvers.add(authenticationResolver);
   }
 }

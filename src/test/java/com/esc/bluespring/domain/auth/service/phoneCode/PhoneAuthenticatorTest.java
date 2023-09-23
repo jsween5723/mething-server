@@ -27,7 +27,7 @@ class PhoneAuthenticatorTest {
   @BeforeEach
   public void each() {
     ExpireConcurrentMapCache cache = new ExpireConcurrentMapCache("test", 3L);
-    when(cacheManager.getCache(CacheConfiguration.PHONE_CODE_CACHE_NAME)).thenReturn(cache, cache);
+    when(cacheManager.getCache(CacheConfiguration.CODE_CACHE_NAME)).thenReturn(cache, cache);
   }
 
   @Test

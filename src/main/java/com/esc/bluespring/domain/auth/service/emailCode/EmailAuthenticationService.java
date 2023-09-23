@@ -26,6 +26,6 @@ public class EmailAuthenticationService {
   }
 
   public void isAuthenticated(String email) {
-    authenticator.isAuthenticatedPhone(email);
+    authenticator.isAuthenticatedEmail(email);
   }
 }

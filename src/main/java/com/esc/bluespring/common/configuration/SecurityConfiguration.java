@@ -13,7 +13,6 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -33,16 +32,12 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable).cors(AbstractHttpConfigurer::disable)
-            .sessionManagement(
-                session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(
                 registry -> registry.requestMatchers("/swagger-ui/**").hasRole(Role.ADMIN.name())
                     .anyRequest().permitAll()).oauth2ResourceServer(oauth2 -> oauth2.jwt(
                 jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(converter)
                     .decoder(jwtDecoder))).formLogin(
-                form -> form.permitAll().usernameParameter("email").passwordParameter("password")
-                    .successHandler(loginSuccessHandler).defaultSuccessUrl("/swagger-ui/index.html"));
-//            .formLogin(login->login.configure());
+                form -> form.permitAll().usernameParameter("email").passwordParameter("password"));
         return http.build();
     }
 

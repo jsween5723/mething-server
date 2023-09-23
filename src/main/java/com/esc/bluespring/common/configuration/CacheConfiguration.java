@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableCaching
 @Configuration
 public class CacheConfiguration implements CachingConfigurer {
-  static public String PHONE_CODE_CACHE_NAME = "verificationCode";
+  static public String CODE_CACHE_NAME = "verificationCode";
   static public String LOCATION_DISTRICT_CACHE_NAME = "locationDistricts";
 
   @Bean
@@ -21,7 +21,7 @@ public class CacheConfiguration implements CachingConfigurer {
     SimpleCacheManager cacheManager = new SimpleCacheManager();
     cacheManager.setCaches(Set.of(
         new ConcurrentMapCache(LOCATION_DISTRICT_CACHE_NAME),
-        new ExpireConcurrentMapCache(PHONE_CODE_CACHE_NAME, 5L * 60)));
+        new ExpireConcurrentMapCache(CODE_CACHE_NAME, 5L * 60)));
     return cacheManager;
   }
 
