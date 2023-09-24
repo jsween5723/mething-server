@@ -2,16 +2,19 @@ package com.esc.bluespring.domain.meeting.repository;
 
 import static com.esc.bluespring.domain.locationDistrict.entity.QLocationDistrict.locationDistrict;
 import static com.esc.bluespring.domain.meeting.entity.QMeeting.meeting;
+import static com.esc.bluespring.domain.meeting.team.entity.QMeetingOwnerTeam.meetingOwnerTeam;
 import static com.esc.bluespring.domain.meeting.team.entity.QTeam.team;
 import static com.esc.bluespring.domain.meeting.watchlist.entity.QMeetingWatchlistItem.meetingWatchlistItem;
 import static com.esc.bluespring.domain.member.entity.QMember.member;
 import static com.esc.bluespring.domain.university.entity.QUniversity.university;
+import static com.querydsl.core.types.ExpressionUtils.count;
 
 import com.esc.bluespring.common.utils.querydsl.RepositorySlicer;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.MainPageListElement;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.SearchCondition;
 import com.esc.bluespring.domain.meeting.entity.QMeeting;
-import com.esc.bluespring.domain.meeting.watchlist.entity.QMeetingWatchlistItem;
+import com.esc.bluespring.domain.meeting.team.repository.MeetingOwnerTeamQDR;
+import com.esc.bluespring.domain.member.entity.Student;
 import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -22,17 +25,20 @@ import org.springframework.data.domain.Slice;
 
 @RequiredArgsConstructor
 public class MeetingQDRImpl implements MeetingQDR {
-    private final JPAQueryFactory query;
 
-    public Slice<MainPageListElement> search(SearchCondition condition, Pageable pageable) {
+    private final JPAQueryFactory query;
+    private final MeetingOwnerTeamQDR meetingOwnerTeamQDR;
+
+    public Slice<MainPageListElement> search(Student student, SearchCondition condition,
+        Pageable pageable) {
 
         List<MainPageListElement> fetch = query.select(
-                toMainPageListElement(meeting, meetingWatchlistItem))
-            .leftJoin(meeting.fromTeam, team).fetchJoin()
-            .leftJoin(team.representedUniversity, university).fetchJoin()
+                toMainPageListElement(meeting, student))
+            .innerJoin(meetingOwnerTeam).fetchJoin()
+            .leftJoin(meetingOwnerTeam.representedUniversity, university).fetchJoin()
             .leftJoin(university.locationDistrict, locationDistrict).fetchJoin()
-            .join(team.owner, member).fetchJoin()
-            .leftJoin(team.participants).fetchJoin()
+            .join(meetingOwnerTeam.owner, member).fetchJoin()
+            .leftJoin(meetingOwnerTeam.participants).fetchJoin()
             .groupBy(meetingWatchlistItem)
             .having(meetingWatchlistItem.meeting.id.eq(meeting.id))
             .offset(pageable.getOffset())
@@ -41,7 +47,11 @@ public class MeetingQDRImpl implements MeetingQDR {
         return RepositorySlicer.toSlice(fetch, pageable);
     }
 
-    public ConstructorExpression<MainPageListElement> toMainPageListElement(QMeeting meeting, QMeetingWatchlistItem watchlistItem) {
-        return Projections.constructor(MainPageListElement.class, meeting.id, meeting.fromTeam, watchlistItem.count(), meeting.createdAt);
+    public ConstructorExpression<MainPageListElement> toMainPageListElement(QMeeting meeting,
+        Student student) {
+        return Projections.constructor(MainPageListElement.class, meeting.id, meetingOwnerTeamQDR.toMainPageListElement(meetingOwnerTeam),
+            count(meeting.watchlist), query.select(meetingWatchlistItem.owner.eq(student)
+                .and(meetingWatchlistItem.meeting.eq(meeting))).from(meetingWatchlistItem)
+            , meeting.createdAt);
     }
 }

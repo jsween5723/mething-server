@@ -5,6 +5,7 @@ import com.esc.bluespring.domain.meeting.request.entity.MeetingRequest;
 import com.esc.bluespring.domain.meeting.team.entity.MeetingOwnerTeam;
 import com.esc.bluespring.domain.meeting.team.entity.MeetingRequesterTeam;
 import com.esc.bluespring.domain.meeting.team.entity.Team;
+import com.esc.bluespring.domain.meeting.watchlist.entity.MeetingWatchlistItem;
 import com.esc.bluespring.domain.member.entity.Member;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -32,13 +33,17 @@ public class Meeting extends BaseEntity {
     private Team toTeam;
     @OneToMany(mappedBy = "targetMeeting", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MeetingRequest> joinRequests = new ArrayList<>();
+    @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MeetingWatchlistItem> watchlist = new ArrayList<>();
 
     @Builder
-    public Meeting(Long id, Team fromTeam, Team toTeam, List<MeetingRequest> joinRequests) {
+    public Meeting(Long id, Team fromTeam, Team toTeam, List<MeetingRequest> joinRequests,
+        List<MeetingWatchlistItem> watchlist) {
         super(id);
         this.fromTeam = fromTeam;
         this.toTeam = toTeam;
         this.joinRequests = joinRequests;
+        this.watchlist = watchlist;
     }
 
     public void join(MeetingRequesterTeam team) {

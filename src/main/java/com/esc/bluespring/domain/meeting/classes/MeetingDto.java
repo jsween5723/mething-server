@@ -13,7 +13,7 @@ public record MeetingDto() {
 
     }
 
-    public record MainPageListElement(Long id, TeamDto.MainPageListElement fromTeam, Long count,
+    public record MainPageListElement(Long id, TeamDto.MainPageListElement fromTeam, Long count, Boolean isAdded,
                                       Long createdAt) {
     }
 
