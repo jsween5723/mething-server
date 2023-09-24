@@ -6,6 +6,7 @@ import com.esc.bluespring.domain.university.entity.University;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
@@ -28,7 +29,7 @@ public abstract class Team extends OwnerEntity {
 
     private String title;
     @JoinColumn(name = "represented_university_id")
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private University representedUniversity;
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TeamParticipant> participants = new ArrayList<>();
@@ -39,5 +40,9 @@ public abstract class Team extends OwnerEntity {
         this.title = title;
         this.representedUniversity = representedUniversity;
         this.participants = participants;
+    }
+
+    public void mapParticipants(List<TeamParticipant> source) {
+        participants = source;
     }
 }

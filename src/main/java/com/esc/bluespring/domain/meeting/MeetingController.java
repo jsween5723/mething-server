@@ -34,11 +34,15 @@ public class MeetingController {
     private final MeetingMapper meetingMapper;
     private final TeamMapper teamMapper;
     private final MeetingServiceFacade meetingServiceFacade;
+
     @GetMapping
-    public CustomSlice<MainPageListElement> search(SearchCondition condition, Pageable pageable) {
-        Slice<MainPageListElement> result = meetingServiceFacade.search(condition, pageable);
+    public CustomSlice<MainPageListElement> search(SearchCondition condition, Student student,
+        Pageable pageable) {
+        Slice<MainPageListElement> result = meetingServiceFacade.search(student, condition,
+            pageable).map(meeting -> meetingMapper.toMainPageListElement(meeting, student));
         return new CustomSlice<>(result);
     }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void create(@Valid @RequestBody Create dto, Student member) {
@@ -48,7 +52,8 @@ public class MeetingController {
 
     @PostMapping("{id}/requests")
     @ResponseStatus(HttpStatus.CREATED)
-    public void request(@PathVariable Long id, @Valid @RequestBody MeetingDto.Request dto, Student member) {
+    public void request(@PathVariable Long id, @Valid @RequestBody MeetingDto.Request dto,
+        Student member) {
         Meeting meeting = meetingServiceFacade.find(id);
         MeetingRequesterTeam meetingRequesterTeam = teamMapper.toEntity(dto, member);
         meetingServiceFacade.addRequest(meeting, meetingRequesterTeam);
@@ -64,7 +69,8 @@ public class MeetingController {
     @DeleteMapping("{id}/watchlist-items/remove")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void takeOutFromWatchlist(@PathVariable Long id, Member member) {
-        MeetingWatchlistItem meetingWatchlistItem = meetingServiceFacade.findWatchlistItem(id, member);
+        MeetingWatchlistItem meetingWatchlistItem = meetingServiceFacade.findWatchlistItem(id,
+            member);
         meetingWatchlistItem.validOwner(member);
         meetingServiceFacade.removeWatchlistItem(meetingWatchlistItem);
     }

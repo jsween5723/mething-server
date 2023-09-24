@@ -3,6 +3,7 @@ package com.esc.bluespring.domain.member.student;
 import com.esc.bluespring.domain.member.entity.Student;
 import com.esc.bluespring.domain.member.exception.MemberException.DuplicateNicknameException;
 import com.esc.bluespring.domain.member.exception.MemberException.DuplicateSchoolEmailException;
+import com.esc.bluespring.domain.member.exception.MemberException.MemberNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,5 +27,15 @@ public class StudentService {
         if (repository.existsByNickname(entity.getNickname())) {
             throw new DuplicateNicknameException();
         }
+    }
+
+    @Transactional(readOnly = true)
+    public Student find(String email) {
+        return repository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
+    }
+
+    @Transactional(readOnly = true)
+    public Student find(Long id) {
+        return repository.findById(id).orElseThrow(MemberNotFoundException::new);
     }
 }

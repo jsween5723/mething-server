@@ -1,5 +1,6 @@
 package com.esc.bluespring.domain.meeting.mapper;
 
+import com.esc.bluespring.common.entity.OwnerEntity;
 import com.esc.bluespring.common.utils.time.TimeMapper;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.Create;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.MainPageListElement;
@@ -18,7 +19,16 @@ public interface MeetingMapper {
 
     TeamMapper teamMapper = Mappers.getMapper(TeamMapper.class);
 
-    MainPageListElement toMainPageListElement(Meeting meeting, Long count);
+    @Mapping(target = "count", expression = "java(meeting.getWatchlist().size())")
+    @Mapping(target = "isAdded", expression = "java(toIsAdded(meeting, student))")
+    @Mapping(target = "id", source = "meeting.id")
+    @Mapping(target = "createdAt", source = "meeting.createdAt")
+    MainPageListElement toMainPageListElement(Meeting meeting, Student student);
+
+    default boolean toIsAdded(Meeting meeting, Student student) {
+        return meeting.getWatchlist().stream().map(OwnerEntity::getOwner).toList()
+            .contains(student);
+    }
 
     @Mapping(target = "fromTeam", expression = "java(teamMapper.toEntity(dto,owner))")
     Meeting toEntity(Create dto, Student owner);

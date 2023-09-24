@@ -13,8 +13,9 @@ public record MeetingDto() {
 
     }
 
-    public record MainPageListElement(Long id, TeamDto.MainPageListElement fromTeam, Long count,
-                                      Long createdAt) {
+    public record MainPageListElement(Long id, TeamDto.MainPageListElement fromTeam, Integer count,
+                                      Boolean isAdded, Long createdAt) {
+
     }
 
     public record Create(@NotNull @NotBlank @Length(max = 12) String title,

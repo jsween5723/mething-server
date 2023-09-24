@@ -10,14 +10,13 @@ import com.esc.bluespring.domain.member.entity.Student;
 import com.esc.bluespring.domain.university.classes.UniversityMapper;
 import com.esc.bluespring.domain.university.entity.University;
 import java.util.List;
-import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants.ComponentModel;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(uses = {UniversityMapper.class,
-    TeamParticipantMapper.class}, injectionStrategy = InjectionStrategy.CONSTRUCTOR, componentModel = ComponentModel.SPRING)
+    TeamParticipantMapper.class}, componentModel = ComponentModel.SPRING)
 public interface TeamMapper {
     default MainPageListElement toMainPageListElement(MeetingOwnerTeam team) {
         TeamParticipantMapper teamParticipantMapper = Mappers.getMapper(TeamParticipantMapper.class);

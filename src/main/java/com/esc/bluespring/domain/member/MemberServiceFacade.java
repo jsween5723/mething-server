@@ -30,7 +30,7 @@ public class MemberServiceFacade implements UserDetailsService {
         String encoded = passwordEncoder.encode(member.getPassword());
         member.changePassword(encoded);
         if (member instanceof Student student) {
-            emailAuthenticationService.isAuthenticated(student.getEmail());
+//            emailAuthenticationService.isAuthenticated(student.getEmail());
             return studentService.join(student);
         }
         return repository.save(member);
@@ -38,7 +38,11 @@ public class MemberServiceFacade implements UserDetailsService {
 
     @Transactional(readOnly = true)
     public Member find(Long id) {
-        return repository.findById(id).orElseThrow(MemberNotFoundException::new);
+        Member member = repository.findById(id).orElseThrow(MemberNotFoundException::new);
+        if (member instanceof Student) {
+            return studentService.find(id);
+        }
+        return member;
     }
 
     private void validForm(Member entity) {
