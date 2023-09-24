@@ -3,7 +3,6 @@ package com.esc.bluespring.common.security;
 import com.esc.bluespring.domain.member.classes.MemberDto.JwtToken;
 import com.esc.bluespring.domain.member.entity.Member;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,7 +20,7 @@ public class LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-        Authentication authentication) throws IOException, ServletException {
+        Authentication authentication) throws IOException {
         String accessToken = jwtEncoder.generateAccessToken((Member) authentication.getPrincipal());
         Cookie refreshToken = new Cookie("refreshToken", jwtEncoder.generateRefreshToken());
         refreshToken.isHttpOnly();

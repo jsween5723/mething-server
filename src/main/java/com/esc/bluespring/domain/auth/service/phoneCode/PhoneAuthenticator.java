@@ -42,6 +42,6 @@ class PhoneAuthenticator {
   }
 
   private Cache getCache() {
-    return cacheManager.getCache(CacheConfiguration.PHONE_CODE_CACHE_NAME);
+    return cacheManager.getCache(CacheConfiguration.CODE_CACHE_NAME);
   }
 }

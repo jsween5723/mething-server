@@ -86,7 +86,7 @@ public abstract class Member extends BaseEntity implements UserDetails {
 
         @Override
         public String getAuthority() {
-            return name();
+            return "ROLE_"+name();
         }
     }
 }

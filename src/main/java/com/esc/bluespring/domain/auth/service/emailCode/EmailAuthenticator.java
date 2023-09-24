@@ -16,32 +16,32 @@ class EmailAuthenticator {
     getCache().put(email, code);
   }
 
-  public void authenticatePhoneCode(String phoneNumber, String code) {
-    EmailCode originalCode = getPhoneCode(phoneNumber);
+  public void authenticatePhoneCode(String email, String code) {
+    EmailCode originalCode = getCode(email);
     originalCode.authenticate(code);
   }
 
-  public boolean isAuthenticatedPhone(String phoneNumber) {
-    return getPhoneCode(phoneNumber).isAuthenticated();
+  public boolean isAuthenticatedEmail(String email) {
+    return getCode(email).isAuthenticated();
   }
 
-  private EmailCode getPhoneCode(String phoneNumber) {
-    EmailCode originalCode = getCache().get(phoneNumber, EmailCode.class);
+  private EmailCode getCode(String email) {
+    EmailCode originalCode = getCache().get(email, EmailCode.class);
     if (originalCode == null) {
       throw new EmailCodeNotFoundException();
     }
     return originalCode;
   }
 
-  boolean isExistCode(String phoneNumber, String code) {
+  boolean isExistCode(String email, String code) {
     try {
-      return getPhoneCode(phoneNumber).getCode().equals(code);
+      return getCode(email).getCode().equals(code);
     } catch (EmailCodeNotFoundException e) {
       return false;
     }
   }
 
   private Cache getCache() {
-    return cacheManager.getCache(CacheConfiguration.PHONE_CODE_CACHE_NAME);
+    return cacheManager.getCache(CacheConfiguration.CODE_CACHE_NAME);
   }
 }

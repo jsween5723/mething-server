@@ -4,7 +4,7 @@ spring:
   application:
     name: meeting
   config:
-    import: configserver:https://${ESC_CONFIG}
+    import: configserver:${SCHEME}://${ESC_CONFIG}${ESC_CONFIG_PORT}
   cloud:
     config:
       name: meeting, naver-sms, aws
