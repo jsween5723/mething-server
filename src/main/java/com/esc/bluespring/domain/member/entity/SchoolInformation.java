@@ -3,6 +3,7 @@ package com.esc.bluespring.domain.member.entity;
 import com.esc.bluespring.domain.file.entity.Image;
 import com.esc.bluespring.domain.university.major.entity.Major;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
@@ -23,9 +24,12 @@ public class SchoolInformation {
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Image studentCertificationImageUrl;
     private boolean isCertificated = false;
+    @Column(nullable = false)
+    private String name;
 
     public SchoolInformation(Major major, Image studentCertificationImageUrl,
-        Boolean isCertificated) {
+        Boolean isCertificated, String name) {
+        this.name = name;
         this.major = major;
         this.studentCertificationImageUrl = studentCertificationImageUrl;
         this.isCertificated = isCertificated != null && isCertificated;
