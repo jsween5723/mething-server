@@ -3,12 +3,13 @@ package com.esc.bluespring.domain.member.classes;
 import com.esc.bluespring.common.enums.Gender;
 import com.esc.bluespring.common.enums.MBTI;
 import com.esc.bluespring.domain.university.major.classes.MajorDto.SearchListElement;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.format.annotation.DateTimeFormat.ISO;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,7 +19,7 @@ public record MemberDto() {
                        @NotBlank @Length(min = 2, max = 10, message = "닉네임은 2~10 글자입니다.") @NotNull String nickname,
                        @NotNull @NotBlank String name,
                        @NotNull @NotBlank String password,
-                       @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyMMdd", timezone = "Asia/Seoul") LocalDateTime birthday,
+                       @DateTimeFormat(iso = ISO.DATE) LocalDateTime birthday,
                        @NotNull Long majorId, @NotNull @Email String email,
                        @RequestPart("studentCertificationImageUrl") MultipartFile studentCertificationImage,
                        @NotNull Gender gender, @NotNull MBTI mbti) {

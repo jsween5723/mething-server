@@ -4,7 +4,7 @@ import com.esc.bluespring.common.CustomSlice;
 import com.esc.bluespring.domain.friendship.request.classes.FriendshipRequestDto.ListElement;
 import com.esc.bluespring.domain.friendship.request.classes.FriendshipRequestDto.SearchCondition;
 import com.esc.bluespring.domain.friendship.request.entity.FriendshipRequest;
-import com.esc.bluespring.domain.member.entity.Member;
+import com.esc.bluespring.domain.member.entity.Student;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +30,8 @@ public class FriendshipRequestController {
     private final FriendshipRequestService service;
 
     @GetMapping("/me")
-    public CustomSlice<ListElement> search(Member member, @ParameterObject SearchCondition condition,
-        Pageable pageable) {
+    public CustomSlice<ListElement> search(Student member,
+        @ParameterObject SearchCondition condition, Pageable pageable) {
         condition = new SearchCondition(condition.universityName(), condition.requesterNickname(),
             member.getId());
         Slice<FriendshipRequest> result = service.search(condition, pageable);
@@ -41,21 +41,21 @@ public class FriendshipRequestController {
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(description = "신청자가 해당 친구 신청을 철회합니다.")
-    public void remove(Member member, @PathVariable Long id) {
+    public void remove(Student member, @PathVariable Long id) {
         FriendshipRequest request = service.find(id);
         service.delete(request, member);
     }
 
     @PatchMapping("{id}/accept")
     @Operation(description = "수신자가 해당 친구 신청을 수락합니다.")
-    public void accept(Member member, @PathVariable Long id) {
+    public void accept(Student member, @PathVariable Long id) {
         FriendshipRequest request = service.find(id);
         service.accept(request, member);
     }
 
     @PatchMapping("{id}/reject")
     @Operation(description = "수신자가 해당 친구 신청을 거절합니다.")
-    public void reject(Member member, @PathVariable Long id) {
+    public void reject(Student member, @PathVariable Long id) {
         FriendshipRequest request = service.find(id);
         service.reject(request, member);
     }

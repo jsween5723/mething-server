@@ -38,8 +38,8 @@ public class MeetingServiceFacade {
         return repository.findById(id).orElseThrow(MeetingNotFoundException::new);
     }
     @Transactional(readOnly = true)
-    public Slice<MainPageListElement> search(SearchCondition condition, Pageable pageable) {
-        return repository.search(condition, pageable);
+    public Slice<MainPageListElement> search(Student student, SearchCondition condition, Pageable pageable) {
+        return repository.search(student, condition, pageable);
     }
 
     @Transactional

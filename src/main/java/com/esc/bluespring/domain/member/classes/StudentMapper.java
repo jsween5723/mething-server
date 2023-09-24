@@ -18,6 +18,8 @@ public interface StudentMapper {
 
     @Mapping(target = "profileImage", source = "profileImage")
     @Mapping(target = "schoolInformation", source = "dto")
+    @Mapping(target = "schoolInformation.major", source = "majorId")
+    @Mapping(target = "schoolInformation.name", source = "name")
     Student toEntity(Join dto);
 
     @Mapping(target = "id", source = "id")

@@ -55,12 +55,18 @@ public class FriendshipRequest extends BaseEntity {
     }
 
     public void validRequesterOwner(Member user) {
+        if (user.isAdmin()) {
+            return;
+        }
         if (requester.getId().equals(user.getId())) {
             throw new NotOwnerException();
         }
     }
 
     public void validTargetOwner(Member user) {
+        if (user.isAdmin()) {
+            return;
+        }
         if (target.getId().equals(user.getId())) {
             throw new NotOwnerException();
         }

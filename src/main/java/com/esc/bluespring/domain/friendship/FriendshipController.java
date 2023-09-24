@@ -4,7 +4,7 @@ import com.esc.bluespring.common.CustomSlice;
 import com.esc.bluespring.domain.friendship.classes.FriendshipDto.ListElement;
 import com.esc.bluespring.domain.friendship.classes.FriendshipDto.SearchCondition;
 import com.esc.bluespring.domain.friendship.entity.Friendship;
-import com.esc.bluespring.domain.member.entity.Member;
+import com.esc.bluespring.domain.member.entity.Student;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -23,7 +23,7 @@ public class FriendshipController {
     private final FriendshipService friendshipService;
     private final FriendshipMapper friendshipMapper;
     @GetMapping("/me")
-    public CustomSlice<ListElement> searchMyFriend(SearchCondition condition, Member user, Pageable pageable) {
+    public CustomSlice<ListElement> searchMyFriend(SearchCondition condition, Student user, Pageable pageable) {
         Slice<Friendship> result = friendshipService.search(condition, pageable, user);
         return new CustomSlice<>(result.map(friendshipMapper::toListElement));
     }

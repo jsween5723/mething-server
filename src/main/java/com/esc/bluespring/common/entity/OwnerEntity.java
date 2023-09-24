@@ -28,6 +28,9 @@ public abstract class OwnerEntity extends BaseEntity{
     }
 
     public void validOwner(Member member) {
+        if (member.isAdmin()) {
+            return;
+        }
         if (!owner.getId().equals(member.getId())) {
             throw new NotOwnerException();
         }
