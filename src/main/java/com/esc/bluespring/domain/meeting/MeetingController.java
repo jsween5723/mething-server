@@ -4,7 +4,8 @@ import com.esc.bluespring.common.CustomSlice;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.Create;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.MainPageListElement;
-import com.esc.bluespring.domain.meeting.classes.MeetingDto.SearchCondition;
+import com.esc.bluespring.domain.meeting.classes.MeetingDto.MyMeetingPageListElement;
+import com.esc.bluespring.domain.meeting.classes.MeetingDto.MainPageSearchCondition;
 import com.esc.bluespring.domain.meeting.entity.Meeting;
 import com.esc.bluespring.domain.meeting.mapper.MeetingMapper;
 import com.esc.bluespring.domain.meeting.mapper.TeamMapper;
@@ -12,8 +13,13 @@ import com.esc.bluespring.domain.meeting.team.entity.MeetingRequesterTeam;
 import com.esc.bluespring.domain.meeting.watchlist.entity.MeetingWatchlistItem;
 import com.esc.bluespring.domain.member.entity.Member;
 import com.esc.bluespring.domain.member.entity.Student;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
@@ -29,6 +35,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("api/v1/meetings")
 @RequiredArgsConstructor
+@Tag(name = "미팅 컨트롤러")
 public class MeetingController {
 
     private final MeetingMapper meetingMapper;
@@ -36,10 +43,19 @@ public class MeetingController {
     private final MeetingServiceFacade meetingServiceFacade;
 
     @GetMapping
-    public CustomSlice<MainPageListElement> search(SearchCondition condition, Student student,
-        Pageable pageable) {
-        Slice<MainPageListElement> result = meetingServiceFacade.search(student, condition,
+    @Operation(description = "메인 화면 과팅 목록", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
+    public CustomSlice<MainPageListElement> search(@ParameterObject MainPageSearchCondition condition,
+        Student student, Pageable pageable) {
+        Slice<MainPageListElement> result = meetingServiceFacade.searchMainPageList(student, condition,
             pageable).map(meeting -> meetingMapper.toMainPageListElement(meeting, student));
+        return new CustomSlice<>(result);
+    }
+
+    @GetMapping("/me")
+    @Operation(description = "내 과팅 목록", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
+    public CustomSlice<MyMeetingPageListElement> search(Student student, Pageable pageable) {
+        Slice<MyMeetingPageListElement> result = meetingServiceFacade.searchMyMeetingList(student,
+            pageable).map(meetingMapper::toMyMeetingPageListElement);
         return new CustomSlice<>(result);
     }
 
@@ -52,6 +68,7 @@ public class MeetingController {
 
     @PostMapping("{id}/requests")
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(description = "메인 화면 미팅 목록", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public void request(@PathVariable Long id, @Valid @RequestBody MeetingDto.Request dto,
         Student member) {
         Meeting meeting = meetingServiceFacade.find(id);
@@ -61,6 +78,7 @@ public class MeetingController {
 
     @PostMapping("{id}/watchlist-items/add")
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(description = "메인 화면 미팅 목록", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public void addWatchlist(@PathVariable Long id, Student member) {
         Meeting meeting = meetingServiceFacade.find(id);
         meetingServiceFacade.addWatchlist(meeting, member);
@@ -68,6 +86,7 @@ public class MeetingController {
 
     @DeleteMapping("{id}/watchlist-items/remove")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(description = "메인 화면 미팅 목록", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public void takeOutFromWatchlist(@PathVariable Long id, Member member) {
         MeetingWatchlistItem meetingWatchlistItem = meetingServiceFacade.findWatchlistItem(id,
             member);
