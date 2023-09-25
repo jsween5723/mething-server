@@ -2,7 +2,7 @@ package com.esc.bluespring.common.configuration;
 
 import com.esc.bluespring.common.security.JwtAuthenticationConverter;
 import com.esc.bluespring.domain.member.entity.Member.Role;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -19,16 +19,13 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @EnableWebSecurity
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfiguration {
 
-    @Autowired
-    private UserDetailsService userDetailsService;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private JwtAuthenticationConverter converter;
-    @Autowired
-    private JwtDecoder jwtDecoder;
+    private final UserDetailsService userDetailsService;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtAuthenticationConverter converter;
+    private final JwtDecoder jwtDecoder;
 
 
     @Bean

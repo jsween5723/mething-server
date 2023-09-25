@@ -4,6 +4,7 @@ import com.esc.bluespring.common.entity.OwnerEntity;
 import com.esc.bluespring.common.utils.time.TimeMapper;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.Create;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.MainPageListElement;
+import com.esc.bluespring.domain.meeting.classes.MeetingDto.MyMeetingPageListElement;
 import com.esc.bluespring.domain.meeting.entity.Meeting;
 import com.esc.bluespring.domain.member.entity.Student;
 import com.esc.bluespring.domain.university.classes.UniversityMapper;
@@ -19,12 +20,18 @@ public interface MeetingMapper {
 
     TeamMapper teamMapper = Mappers.getMapper(TeamMapper.class);
 
-    @Mapping(target = "count", expression = "java(meeting.getWatchlist().size())")
-    @Mapping(target = "isAdded", expression = "java(toIsAdded(meeting, student))")
+    @Mapping(target = "likeCount", expression = "java(meeting.getWatchlist().size())")
+    @Mapping(target = "isLiked", expression = "java(toIsAdded(meeting, student))")
     @Mapping(target = "id", source = "meeting.id")
     @Mapping(target = "createdAt", source = "meeting.createdAt")
     MainPageListElement toMainPageListElement(Meeting meeting, Student student);
 
+    @Mapping(target = "requestCount", source = "meeting")
+    MyMeetingPageListElement toMyMeetingPageListElement(Meeting meeting);
+
+    default Integer getRequestCount(Meeting meeting) {
+        return meeting.getJoinRequests().size();
+    }
     default boolean toIsAdded(Meeting meeting, Student student) {
         return meeting.getWatchlist().stream().map(OwnerEntity::getOwner).toList()
             .contains(student);

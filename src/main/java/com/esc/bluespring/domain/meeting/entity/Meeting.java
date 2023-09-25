@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 public class Meeting extends BaseEntity {
 
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "from_team_id")
+    @JoinColumn(name = "from_team_id", nullable = false)
     private Team fromTeam;
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "to_team_id")
@@ -63,6 +63,10 @@ public class Meeting extends BaseEntity {
     }
     public void mapWatchlist(List<MeetingWatchlistItem> source) {
         watchlist = source;
+    }
+
+    public void mapMeetingRequests(List<MeetingRequest> source) {
+        joinRequests = source;
     }
     public void validOwner(Member member){
         getOwnerTeam().validOwner(member);

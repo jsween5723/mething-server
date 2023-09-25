@@ -29,7 +29,6 @@ public interface TeamMapper {
         return toMainPageListElement(team.getId(), team.getTitle(), team.getIntroduce(),
             team.getRepresentedUniversity(), participants);
     }
-
     MainPageListElement toMainPageListElement(Long id, String title, String introduce,
         University representedUniversity,
         List<TeamParticipantDto.MainPageListElement> participants);

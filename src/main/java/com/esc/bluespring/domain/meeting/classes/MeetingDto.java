@@ -9,12 +9,18 @@ import org.hibernate.validator.constraints.Length;
 
 public record MeetingDto() {
 
-    public record SearchCondition(boolean isMyLocation) {
+    public record MainPageSearchCondition(boolean isMyLocation) {
 
     }
 
-    public record MainPageListElement(Long id, TeamDto.MainPageListElement fromTeam, Integer count,
-                                      Boolean isAdded, Long createdAt) {
+
+    public record MainPageListElement(Long id, TeamDto.MainPageListElement fromTeam,
+                                      Integer likeCount, Boolean isLiked, Long createdAt) {
+
+    }
+
+    public record MyMeetingPageListElement(Long id, TeamDto.MainPageListElement fromTeam,
+                                           Integer requestCount, Long createdAt) {
 
     }
 

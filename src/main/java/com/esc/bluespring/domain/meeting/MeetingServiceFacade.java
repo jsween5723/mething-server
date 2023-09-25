@@ -1,6 +1,6 @@
 package com.esc.bluespring.domain.meeting;
 
-import com.esc.bluespring.domain.meeting.classes.MeetingDto.SearchCondition;
+import com.esc.bluespring.domain.meeting.classes.MeetingDto.MainPageSearchCondition;
 import com.esc.bluespring.domain.meeting.entity.Meeting;
 import com.esc.bluespring.domain.meeting.exception.MeetingException.MeetingNotFoundException;
 import com.esc.bluespring.domain.meeting.repository.MeetingRepository;
@@ -37,8 +37,13 @@ public class MeetingServiceFacade {
         return repository.findById(id).orElseThrow(MeetingNotFoundException::new);
     }
     @Transactional(readOnly = true)
-    public Slice<Meeting> search(Student student, SearchCondition condition, Pageable pageable) {
-        return repository.search(student, condition, pageable);
+    public Slice<Meeting> searchMainPageList(Student student, MainPageSearchCondition condition, Pageable pageable) {
+        return repository.searchMainPageList(student, condition, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Slice<Meeting> searchMyMeetingList(Student student, Pageable pageable) {
+        return repository.searchMyMeetingList(student, pageable);
     }
 
     @Transactional
