@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Tag(name = "친구요청 컨트롤러")
 public class FriendshipRequestController {
 
-    private final FriendshipRequestMapper mapper;
+    private final FriendshipRequestMapper mapper = FriendshipRequestMapper.INSTANCE;
     private final FriendshipRequestService service;
 
     @GetMapping("/me")

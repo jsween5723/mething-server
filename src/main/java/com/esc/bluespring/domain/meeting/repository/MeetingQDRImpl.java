@@ -51,7 +51,7 @@ public class MeetingQDRImpl implements MeetingQDR {
             .leftJoin(meetingOwnerTeam.owner.as(QStudent.class), student).fetchJoin()
             .leftJoin(meetingOwnerTeam.representedUniversity, university).fetchJoin()
             .leftJoin(university.locationDistrict, locationDistrict).fetchJoin().fetchJoin()
-            .where(toWhereCondition(condition, user),
+            .where(user != null ? toWhereCondition(condition, user) : null,
                 meeting.fromTeam.instanceOf(MeetingOwnerTeam.class), meeting.toTeam.isNull())
             .offset(pageable.getOffset()).limit(pageable.getPageSize() + 1).fetch();
         List<Long> teamIds = meetings.stream().map(Meeting::getFromTeam).map(BaseEntity::getId)
