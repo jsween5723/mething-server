@@ -1,12 +1,16 @@
 package com.esc.bluespring.domain.meeting;
 
+import static com.esc.bluespring.domain.member.entity.Member.ADMIN;
+import static com.esc.bluespring.domain.member.entity.Member.ANONYMOUS;
+import static com.esc.bluespring.domain.member.entity.Member.STUDENT;
+
 import com.esc.bluespring.common.CustomSlice;
-import com.esc.bluespring.common.resolver.annotation.AllowAnonymous;
+import com.esc.bluespring.domain.auth.exception.AuthException.ForbiddenException;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.Create;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.MainPageListElement;
-import com.esc.bluespring.domain.meeting.classes.MeetingDto.MyMeetingPageListElement;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.MainPageSearchCondition;
+import com.esc.bluespring.domain.meeting.classes.MeetingDto.MyMeetingPageListElement;
 import com.esc.bluespring.domain.meeting.entity.Meeting;
 import com.esc.bluespring.domain.meeting.mapper.MeetingMapper;
 import com.esc.bluespring.domain.meeting.mapper.TeamMapper;
@@ -24,6 +28,7 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,20 +43,26 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Tag(name = "미팅 컨트롤러")
 public class MeetingController {
+
     private final MeetingMapper meetingMapper = MeetingMapper.INSTANCE;
     private final TeamMapper teamMapper = TeamMapper.INSTANCE;
     private final MeetingServiceFacade meetingServiceFacade;
 
     @GetMapping
+    @Secured({STUDENT, ANONYMOUS, ADMIN})
     @Operation(description = "메인 화면 과팅 목록", parameters = @Parameter(in = ParameterIn.HEADER, name = "Authorization"))
-    public CustomSlice<MainPageListElement> search(@ParameterObject MainPageSearchCondition condition,
-        @AllowAnonymous Student student, Pageable pageable) {
-        Slice<MainPageListElement> result = meetingServiceFacade.searchMainPageList(student, condition,
-            pageable).map(meeting -> meetingMapper.toMainPageListElement(meeting, student));
+    public CustomSlice<MainPageListElement> search(
+        @ParameterObject MainPageSearchCondition condition, Member student, Pageable pageable) {
+        if (!(student instanceof Student) && condition.isMyLocation()) {
+            throw new ForbiddenException();
+        }
+        Slice<MainPageListElement> result = meetingServiceFacade.searchMainPageList(student, condition, pageable)
+            .map(meeting -> meetingMapper.toMainPageListElement(meeting, (Student) student));
         return new CustomSlice<>(result);
     }
 
     @GetMapping("/me")
+    @Secured(STUDENT)
     @Operation(description = "내 과팅 목록", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public CustomSlice<MyMeetingPageListElement> search(Student student, Pageable pageable) {
         Slice<MyMeetingPageListElement> result = meetingServiceFacade.searchMyMeetingList(student,
@@ -60,6 +71,7 @@ public class MeetingController {
     }
 
     @PostMapping
+    @Secured(STUDENT)
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(description = "과팅 생성", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public void create(@Valid @RequestBody Create dto, Student member) {
@@ -68,6 +80,7 @@ public class MeetingController {
     }
 
     @PostMapping("{id}/requests")
+    @Secured({STUDENT, ANONYMOUS})
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(description = "특정 과팅 신청 목록", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public void request(@PathVariable Long id, @Valid @RequestBody MeetingDto.Request dto,
@@ -78,16 +91,18 @@ public class MeetingController {
     }
 
     @PostMapping("{id}/watchlist-items/add")
+    @Secured(STUDENT)
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(description = "메인 화면 미팅 목록", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
+    @Operation(description = "과팅 찜하기", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public void addWatchlist(@PathVariable Long id, Student member) {
         Meeting meeting = meetingServiceFacade.find(id);
         meetingServiceFacade.addWatchlist(meeting, member);
     }
 
     @DeleteMapping("{id}/watchlist-items/remove")
+    @Secured(STUDENT)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(description = "메인 화면 미팅 목록", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
+    @Operation(description = "과팅 찜하기 해제", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public void takeOutFromWatchlist(@PathVariable Long id, Member member) {
         MeetingWatchlistItem meetingWatchlistItem = meetingServiceFacade.findWatchlistItem(id,
             member);

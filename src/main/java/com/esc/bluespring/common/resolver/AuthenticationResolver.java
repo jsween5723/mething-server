@@ -1,13 +1,14 @@
 package com.esc.bluespring.common.resolver;
 
-import com.esc.bluespring.common.resolver.annotation.AllowAnonymous;
-import com.esc.bluespring.domain.auth.exception.AuthException.ForbiddenException;
+import static com.esc.bluespring.domain.member.entity.Member.ANONYMOUS;
+
 import com.esc.bluespring.domain.member.entity.Admin;
 import com.esc.bluespring.domain.member.entity.Member;
 import com.esc.bluespring.domain.member.entity.Student;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
@@ -18,6 +19,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @Component
 @RequiredArgsConstructor
 public class AuthenticationResolver implements HandlerMethodArgumentResolver {
+
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         return Member.class.isAssignableFrom(parameter.getParameterType());
@@ -27,10 +29,11 @@ public class AuthenticationResolver implements HandlerMethodArgumentResolver {
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer,
         NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication.getPrincipal().equals("anonymousUser") && parameter.getParameterAnnotation(AllowAnonymous.class) != null) {
+        if (authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList()
+            .contains(ANONYMOUS)) {
             return null;
         }
-        Member principal = (Member) authentication.getDetails();
+        Member principal = authentication.getDetails() instanceof Member member ? member : null;
         if (parameter.getParameterType().equals(Member.class)) {
             return principal;
         }
@@ -41,6 +44,6 @@ public class AuthenticationResolver implements HandlerMethodArgumentResolver {
         if (principal instanceof Admin admin && parameter.getParameterType().equals(Admin.class)) {
             return admin;
         }
-        throw new ForbiddenException();
+        return null;
     }
 }

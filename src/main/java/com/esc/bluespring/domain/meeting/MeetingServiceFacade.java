@@ -37,7 +37,7 @@ public class MeetingServiceFacade {
         return repository.findById(id).orElseThrow(MeetingNotFoundException::new);
     }
     @Transactional(readOnly = true)
-    public Slice<Meeting> searchMainPageList(Student student, MainPageSearchCondition condition, Pageable pageable) {
+    public Slice<Meeting> searchMainPageList(Member student, MainPageSearchCondition condition, Pageable pageable) {
         return repository.searchMainPageList(student, condition, pageable);
     }
 

@@ -22,6 +22,7 @@ import com.esc.bluespring.domain.meeting.team.entity.Team;
 import com.esc.bluespring.domain.meeting.team.entity.TeamParticipant;
 import com.esc.bluespring.domain.meeting.team.repository.MeetingOwnerTeamQDR;
 import com.esc.bluespring.domain.meeting.watchlist.entity.MeetingWatchlistItem;
+import com.esc.bluespring.domain.member.entity.Member;
 import com.esc.bluespring.domain.member.entity.QMember;
 import com.esc.bluespring.domain.member.entity.QStudent;
 import com.esc.bluespring.domain.member.entity.Student;
@@ -44,15 +45,14 @@ public class MeetingQDRImpl implements MeetingQDR {
     private final MeetingOwnerTeamQDR meetingOwnerTeamQDR;
 
     @Transactional(readOnly = true)
-    public Slice<Meeting> searchMainPageList(Student user, MainPageSearchCondition condition,
+    public Slice<Meeting> searchMainPageList(Member user, MainPageSearchCondition condition,
         Pageable pageable) {
         List<Meeting> meetings = query.selectFrom(meeting)
             .innerJoin(meeting.fromTeam.as(QMeetingOwnerTeam.class), meetingOwnerTeam).fetchJoin()
             .leftJoin(meetingOwnerTeam.owner.as(QStudent.class), student).fetchJoin()
             .leftJoin(meetingOwnerTeam.representedUniversity, university).fetchJoin()
             .leftJoin(university.locationDistrict, locationDistrict).fetchJoin().fetchJoin()
-            .where(user != null ? toWhereCondition(condition, user) : null,
-                meeting.fromTeam.instanceOf(MeetingOwnerTeam.class), meeting.toTeam.isNull())
+            .where(toWhereCondition(condition, user), meeting.toTeam.isNull())
             .offset(pageable.getOffset()).limit(pageable.getPageSize() + 1).fetch();
         List<Long> teamIds = meetings.stream().map(Meeting::getFromTeam).map(BaseEntity::getId)
             .toList();
@@ -99,9 +99,9 @@ public class MeetingQDRImpl implements MeetingQDR {
         return RepositorySlicer.toSlice(meetings, pageable);
     }
 
-    private BooleanBuilder toWhereCondition(MainPageSearchCondition condition, Student student) {
+    private BooleanBuilder toWhereCondition(MainPageSearchCondition condition, Member member) {
         BooleanBuilder builder = new BooleanBuilder();
-        if (condition.isMyLocation()) {
+        if (condition.isMyLocation() && member instanceof Student student) {
             builder.and(locationDistrict.id.eq(
                 student.getSchoolInformation().getMajor().getUniversity().getLocationDistrict()
                     .getId()));
