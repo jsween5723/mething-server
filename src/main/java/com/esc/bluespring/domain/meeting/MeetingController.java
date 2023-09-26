@@ -1,6 +1,7 @@
 package com.esc.bluespring.domain.meeting;
 
 import com.esc.bluespring.common.CustomSlice;
+import com.esc.bluespring.common.resolver.annotation.AllowAnonymous;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.Create;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.MainPageListElement;
@@ -37,15 +38,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Tag(name = "미팅 컨트롤러")
 public class MeetingController {
-
-    private final MeetingMapper meetingMapper;
-    private final TeamMapper teamMapper;
+    private final MeetingMapper meetingMapper = MeetingMapper.INSTANCE;
+    private final TeamMapper teamMapper = TeamMapper.INSTANCE;
     private final MeetingServiceFacade meetingServiceFacade;
 
     @GetMapping
-    @Operation(description = "메인 화면 과팅 목록", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
+    @Operation(description = "메인 화면 과팅 목록", parameters = @Parameter(in = ParameterIn.HEADER, name = "Authorization"))
     public CustomSlice<MainPageListElement> search(@ParameterObject MainPageSearchCondition condition,
-        Student student, Pageable pageable) {
+        @AllowAnonymous Student student, Pageable pageable) {
         Slice<MainPageListElement> result = meetingServiceFacade.searchMainPageList(student, condition,
             pageable).map(meeting -> meetingMapper.toMainPageListElement(meeting, student));
         return new CustomSlice<>(result);
@@ -61,6 +61,7 @@ public class MeetingController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(description = "과팅 생성", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public void create(@Valid @RequestBody Create dto, Student member) {
         Meeting entity = meetingMapper.toEntity(dto, member);
         meetingServiceFacade.save(entity);
@@ -68,7 +69,7 @@ public class MeetingController {
 
     @PostMapping("{id}/requests")
     @ResponseStatus(HttpStatus.CREATED)
-    @Operation(description = "메인 화면 미팅 목록", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
+    @Operation(description = "특정 과팅 신청 목록", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public void request(@PathVariable Long id, @Valid @RequestBody MeetingDto.Request dto,
         Student member) {
         Meeting meeting = meetingServiceFacade.find(id);

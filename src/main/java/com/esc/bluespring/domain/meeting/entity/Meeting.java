@@ -42,13 +42,14 @@ public class Meeting extends BaseEntity {
         super(id);
         this.fromTeam = fromTeam;
         this.toTeam = toTeam;
-        this.joinRequests = joinRequests;
-        this.watchlist = watchlist;
+        this.joinRequests = joinRequests == null ? new ArrayList<>() : joinRequests;
+        this.watchlist = watchlist == null ? new ArrayList<>() : watchlist;
     }
 
     public void join(MeetingRequesterTeam team) {
         this.toTeam = team;
     }
+
     public Meeting getOppnentRelation() {
         return Meeting.builder().fromTeam(toTeam).toTeam(fromTeam).build();
     }
@@ -61,14 +62,16 @@ public class Meeting extends BaseEntity {
         Team team = fromTeam instanceof MeetingOwnerTeam ? fromTeam : toTeam;
         return (MeetingOwnerTeam) team;
     }
+
     public void mapWatchlist(List<MeetingWatchlistItem> source) {
-        watchlist = source;
+        watchlist = source == null ? new ArrayList<>() : source;
     }
 
     public void mapMeetingRequests(List<MeetingRequest> source) {
-        joinRequests = source;
+        joinRequests = source == null ? new ArrayList<>() : source;
     }
-    public void validOwner(Member member){
+
+    public void validOwner(Member member) {
         getOwnerTeam().validOwner(member);
     }
 }

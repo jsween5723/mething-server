@@ -17,7 +17,7 @@ class LocationDistrictController {
 
   private final LocationDistrictService locationDistrictService;
 //  private final CsvParser csvParser;
-  private final LocationDistrictMapper mapper;
+  private final LocationDistrictMapper mapper = LocationDistrictMapper.INSTANCE;
 
 //  @PostMapping("csv")
 //  @ResponseStatus(HttpStatus.CREATED)

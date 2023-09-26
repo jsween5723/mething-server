@@ -2,6 +2,7 @@ package com.esc.bluespring.domain.member;
 
 import com.esc.bluespring.common.security.CustomJwtEncoder;
 import com.esc.bluespring.common.utils.file.S3Service;
+import com.esc.bluespring.domain.file.entity.Image;
 import com.esc.bluespring.domain.member.classes.AdminMapper;
 import com.esc.bluespring.domain.member.classes.MemberDto.AdminJoin;
 import com.esc.bluespring.domain.member.classes.MemberDto.Join;
@@ -32,14 +33,16 @@ public class MemberController {
 
     private final MemberServiceFacade memberServiceFacade;
     private final S3Service s3Service;
-    private final StudentMapper mapper;
-    private final AdminMapper adminMapper;
+    private final StudentMapper mapper = StudentMapper.INSTANCE;
+    private final AdminMapper adminMapper = AdminMapper.INSTANCE;
     private final CustomJwtEncoder customJwtEncoder;
 
     @PostMapping("join")
     @ResponseStatus(HttpStatus.CREATED)
     public void join(Join dto) {
-        memberServiceFacade.join(mapper.toEntity(dto));
+        Image profile = s3Service.upload(dto.profileImage());
+        Image certificateImage = s3Service.upload(dto.studentCertificationImage());
+        memberServiceFacade.join(mapper.toEntity(dto, profile, certificateImage));
     }
 
     @PostMapping("admin-join")

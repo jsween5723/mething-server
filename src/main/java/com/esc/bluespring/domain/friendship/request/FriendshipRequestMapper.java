@@ -3,19 +3,11 @@ package com.esc.bluespring.domain.friendship.request;
 import com.esc.bluespring.domain.friendship.request.classes.FriendshipRequestDto.ListElement;
 import com.esc.bluespring.domain.friendship.request.entity.FriendshipRequest;
 import com.esc.bluespring.domain.member.classes.StudentMapper;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 
-@Component
-@RequiredArgsConstructor
-public class FriendshipRequestMapper {
-    private final StudentMapper studentMapper;
-
-    public ListElement toListElement(FriendshipRequest request) {
-        return ListElement.builder()
-            .id(request.getId())
-            .message(request.getMessage())
-            .requester(studentMapper.toDetail(request.getRequester()))
-            .build();
-    }
+@Mapper(uses = {StudentMapper.class})
+public interface FriendshipRequestMapper {
+    FriendshipRequestMapper INSTANCE = Mappers.getMapper(FriendshipRequestMapper.class);
+    ListElement toListElement(FriendshipRequest request);
 }
