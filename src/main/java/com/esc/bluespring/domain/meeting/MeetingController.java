@@ -43,7 +43,7 @@ public class MeetingController {
     private final MeetingServiceFacade meetingServiceFacade;
 
     @GetMapping
-    @Operation(description = "메인 화면 과팅 목록", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
+    @Operation(description = "메인 화면 과팅 목록", parameters = @Parameter(in = ParameterIn.HEADER, name = "Authorization"))
     public CustomSlice<MainPageListElement> search(@ParameterObject MainPageSearchCondition condition,
         @AllowAnonymous Student student, Pageable pageable) {
         Slice<MainPageListElement> result = meetingServiceFacade.searchMainPageList(student, condition,
