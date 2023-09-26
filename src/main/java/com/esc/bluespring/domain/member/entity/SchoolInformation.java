@@ -22,16 +22,16 @@ public class SchoolInformation {
     private Major major;
     @JoinColumn(name = "student_certification_image_url", referencedColumnName = "url")
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Image studentCertificationImageUrl;
+    private Image studentCertificationImage;
     private boolean isCertificated = false;
     @Column(nullable = false)
     private String name;
 
-    public SchoolInformation(Major major, Image studentCertificationImageUrl,
+    public SchoolInformation(Major major, Image studentCertificationImage,
         Boolean isCertificated, String name) {
         this.name = name;
         this.major = major;
-        this.studentCertificationImageUrl = studentCertificationImageUrl;
+        this.studentCertificationImage = studentCertificationImage;
         this.isCertificated = isCertificated != null && isCertificated;
     }
 }

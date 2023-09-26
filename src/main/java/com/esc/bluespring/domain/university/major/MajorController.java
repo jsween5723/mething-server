@@ -19,7 +19,7 @@ public class MajorController {
 
     private final MajorService majorService;
     //  private final CsvParser csvParser;
-    private final MajorMapper majorMapper;
+    private final MajorMapper majorMapper = MajorMapper.INSTANCE;
 
     //  @PostMapping("/majors/csv")
 //  @Operation(summary = "csv 파일을 이용해 전국 대학교별 학과 정보를 일괄 등록한다.")

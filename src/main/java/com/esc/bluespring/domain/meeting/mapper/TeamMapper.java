@@ -12,23 +12,25 @@ import com.esc.bluespring.domain.university.entity.University;
 import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants.ComponentModel;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(uses = {UniversityMapper.class,
-    TeamParticipantMapper.class}, componentModel = ComponentModel.SPRING)
+@Mapper(uses = {TeamParticipantMapper.class, UniversityMapper.class})
 public interface TeamMapper {
+
+    TeamMapper INSTANCE = Mappers.getMapper(TeamMapper.class);
+
     default MainPageListElement toMainPageListElement(MeetingOwnerTeam team) {
-        TeamParticipantMapper teamParticipantMapper = Mappers.getMapper(TeamParticipantMapper.class);
-        TeamParticipantDto.MainPageListElement owner = teamParticipantMapper.toMainPageListElement(
+        TeamParticipantDto.MainPageListElement owner = TeamParticipantMapper.INSTANCE.toMainPageListElement(
             (Student) team.getOwner(), true);
         List<TeamParticipantDto.MainPageListElement> participants = new java.util.ArrayList<>(
-            team.getParticipants().stream()
-                .map(teamParticipantMapper::toMainPageListElement).toList());
+            team.getParticipants().stream().map(TeamParticipantMapper.INSTANCE::toMainPageListElement)
+                .toList());
         participants.add(owner);
         return toMainPageListElement(team.getId(), team.getTitle(), team.getIntroduce(),
             team.getRepresentedUniversity(), participants);
     }
+
+    @Mapping(target = "representedUniversity", source = "representedUniversity")
     MainPageListElement toMainPageListElement(Long id, String title, String introduce,
         University representedUniversity,
         List<TeamParticipantDto.MainPageListElement> participants);

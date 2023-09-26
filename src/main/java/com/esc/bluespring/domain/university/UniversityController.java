@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/universities")
 public class UniversityController {
 
-  private final UniversityMapper universityMapper;
+  private final UniversityMapper universityMapper = UniversityMapper.INSTANCE;
   private final UniversityService universityService;
 //  private final CsvParser csvParser;
 

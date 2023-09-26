@@ -39,10 +39,10 @@ public abstract class Team extends OwnerEntity {
         super(id, owner);
         this.title = title;
         this.representedUniversity = representedUniversity;
-        this.participants = participants;
+        this.participants = participants == null ? new ArrayList<>() : participants;
     }
 
     public void mapParticipants(List<TeamParticipant> source) {
-        participants = source;
+        participants = source == null ? new ArrayList<>() : source;
     }
 }
