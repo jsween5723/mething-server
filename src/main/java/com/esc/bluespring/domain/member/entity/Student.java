@@ -73,6 +73,10 @@ public class Student extends Member{
         }
     }
 
+    public void changeCertificationState(boolean state) {
+        getSchoolInformation().changeCertificationState(state);
+    }
+
     public boolean isCertificated() {
         return getSchoolInformation().isCertificated();
     }
@@ -109,25 +113,28 @@ public class Student extends Member{
         watchlist.add(item);
     }
 
-    public void patch(Student source) {
+    @Override
+    public void patch(Member source) {
         super.patch(source);
-        if (source.nickname != null) {
-            nickname = source.nickname;
-        }
-        if (source.birthday != null) {
-            birthday = source.birthday;
-        }
-        if (source.profileImage != null) {
-            profileImage = source.profileImage;
-        }
-        if (source.gender != null) {
-            gender = source.gender;
-        }
-        if (source.mbti != null) {
-            mbti = source.mbti;
-        }
-        if (source.schoolInformation != null) {
-            schoolInformation.patch(source.schoolInformation);
+        if (source instanceof Student student) {
+            if (student.nickname != null) {
+                nickname = student.nickname;
+            }
+            if (student.birthday != null) {
+                birthday = student.birthday;
+            }
+            if (student.profileImage != null) {
+                profileImage = student.profileImage;
+            }
+            if (student.gender != null) {
+                gender = student.gender;
+            }
+            if (student.mbti != null) {
+                mbti = student.mbti;
+            }
+            if (student.schoolInformation != null) {
+                schoolInformation.patch(student.schoolInformation);
+            }
         }
     }
 }

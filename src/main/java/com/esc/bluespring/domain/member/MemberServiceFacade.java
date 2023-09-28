@@ -38,11 +38,7 @@ public class MemberServiceFacade implements UserDetailsService {
 
     @Transactional(readOnly = true)
     public Member find(Long id) {
-        Member member = repository.findById(id).orElseThrow(MemberNotFoundException::new);
-        if (member instanceof Student) {
-            return studentService.find(id);
-        }
-        return member;
+        return repository.findById(id).orElseThrow(MemberNotFoundException::new);
     }
 
     private void validForm(Member entity) {

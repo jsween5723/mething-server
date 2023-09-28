@@ -36,17 +36,21 @@ public class SchoolInformation {
     }
 
     void patch(SchoolInformation source) {
-        major = source.major;
-        name = source.name;
-        studentCertificationImage = source.studentCertificationImage;
-        uncertificate();
+        if (source.major == null && source.name == null && source.studentCertificationImage == null) {
+            return;
+        }
+        if (source.major != null) {
+            major = source.major;
+        }
+        if (source.name != null && !source.name.isBlank()) {
+            name = source.name;
+        }
+        if (source.studentCertificationImage != null) {
+            studentCertificationImage = source.studentCertificationImage;
+        }
+        changeCertificationState(false);
     }
-
-    public void uncertificate() {
-        isCertificated = false;
-    }
-
-    public void certificate() {
-        isCertificated = true;
+    public void changeCertificationState(boolean state) {
+        isCertificated = state;
     }
 }

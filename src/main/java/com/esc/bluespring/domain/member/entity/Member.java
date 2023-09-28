@@ -87,7 +87,6 @@ public abstract class Member extends BaseEntity implements UserDetails {
     public void changePassword(String password) {
         this.password = password;
     }
-
     public enum Role implements GrantedAuthority {
         ADMIN, STUDENT, NOT_CERTIFICATED_STUDENT;
 

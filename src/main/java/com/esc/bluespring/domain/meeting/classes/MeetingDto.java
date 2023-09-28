@@ -19,6 +19,9 @@ public record MeetingDto() {
 
     }
 
+    public record Detail(Long id, TeamDto.MainPageListElement fromTeam,
+                         Integer likeCount, Boolean isLiked, Long createdAt) {}
+
     public record MyMeetingPageListElement(Long id, TeamDto.MainPageListElement fromTeam,
                                            Integer requestCount, Long createdAt) {
 
