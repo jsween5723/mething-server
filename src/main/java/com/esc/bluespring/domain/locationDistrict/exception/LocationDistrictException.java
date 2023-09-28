@@ -9,7 +9,7 @@ import java.util.List;
 public abstract class LocationDistrictException extends ApplicationException {
 
   protected LocationDistrictException(ExceptionCode exceptionCode) {
-    super(exceptionCode);
+    super(exceptionCode, null);
   }
   public static class LocationDistrictNotFoundException extends LocationDistrictException {
 

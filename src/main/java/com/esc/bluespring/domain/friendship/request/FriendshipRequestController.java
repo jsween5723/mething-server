@@ -31,7 +31,7 @@ public class FriendshipRequestController {
 
     @GetMapping("/me")
     public CustomSlice<ListElement> search(Student member,
-        @ParameterObject SearchCondition condition, Pageable pageable) {
+        @ParameterObject SearchCondition condition, @ParameterObject Pageable pageable) {
         condition = new SearchCondition(condition.universityName(), condition.requesterNickname(),
             member.getId());
         Slice<FriendshipRequest> result = service.search(condition, pageable);

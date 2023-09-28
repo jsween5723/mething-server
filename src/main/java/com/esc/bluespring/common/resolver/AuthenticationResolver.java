@@ -22,7 +22,9 @@ public class AuthenticationResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return Member.class.isAssignableFrom(parameter.getParameterType());
+        Class<?> parameterType = parameter.getParameterType();
+        return parameterType.equals(Member.class) || parameterType.equals(Student.class)
+            || parameterType.equals(Admin.class);
     }
 
     @Override

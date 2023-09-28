@@ -1,26 +1,24 @@
 package com.esc.bluespring.common.security;
 
-import com.esc.bluespring.domain.auth.exception.AuthException.ForbiddenException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 @Component
 @RequiredArgsConstructor
 public class AccessDeniedHandlerImpl implements AccessDeniedHandler {
-    private final ObjectMapper objectMapper;
+    @Qualifier("handlerExceptionResolver")
+    @Autowired
+    private HandlerExceptionResolver resolver;
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response,
-        AccessDeniedException accessDeniedException) throws IOException {
-        String responseBody = objectMapper.writeValueAsString(new ForbiddenException());
-        response.getWriter().append(responseBody);
-        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        response.getWriter().flush();
-        response.getWriter().close();
+        AccessDeniedException accessDeniedException) {
+        resolver.resolveException(request, response, null, accessDeniedException);
     }
 }

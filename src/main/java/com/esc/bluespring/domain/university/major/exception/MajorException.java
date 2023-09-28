@@ -5,7 +5,7 @@ import com.esc.bluespring.common.exception.ApplicationException;
 public abstract class MajorException extends ApplicationException {
 
   protected MajorException(MajorExceptionCode exceptionCode) {
-    super(exceptionCode);
+    super(exceptionCode, null);
   }
 
   public static class MajorNotFoundException extends MajorException {

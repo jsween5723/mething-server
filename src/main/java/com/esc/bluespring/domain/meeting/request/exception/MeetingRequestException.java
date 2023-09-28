@@ -6,7 +6,7 @@ import com.esc.bluespring.common.exception.ExceptionCode;
 public class MeetingRequestException extends ApplicationException {
 
     protected MeetingRequestException(ExceptionCode exceptionCode) {
-        super(exceptionCode);
+        super(exceptionCode, null);
     }
 
     static public class MeetingRequestNotFoundRequestException extends MeetingRequestException {

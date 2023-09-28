@@ -24,9 +24,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 @Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn
 public abstract class Member extends BaseEntity implements UserDetails {
-    static public final String ADMIN = "ROLE_ADMIN";
-    static public final String STUDENT = "ROLE_STUDENT";
-    static public final String ANONYMOUS = "ROLE_ANONYMOUS";
+    static public final String ADMIN = "ADMIN";
+    static public final String STUDENT = "STUDENT";
+    static public final String ANONYMOUS = "ANONYMOUS";
     @Column(nullable = false)
     private String email;
     @Column(nullable = false, length = 800)

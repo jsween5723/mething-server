@@ -6,7 +6,7 @@ import com.esc.bluespring.domain.friendship.classes.FriendshipDto.SearchConditio
 import com.esc.bluespring.domain.friendship.entity.Friendship;
 import com.esc.bluespring.domain.member.entity.Student;
 import lombok.RequiredArgsConstructor;
-import org.mapstruct.factory.Mappers;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
@@ -24,7 +24,7 @@ public class FriendshipController {
     private final FriendshipService friendshipService;
     private final FriendshipMapper friendshipMapper = FriendshipMapper.INSTANCE;
     @GetMapping("/me")
-    public CustomSlice<ListElement> searchMyFriend(SearchCondition condition, Student user, Pageable pageable) {
+    public CustomSlice<ListElement> searchMyFriend(@ParameterObject SearchCondition condition, Student user, @ParameterObject Pageable pageable) {
         Slice<Friendship> result = friendshipService.search(condition, pageable, user);
         return new CustomSlice<>(result.map(friendshipMapper::toListElement));
     }

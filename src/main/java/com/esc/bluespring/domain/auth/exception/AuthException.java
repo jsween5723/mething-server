@@ -9,11 +9,16 @@ import static com.esc.bluespring.domain.auth.exception.AuthExceptionCode.UNVALID
 
 import com.esc.bluespring.common.exception.ApplicationException;
 import com.esc.bluespring.common.exception.ExceptionCode;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 
 public abstract class AuthException extends ApplicationException {
 
     protected AuthException(ExceptionCode exceptionCode) {
-        super(exceptionCode);
+        super(exceptionCode, null);
+    }
+    protected AuthException(ExceptionCode exceptionCode, Throwable e) {
+        super(exceptionCode, e);
     }
 
     public static class PhoneCodeNotFoundException extends AuthException {
@@ -46,15 +51,19 @@ public abstract class AuthException extends ApplicationException {
 
     public static class LoginRequiredException extends AuthException {
 
-        public LoginRequiredException() {
-            super(LOGIN_REQUIRED);
+        public LoginRequiredException(AuthenticationException e) {
+            super(LOGIN_REQUIRED, e);
         }
     }
 
     public static class ForbiddenException extends AuthException {
 
+        public ForbiddenException(AccessDeniedException e) {
+            super(FORBIDDEN, e);
+        }
+
         public ForbiddenException() {
-            super(FORBIDDEN);
+            this(null);
         }
     }
 }

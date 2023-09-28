@@ -7,7 +7,7 @@ import com.esc.bluespring.common.exception.ApplicationException;
 public class FriendshipException extends ApplicationException {
 
     protected FriendshipException(FriendshipExceptionCode exceptionCode) {
-        super(exceptionCode);
+        super(exceptionCode, null);
     }
 
     static public class FriendshipNotFoundException extends FriendshipException{
