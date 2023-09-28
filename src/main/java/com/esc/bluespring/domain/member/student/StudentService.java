@@ -33,9 +33,4 @@ public class StudentService {
     public Student find(String email) {
         return repository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
     }
-
-    @Transactional(readOnly = true)
-    public Student find(Long id) {
-        return repository.findById(id).orElseThrow(MemberNotFoundException::new);
-    }
 }
