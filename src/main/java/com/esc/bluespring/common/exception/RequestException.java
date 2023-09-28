@@ -6,7 +6,7 @@ import static com.esc.bluespring.common.exception.RequestExceptionCode.REQUEST_N
 public abstract class RequestException extends ApplicationException {
 
   RequestException(RequestExceptionCode exceptionCode) {
-    super(exceptionCode);
+    super(exceptionCode, null);
   }
 
   public static class RequestNotFoundException extends RequestException {

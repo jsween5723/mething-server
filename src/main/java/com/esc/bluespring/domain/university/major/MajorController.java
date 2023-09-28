@@ -6,6 +6,7 @@ import com.esc.bluespring.domain.university.major.classes.MajorDto.SearchListEle
 import com.esc.bluespring.domain.university.major.classes.MajorMapper;
 import com.esc.bluespring.domain.university.major.entity.Major;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +32,8 @@ public class MajorController {
 //    majorService.saveAllWithMajorCSV(majors);
 //  }
     @GetMapping
-    public CustomSlice<SearchListElement> search(SearchCondition condition, Pageable pageable) {
+    public CustomSlice<SearchListElement> search(@ParameterObject SearchCondition condition,
+        @ParameterObject Pageable pageable) {
         Slice<Major> result = majorService.search(condition, pageable);
         return new CustomSlice<>(result.map(majorMapper::toSearchListElement));
     }

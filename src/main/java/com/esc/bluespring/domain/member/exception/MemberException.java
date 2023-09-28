@@ -12,7 +12,7 @@ import com.esc.bluespring.common.exception.ApplicationException;
 public abstract class MemberException extends ApplicationException {
 
   protected MemberException(MemberExceptionCode exceptionCode) {
-    super(exceptionCode);
+    super(exceptionCode, null);
   }
 
   public static class MemberNotFoundException extends MemberException {

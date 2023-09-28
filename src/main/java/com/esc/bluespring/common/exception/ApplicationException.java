@@ -9,8 +9,8 @@ public abstract class ApplicationException extends RuntimeException {
   private final String code;
   private final HttpStatus httpStatus;
 
-  protected ApplicationException(ExceptionCode exceptionCode) {
-    super(exceptionCode.getMessage());
+  protected ApplicationException(ExceptionCode exceptionCode, Throwable e) {
+    super(exceptionCode.getMessage(), e);
     this.code = exceptionCode.getCode();
     this.httpStatus = exceptionCode.getHttpStatus();
   }

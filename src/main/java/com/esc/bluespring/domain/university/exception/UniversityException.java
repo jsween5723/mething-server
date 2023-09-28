@@ -4,7 +4,7 @@ import com.esc.bluespring.common.exception.ApplicationException;
 
 public abstract class UniversityException extends ApplicationException {
   protected UniversityException(UniversityExceptionCode exceptionCode) {
-    super(exceptionCode);
+    super(exceptionCode, null);
   }
 
 

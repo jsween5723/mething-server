@@ -28,7 +28,7 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.annotation.Secured;
+import jakarta.annotation.security.RolesAllowed;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,29 +49,30 @@ public class MeetingController {
     private final MeetingServiceFacade meetingServiceFacade;
 
     @GetMapping
-    @Secured({STUDENT, ANONYMOUS, ADMIN})
+    @RolesAllowed({STUDENT, ANONYMOUS, ADMIN})
     @Operation(description = "메인 화면 과팅 목록", parameters = @Parameter(in = ParameterIn.HEADER, name = "Authorization"))
     public CustomSlice<MainPageListElement> search(
-        @ParameterObject MainPageSearchCondition condition, Member student, Pageable pageable) {
+        @ParameterObject MainPageSearchCondition condition, Member student, @ParameterObject Pageable pageable) {
         if (!(student instanceof Student) && condition.isMyLocation()) {
             throw new ForbiddenException();
         }
+        assert student instanceof Student;
         Slice<MainPageListElement> result = meetingServiceFacade.searchMainPageList(student, condition, pageable)
             .map(meeting -> meetingMapper.toMainPageListElement(meeting, (Student) student));
         return new CustomSlice<>(result);
     }
 
     @GetMapping("/me")
-    @Secured(STUDENT)
+    @RolesAllowed({STUDENT})
     @Operation(description = "내 과팅 목록", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
-    public CustomSlice<MyMeetingPageListElement> search(Student student, Pageable pageable) {
+    public CustomSlice<MyMeetingPageListElement> search(Student student, @ParameterObject Pageable pageable) {
         Slice<MyMeetingPageListElement> result = meetingServiceFacade.searchMyMeetingList(student,
             pageable).map(meetingMapper::toMyMeetingPageListElement);
         return new CustomSlice<>(result);
     }
 
     @PostMapping
-    @Secured(STUDENT)
+    @RolesAllowed({STUDENT})
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(description = "과팅 생성", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public void create(@Valid @RequestBody Create dto, Student member) {
@@ -80,7 +81,7 @@ public class MeetingController {
     }
 
     @PostMapping("{id}/requests")
-    @Secured({STUDENT, ANONYMOUS})
+    @RolesAllowed({STUDENT})
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(description = "특정 과팅 신청 목록", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public void request(@PathVariable Long id, @Valid @RequestBody MeetingDto.Request dto,
@@ -91,7 +92,7 @@ public class MeetingController {
     }
 
     @PostMapping("{id}/watchlist-items/add")
-    @Secured(STUDENT)
+    @RolesAllowed({STUDENT})
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(description = "과팅 찜하기", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public void addWatchlist(@PathVariable Long id, Student member) {
@@ -100,10 +101,10 @@ public class MeetingController {
     }
 
     @DeleteMapping("{id}/watchlist-items/remove")
-    @Secured(STUDENT)
+    @RolesAllowed({STUDENT})
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(description = "과팅 찜하기 해제", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
-    public void takeOutFromWatchlist(@PathVariable Long id, Member member) {
+    public void takeOutFromWatchlist(@PathVariable Long id, Student member) {
         MeetingWatchlistItem meetingWatchlistItem = meetingServiceFacade.findWatchlistItem(id,
             member);
         meetingWatchlistItem.validOwner(member);
