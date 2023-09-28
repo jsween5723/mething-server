@@ -1,11 +1,11 @@
-package com.esc.bluespring.domain.member.student;
+package com.esc.bluespring.domain.member.student.repository;
 
 import com.esc.bluespring.domain.member.entity.Student;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-public interface StudentRepository extends JpaRepository<Student, Long> {
+public interface StudentRepository extends JpaRepository<Student, Long>, StudentQDR {
 
     Optional<Student> findByEmail(String email);
 

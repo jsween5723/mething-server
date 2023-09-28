@@ -39,14 +39,9 @@ public class SchoolInformation {
         major = source.major;
         name = source.name;
         studentCertificationImage = source.studentCertificationImage;
-        uncertificate();
+        changeCertificationState(false);
     }
-
-    public void uncertificate() {
-        isCertificated = false;
-    }
-
-    public void certificate() {
-        isCertificated = true;
+    public void changeCertificationState(boolean state) {
+        isCertificated = state;
     }
 }

@@ -73,6 +73,10 @@ public class Student extends Member{
         }
     }
 
+    public void changeCertificationState(boolean state) {
+        getSchoolInformation().changeCertificationState(state);
+    }
+
     public boolean isCertificated() {
         return getSchoolInformation().isCertificated();
     }

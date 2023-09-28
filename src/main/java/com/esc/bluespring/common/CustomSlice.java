@@ -26,4 +26,12 @@ public class CustomSlice<T> {
     public boolean getHasPrevious() {
         return slice.hasPrevious();
     }
+
+    public int getCurrentPageNumber() {
+        return slice.getNumber();
+    }
+
+    public int getPageSize() {
+        return slice.getSize();
+    }
 }
