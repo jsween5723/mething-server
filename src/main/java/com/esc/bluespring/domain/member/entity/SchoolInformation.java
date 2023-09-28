@@ -34,4 +34,19 @@ public class SchoolInformation {
         this.studentCertificationImage = studentCertificationImage;
         this.isCertificated = isCertificated != null && isCertificated;
     }
+
+    void patch(SchoolInformation source) {
+        major = source.major;
+        name = source.name;
+        studentCertificationImage = source.studentCertificationImage;
+        uncertificate();
+    }
+
+    public void uncertificate() {
+        isCertificated = false;
+    }
+
+    public void certificate() {
+        isCertificated = true;
+    }
 }

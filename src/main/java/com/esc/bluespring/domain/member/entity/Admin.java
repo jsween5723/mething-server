@@ -13,4 +13,10 @@ public class Admin extends Member {
     public Admin(Long id, String email, String password) {
         super(id, email, password);
     }
+
+    @Override
+    public Role getRole() {
+        return Role.ADMIN;
+    }
+
 }

@@ -2,6 +2,7 @@ package com.esc.bluespring.domain.member.entity;
 
 import com.esc.bluespring.common.enums.Gender;
 import com.esc.bluespring.common.enums.MBTI;
+import com.esc.bluespring.domain.auth.exception.AuthException.ForbiddenException;
 import com.esc.bluespring.domain.file.entity.Image;
 import com.esc.bluespring.domain.friendship.entity.Friendship;
 import com.esc.bluespring.domain.friendship.request.entity.FriendshipRequest;
@@ -18,7 +19,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -32,7 +33,7 @@ public class Student extends Member{
     @Column(nullable = false)
     private String nickname;
     @Column(nullable = false)
-    private LocalDateTime birthday;
+    private LocalDate birthday;
     @JoinColumn(name = "profile_image_url", referencedColumnName = "url")
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Image profileImage;
@@ -50,7 +51,7 @@ public class Student extends Member{
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Friendship> friendships = new ArrayList<>();
 
-    public Student(Long id, String email, String password, String nickname, LocalDateTime birthday,
+    public Student(Long id, String email, String password, String nickname, LocalDate birthday,
         Image profileImage, Gender gender, MBTI mbti, SchoolInformation schoolInformation) {
         super(id, email, password);
         this.nickname = nickname;
@@ -59,6 +60,21 @@ public class Student extends Member{
         this.gender = gender;
         this.mbti = mbti;
         this.schoolInformation = schoolInformation;
+    }
+
+    @Override
+    public Role getRole() {
+        return Role.STUDENT;
+    }
+
+    public void validCertificated() {
+        if (!schoolInformation.isCertificated()) {
+            throw new ForbiddenException();
+        }
+    }
+
+    public boolean isCertificated() {
+        return getSchoolInformation().isCertificated();
     }
 
     @Override
@@ -91,5 +107,27 @@ public class Student extends Member{
             .owner(this)
             .build();
         watchlist.add(item);
+    }
+
+    public void patch(Student source) {
+        super.patch(source);
+        if (source.nickname != null) {
+            nickname = source.nickname;
+        }
+        if (source.birthday != null) {
+            birthday = source.birthday;
+        }
+        if (source.profileImage != null) {
+            profileImage = source.profileImage;
+        }
+        if (source.gender != null) {
+            gender = source.gender;
+        }
+        if (source.mbti != null) {
+            mbti = source.mbti;
+        }
+        if (source.schoolInformation != null) {
+            schoolInformation.patch(source.schoolInformation);
+        }
     }
 }

@@ -8,6 +8,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import java.util.Collection;
 import java.util.List;
 import lombok.AccessLevel;
@@ -27,10 +28,11 @@ public abstract class Member extends BaseEntity implements UserDetails {
     static public final String ADMIN = "ADMIN";
     static public final String STUDENT = "STUDENT";
     static public final String ANONYMOUS = "ANONYMOUS";
+    static public final String NOT_CERTIFICATED_STUDENT = "NOT_CERTIFICATED_STUDENT";
     @Column(nullable = false)
-    private String email;
+    protected String email;
     @Column(nullable = false, length = 800)
-    private String password;
+    protected String password;
 
     public Member(Long id) {
         super(id);
@@ -44,8 +46,11 @@ public abstract class Member extends BaseEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(getClass().equals(Admin.class) ? Role.ADMIN : Role.STUDENT);
+        return List.of(getRole());
     }
+
+    @Transient
+    abstract public Role getRole();
 
     @Override
     public boolean isAccountNonExpired() {
@@ -84,11 +89,20 @@ public abstract class Member extends BaseEntity implements UserDetails {
     }
 
     public enum Role implements GrantedAuthority {
-        ADMIN, STUDENT;
+        ADMIN, STUDENT, NOT_CERTIFICATED_STUDENT;
 
         @Override
         public String getAuthority() {
             return "ROLE_"+name();
+        }
+    }
+
+    public void patch(Member source) {
+        if (source.email != null) {
+            email = source.email;
+        }
+        if (source.password != null) {
+            password = source.getPassword();
         }
     }
 }
