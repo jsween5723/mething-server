@@ -31,6 +31,9 @@ public class S3Service {
   private static final String AWS_DOMAIN = ".amazonaws.com/";
   private final Directory directory = S3Directory.MEMBER;
   public Image upload(MultipartFile file) {
+    if (file == null) {
+      return null;
+    }
     Image metadata = Image.builder().file(file).build();
     String fileName = directory.getDirName() + metadata.getFileName();
     saveFile(file, fileName);
