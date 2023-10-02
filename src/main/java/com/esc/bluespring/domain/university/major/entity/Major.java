@@ -1,6 +1,6 @@
 package com.esc.bluespring.domain.university.major.entity;
 
-import com.esc.bluespring.common.entity.BaseEntity;
+import com.esc.bluespring.common.entity.InformationEntity;
 import com.esc.bluespring.domain.university.entity.University;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "majors")
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Major extends BaseEntity {
+public class Major extends InformationEntity {
 
     private String name;
 

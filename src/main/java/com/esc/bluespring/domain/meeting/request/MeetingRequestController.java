@@ -3,6 +3,7 @@ package com.esc.bluespring.domain.meeting.request;
 import com.esc.bluespring.domain.meeting.MeetingServiceFacade;
 import com.esc.bluespring.domain.meeting.request.entity.MeetingRequest;
 import com.esc.bluespring.domain.member.entity.Member;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,7 +21,7 @@ public class MeetingRequestController {
     private final MeetingServiceFacade meetingServiceFacade;
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void cancel(@PathVariable Long id, Member member) {
+    public void cancel(@PathVariable UUID id, Member member) {
         MeetingRequest request = requestService.find(id);
         request.validRequesterOwner(member);
         requestService.delete(request);
@@ -28,7 +29,7 @@ public class MeetingRequestController {
 
     @PatchMapping("{id}/accept")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void accept(@PathVariable Long id, Member member) {
+    public void accept(@PathVariable UUID id, Member member) {
         MeetingRequest request = requestService.find(id);
         request.validTargetOwner(member);
         meetingServiceFacade.acceptRequest(request);
@@ -36,7 +37,7 @@ public class MeetingRequestController {
 
     @PatchMapping("{id}/reject")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void reject(@PathVariable Long id, Member member) {
+    public void reject(@PathVariable UUID id, Member member) {
         MeetingRequest request = requestService.find(id);
         request.validTargetOwner(member);
         requestService.reject(request);

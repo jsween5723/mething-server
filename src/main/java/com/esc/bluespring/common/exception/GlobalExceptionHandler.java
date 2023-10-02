@@ -23,13 +23,17 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(AccessDeniedException.class)
   @ResponseStatus(HttpStatus.FORBIDDEN)
   public ErrorResponse accessDeniedException(AccessDeniedException e) {
-    return ErrorResponse.of(new ForbiddenException(e));
+    ForbiddenException exception = new ForbiddenException(e);
+    log.error(exception.getCause().getMessage());
+    return ErrorResponse.of(exception);
   }
 
   @ExceptionHandler(AuthenticationException.class)
-  @ResponseStatus(HttpStatus.FORBIDDEN)
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
   public ErrorResponse authenticationException(AuthenticationException e) {
-    return ErrorResponse.of(new LoginRequiredException(e));
+    LoginRequiredException loginRequiredException = new LoginRequiredException(e);
+    log.error(loginRequiredException.getCause().getMessage());
+    return ErrorResponse.of(loginRequiredException);
   }
 
   @ExceptionHandler(ApplicationException.class)

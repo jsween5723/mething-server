@@ -1,5 +1,7 @@
 package com.esc.bluespring.domain.meeting.team.classes;
 
+import java.util.UUID;
+
 public record TeamParticipantDto() {
-    public record MainPageListElement(Long id, String profileImageUrl, boolean isOwner) {}
+    public record MainPageListElement(UUID id, String profileImageUrl, boolean isOwner) {}
 }

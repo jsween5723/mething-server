@@ -11,6 +11,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,11 +35,11 @@ public abstract class Member extends BaseEntity implements UserDetails {
     @Column(nullable = false, length = 800)
     protected String password;
 
-    public Member(Long id) {
+    public Member(UUID id) {
         super(id);
     }
 
-    public Member(Long id, String email, String password) {
+    public Member(UUID id, String email, String password) {
         super(id);
         this.email = email;
         this.password = password;

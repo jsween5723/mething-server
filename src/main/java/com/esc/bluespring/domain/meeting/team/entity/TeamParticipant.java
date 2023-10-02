@@ -7,6 +7,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,7 +26,7 @@ public class TeamParticipant extends BaseEntity {
     private Student member;
 
     @Builder
-    TeamParticipant(Long id, Team team, Student member) {
+    TeamParticipant(UUID id, Team team, Student member) {
         super(id);
         this.team = team;
         this.member = member;

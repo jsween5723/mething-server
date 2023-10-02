@@ -3,6 +3,7 @@ package com.esc.bluespring.domain.meeting.watchlist;
 import com.esc.bluespring.domain.meeting.watchlist.entity.MeetingWatchlistItem;
 import com.esc.bluespring.domain.meeting.watchlist.exception.MeetingWatchlistException.MeetingWatchlistItemNotFoundException;
 import com.esc.bluespring.domain.member.entity.Member;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +20,7 @@ public class MeetingWatchListService {
     }
 
     @Transactional
-    public MeetingWatchlistItem find(Long meetingOwnerTeamId, Member member) {
+    public MeetingWatchlistItem find(UUID meetingOwnerTeamId, Member member) {
         return repository.findByMeeting_IdAndOwner(meetingOwnerTeamId, member)
             .orElseThrow(MeetingWatchlistItemNotFoundException::new);
     }

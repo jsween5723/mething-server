@@ -1,8 +1,8 @@
 package com.esc.bluespring.domain.meeting.request;
 
-import com.esc.bluespring.domain.meeting.entity.Meeting;
 import com.esc.bluespring.domain.meeting.request.entity.MeetingRequest;
 import com.esc.bluespring.domain.meeting.request.exception.MeetingRequestException.MeetingRequestNotFoundRequestException;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +17,7 @@ public class MeetingRequestService {
     }
 
     @Transactional(readOnly = true)
-    public MeetingRequest find(Long id) {
+    public MeetingRequest find(UUID id) {
         return repository.findById(id).orElseThrow(MeetingRequestNotFoundRequestException::new);
     }
 
@@ -27,9 +27,8 @@ public class MeetingRequestService {
     }
 
     @Transactional
-    public Meeting accept(MeetingRequest request) {
+    public void accept(MeetingRequest request) {
         repository.rejectRemainRequestsOfMeeting(request.getTargetMeeting());
-        return request.accept();
     }
 
     @Transactional

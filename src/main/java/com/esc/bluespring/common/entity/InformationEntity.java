@@ -36,6 +36,12 @@ public abstract class InformationEntity {
     createdAt = LocalDateTime.now(ZoneOffset.UTC);
   }
 
+  public InformationEntity(Long id, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    this.id = id;
+    this.createdAt = createdAt;
+    this.updatedAt = updatedAt;
+  }
+
   protected InformationEntity(Long id) {
     this.id = id;
   }

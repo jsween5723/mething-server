@@ -3,7 +3,6 @@ package com.esc.bluespring.domain.member.exception;
 import static com.esc.bluespring.domain.member.exception.MemberExceptionCode.DUPLICATED_EMAIL;
 import static com.esc.bluespring.domain.member.exception.MemberExceptionCode.DUPLICATED_NICKNAME;
 import static com.esc.bluespring.domain.member.exception.MemberExceptionCode.DUPLICATED_SCHOOL_EMAIL;
-import static com.esc.bluespring.domain.member.exception.MemberExceptionCode.LOGIN_REQUIRED;
 import static com.esc.bluespring.domain.member.exception.MemberExceptionCode.MEMBER_NOT_FOUND;
 import static com.esc.bluespring.domain.member.exception.MemberExceptionCode.STUDENT_NOT_CERTIFICATED;
 
@@ -43,16 +42,6 @@ public abstract class MemberException extends ApplicationException {
 
     public DuplicateSchoolEmailException() {
       super(DUPLICATED_SCHOOL_EMAIL);
-    }
-  }
-
-  static public class LoginRequiredException extends MemberException {
-
-    public LoginRequiredException(Object o) {
-      super(LOGIN_REQUIRED.appended(o));
-    }
-    public LoginRequiredException() {
-      super(LOGIN_REQUIRED);
     }
   }
 

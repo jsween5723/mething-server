@@ -22,6 +22,7 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -71,7 +72,7 @@ public class MemberController {
     @ResponseStatus(HttpStatus.CREATED)
     @RolesAllowed({STUDENT})
     @Operation(description = "친구신청을 합니다.")
-    public void requestFriendship(Student user, @PathVariable Long id,
+    public void requestFriendship(Student user, @PathVariable UUID id,
         @RequestBody SendFriendShipRequest dto) {
         try {
             Student target = (Student) memberServiceFacade.find(id);

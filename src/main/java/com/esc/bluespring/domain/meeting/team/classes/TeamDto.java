@@ -5,7 +5,7 @@ import java.util.List;
 
 public record TeamDto() {
 
-    public record MainPageListElement(Long id, String title, String introduce,
+    public record MainPageListElement(Long id, String title, Integer maxParticipantNumber,
                                       UniversityDto.MainPageListElement representedUniversity,
                                       List<TeamParticipantDto.MainPageListElement> participants) {
 

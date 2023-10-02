@@ -8,6 +8,7 @@ import com.esc.bluespring.domain.member.entity.Student;
 import com.esc.bluespring.domain.member.exception.MemberException.DuplicateEmailException;
 import com.esc.bluespring.domain.member.exception.MemberException.MemberNotFoundException;
 import com.esc.bluespring.domain.member.student.StudentService;
+import java.util.UUID;
 import javax.security.auth.login.LoginException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -37,7 +38,7 @@ public class MemberServiceFacade implements UserDetailsService {
     }
 
     @Transactional(readOnly = true)
-    public Member find(Long id) {
+    public Member find(UUID id) {
         return repository.findById(id).orElseThrow(MemberNotFoundException::new);
     }
 

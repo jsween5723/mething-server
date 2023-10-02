@@ -33,6 +33,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -47,32 +48,32 @@ public class MeetingQDRImpl implements MeetingQDR {
     @Transactional(readOnly = true)
     public Slice<Meeting> searchMainPageList(Member user, MainPageSearchCondition condition,
         Pageable pageable) {
-        List<Meeting> meetings = query.selectFrom(meeting)
-            .innerJoin(meeting.fromTeam.as(QMeetingOwnerTeam.class), meetingOwnerTeam).fetchJoin()
+        List<Meeting> meetingRelations = query.selectFrom(meeting)
+            .innerJoin(meeting.ownerTeam.as(QMeetingOwnerTeam.class), meetingOwnerTeam).fetchJoin()
             .leftJoin(meetingOwnerTeam.owner.as(QStudent.class), student).fetchJoin()
             .leftJoin(meetingOwnerTeam.representedUniversity, university).fetchJoin()
             .leftJoin(university.locationDistrict, locationDistrict).fetchJoin().fetchJoin()
-            .where(toWhereCondition(condition, user), meeting.toTeam.isNull())
-            .offset(pageable.getOffset()).limit(pageable.getPageSize() + 1).fetch();
-        List<Long> teamIds = meetings.stream().map(Meeting::getFromTeam).map(BaseEntity::getId)
-            .toList();
-        List<Long> meetingIds = meetings.stream().map(BaseEntity::getId).toList();
+            .where(toWhereCondition(condition, user)).offset(pageable.getOffset())
+            .limit(pageable.getPageSize() + 1).fetch();
+        List<UUID> teamIds = meetingRelations.stream().map(Meeting::getOwnerTeam)
+            .map(BaseEntity::getId).toList();
+        List<UUID> meetingIds = meetingRelations.stream().map(BaseEntity::getId).toList();
         Map<Team, List<TeamParticipant>> participantsMap = getParticipantsMap(teamIds);
         Map<Meeting, List<MeetingWatchlistItem>> watchlistItemMap = getWatchlistItemMap(meetingIds);
-        meetings.forEach(meeting -> meeting.mapWatchlist(watchlistItemMap.get(meeting)));
-        meetings.forEach(meeting -> meeting.getFromTeam()
-            .mapParticipants(participantsMap.get(meeting.getFromTeam())));
-        return RepositorySlicer.toSlice(meetings, pageable);
+        meetingRelations.forEach(meeting -> meeting.mapWatchlist(watchlistItemMap.get(meeting)));
+        meetingRelations.forEach(meeting -> meeting.getOwnerTeam()
+            .mapParticipants(participantsMap.get(meeting.getOwnerTeam())));
+        return RepositorySlicer.toSlice(meetingRelations, pageable);
     }
 
-    private Map<Meeting, List<MeetingWatchlistItem>> getWatchlistItemMap(List<Long> meetingIds) {
+    private Map<Meeting, List<MeetingWatchlistItem>> getWatchlistItemMap(List<UUID> meetingIds) {
         return query.selectFrom(meetingWatchlistItem).join(meetingWatchlistItem.meeting)
             .where(meetingWatchlistItem.meeting.id.in(meetingIds)).transform(
                 GroupBy.groupBy(meetingWatchlistItem.meeting)
                     .as(GroupBy.list(meetingWatchlistItem)));
     }
 
-    private Map<Team, List<TeamParticipant>> getParticipantsMap(List<Long> teamIds) {
+    private Map<Team, List<TeamParticipant>> getParticipantsMap(List<UUID> teamIds) {
         return query.selectFrom(teamParticipant).join(teamParticipant.team, meetingOwnerTeam._super)
             .fetchJoin().where(meetingOwnerTeam._super.id.in(teamIds))
             .transform(GroupBy.groupBy(meetingOwnerTeam._super).as(GroupBy.list(teamParticipant)));
@@ -82,18 +83,20 @@ public class MeetingQDRImpl implements MeetingQDR {
     @Transactional(readOnly = true)
     public Slice<Meeting> searchMyMeetingList(Student user, Pageable pageable) {
         List<Meeting> meetings = query.selectFrom(meeting)
-            .innerJoin(meeting.fromTeam.as(QMeetingOwnerTeam.class), meetingOwnerTeam).fetchJoin()
+            .innerJoin(meeting.ownerTeam.as(QMeetingOwnerTeam.class), meetingOwnerTeam).fetchJoin()
+            .leftJoin(meetingOwnerTeam.participants, teamParticipant)
             .leftJoin(meetingOwnerTeam.owner.as(QStudent.class), student).fetchJoin()
             .leftJoin(meetingOwnerTeam.representedUniversity, university).fetchJoin()
             .leftJoin(university.locationDistrict, locationDistrict).fetchJoin()
-            .leftJoin(meetingOwnerTeam.participants, teamParticipant).fetchJoin()
-            .leftJoin(teamParticipant.member)
-            .where(meeting.fromTeam.instanceOf(MeetingOwnerTeam.class), meeting.toTeam.isNull(),
-                meetingOwnerTeam.owner.eq(user).or(teamParticipant.member.eq(user)))
+            .where(meetingOwnerTeam.owner.eq(user).or(teamParticipant.member.eq(user)))
             .offset(pageable.getOffset()).limit(pageable.getPageSize() + 1).fetch();
-        List<Long> meetingIds = meetings.stream().map(BaseEntity::getId).toList();
+        List<MeetingOwnerTeam> ownerTeams = meetings.stream().map(Meeting::getOwnerTeam).toList();
+        Map<Team, List<TeamParticipant>> participantMap = query.selectFrom(teamParticipant)
+            .where(teamParticipant.team.in(ownerTeams))
+            .transform(GroupBy.groupBy(teamParticipant.team).as(GroupBy.list(teamParticipant)));
+        participantMap.forEach(Team::mapParticipants);
         Map<Meeting, List<MeetingRequest>> requestMap = query.selectFrom(meetingRequest)
-            .where(meetingRequest.targetMeeting.id.in(meetingIds)).transform(
+            .where(meetingRequest.targetMeeting.in(meetings)).transform(
                 GroupBy.groupBy(meetingRequest.targetMeeting).as(GroupBy.list(meetingRequest)));
         meetings.forEach(meeting -> meeting.mapMeetingRequests(requestMap.get(meeting)));
         return RepositorySlicer.toSlice(meetings, pageable);

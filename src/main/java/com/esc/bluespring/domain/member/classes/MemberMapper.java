@@ -11,6 +11,7 @@ import com.esc.bluespring.domain.member.entity.SchoolInformation;
 import com.esc.bluespring.domain.member.entity.Student;
 import com.esc.bluespring.domain.member.student.classes.StudentDto.SchoolInformationListElement;
 import com.esc.bluespring.domain.university.major.classes.MajorMapper;
+import java.util.UUID;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -40,7 +41,7 @@ public interface MemberMapper {
     @Mapping(target = "id", ignore = true)
     Admin toEntity(Patch dto);
     @Mapping(target = "id", source = "id")
-    Student toEntity(Long id);
+    Student toEntity(UUID id);
 
     @Mapping(target = "profileImageUrl", source = "member.profileImage.url")
     Detail toDetail(Student member);

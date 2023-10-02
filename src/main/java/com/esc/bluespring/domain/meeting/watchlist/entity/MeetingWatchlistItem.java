@@ -8,6 +8,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,7 +24,7 @@ public class MeetingWatchlistItem extends OwnerEntity {
     private Meeting meeting;
 
     @Builder
-    MeetingWatchlistItem(Long id, Student owner, Meeting meeting) {
+    MeetingWatchlistItem(UUID id, Student owner, Meeting meeting) {
         super(id, owner);
         this.meeting = meeting;
     }
