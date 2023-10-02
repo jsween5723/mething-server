@@ -8,6 +8,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MappedSuperclass;
+import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +23,7 @@ public abstract class OwnerEntity extends BaseEntity{
     @ManyToOne(fetch = FetchType.LAZY)
     private Member owner;
 
-    public OwnerEntity(Long id, Student owner) {
+    public OwnerEntity(UUID id, Student owner) {
         super(id);
         this.owner = owner;
     }

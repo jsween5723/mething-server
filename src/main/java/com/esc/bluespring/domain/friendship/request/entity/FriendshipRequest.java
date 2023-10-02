@@ -12,6 +12,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,7 +38,7 @@ public class FriendshipRequest extends BaseEntity {
     private RequestStatus status = RequestStatus.PENDING;
 
     @Builder
-    FriendshipRequest(Long id, Student requester, Student target, String message) {
+    FriendshipRequest(UUID id, Student requester, Student target, String message) {
         super(id);
         this.requester = requester;
         this.target = target;

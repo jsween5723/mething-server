@@ -22,7 +22,7 @@ public interface MeetingMapper {
     @Mapping(target = "isLiked", expression = "java(toIsLiked(meeting, student))")
     @Mapping(target = "id", source = "meeting.id")
     @Mapping(target = "createdAt", source = "meeting.createdAt")
-    @Mapping(target = "fromTeam", source = "meeting.fromTeam")
+    @Mapping(target = "ownerTeam", source = "meeting.ownerTeam")
     MainPageListElement toMainPageListElement(Meeting meeting, Student student);
 
     @Mapping(target = "requestCount", source = "meeting")
@@ -37,12 +37,11 @@ public interface MeetingMapper {
             .contains(student);
     }
 
-    default TeamDto.MainPageListElement toFromTeam(Team fromTeam) {
-        return teamMapper.toMainPageListElement((MeetingOwnerTeam) fromTeam);
+    default TeamDto.MainPageListElement toFromTeam(Team ownerTeam) {
+        return teamMapper.toMainPageListElement((MeetingOwnerTeam) ownerTeam);
     }
 
-    @Mapping(target = "fromTeam", expression = "java(teamMapper.toEntity(dto,owner))")
-    @Mapping(target = "watchlist", ignore = true)
+    @Mapping(target = "ownerTeam", expression = "java(teamMapper.toEntity(dto,owner))")
     Meeting toEntity(Create dto, Student owner);
 
 

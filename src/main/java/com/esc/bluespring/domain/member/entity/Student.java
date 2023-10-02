@@ -22,14 +22,17 @@ import jakarta.persistence.OneToOne;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Student extends Member{
+public class Student extends Member {
+
     @Column(nullable = false)
     private String nickname;
     @Column(nullable = false)
@@ -44,14 +47,17 @@ public class Student extends Member{
     private MBTI mbti;
     @Embedded
     private SchoolInformation schoolInformation;
-    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @BatchSize(size = 50)
     private List<MeetingWatchlistItem> watchlist = new ArrayList<>();
-    @OneToMany(mappedBy = "requester", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "requester", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @BatchSize(size = 50)
     private List<FriendshipRequest> friendshipRequests = new ArrayList<>();
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @BatchSize(size = 50)
     private List<Friendship> friendships = new ArrayList<>();
 
-    public Student(Long id, String email, String password, String nickname, LocalDate birthday,
+    public Student(UUID id, String email, String password, String nickname, LocalDate birthday,
         Image profileImage, Gender gender, MBTI mbti, SchoolInformation schoolInformation) {
         super(id, email, password);
         this.nickname = nickname;
@@ -88,29 +94,23 @@ public class Student extends Member{
         }
     }
 
-    public void friendshipRequestTo(Student target, String message) {
-        FriendshipRequest request = FriendshipRequest.builder()
-            .requester(this)
-            .target(target)
-            .message(message)
+    public void appendWatchlist(Meeting meeting) {
+        MeetingWatchlistItem item = MeetingWatchlistItem.builder()
+            .meeting(meeting)
+            .owner(this)
             .build();
+        watchlist.add(item);
+    }
+
+    public void friendshipRequestTo(Student target, String message) {
+        FriendshipRequest request = FriendshipRequest.builder().requester(this).target(target)
+            .message(message).build();
         friendshipRequests.add(request);
     }
 
     public void addFriendship(Student friend) {
-        Friendship friendship = Friendship.builder()
-            .member(this)
-            .friend(friend)
-            .build();
+        Friendship friendship = Friendship.builder().member(this).friend(friend).build();
         friendships.add(friendship);
-    }
-
-    public void addWatchlist(Meeting meetingOwnerTeam) {
-        MeetingWatchlistItem item = MeetingWatchlistItem.builder()
-            .meeting(meetingOwnerTeam)
-            .owner(this)
-            .build();
-        watchlist.add(item);
     }
 
     @Override

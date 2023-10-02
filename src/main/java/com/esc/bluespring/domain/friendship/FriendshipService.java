@@ -6,6 +6,7 @@ import com.esc.bluespring.domain.friendship.exception.FriendshipException.Friend
 import com.esc.bluespring.domain.friendship.repository.FriendshipRepository;
 import com.esc.bluespring.domain.member.entity.Member;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -23,7 +24,7 @@ public class FriendshipService {
         return repository.search(condition, user, pageable);
     }
 
-    public Friendship find(Long id) {
+    public Friendship find(UUID id) {
         return repository.findById(id).orElseThrow(FriendshipNotFoundException::new);
     }
 

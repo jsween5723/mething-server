@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.UUID;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
@@ -47,7 +48,7 @@ public record MemberDto() {
     public record JwtToken(String accessToken) {}
 
 
-    public record Detail(Long id, String profileImageUrl, String nickname, SearchListElement major,
+    public record Detail(UUID id, String profileImageUrl, String nickname, SearchListElement major,
                          Gender gender) {
 
     }

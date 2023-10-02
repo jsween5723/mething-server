@@ -1,6 +1,7 @@
 package com.esc.bluespring.domain.member.entity;
 
 import jakarta.persistence.Entity;
+import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Admin extends Member {
 
-    public Admin(Long id, String email, String password) {
+    public Admin(UUID id, String email, String password) {
         super(id, email, password);
     }
 

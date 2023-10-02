@@ -1,6 +1,6 @@
 package com.esc.bluespring.domain.university.entity;
 
-import com.esc.bluespring.common.entity.BaseEntity;
+import com.esc.bluespring.common.entity.InformationEntity;
 import com.esc.bluespring.domain.locationDistrict.entity.LocationDistrict;
 import com.esc.bluespring.domain.university.major.entity.Major;
 import jakarta.persistence.CascadeType;
@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "universities")
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class University extends BaseEntity implements Serializable {
+public class University extends InformationEntity implements Serializable {
   private String name;
   private String campus;
   private String type;

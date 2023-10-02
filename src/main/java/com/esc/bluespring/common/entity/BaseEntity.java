@@ -1,8 +1,8 @@
 package com.esc.bluespring.common.entity;
 
+import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
@@ -10,6 +10,7 @@ import jakarta.persistence.PreUpdate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Objects;
+import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,18 +26,18 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 public abstract class BaseEntity {
 
     @Id
-    @GeneratedValue
-    private Long id;
+    @Column(length = 16)
+    private UUID id;
     @Column(updatable = false)
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private LocalDateTime deletedAt;
 
-    protected BaseEntity(Long id) {
+    protected BaseEntity(UUID id) {
         this.id = id;
     }
 
-    public BaseEntity(Long id, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public BaseEntity(UUID id, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -49,6 +50,7 @@ public abstract class BaseEntity {
 
     @PrePersist
     public void prePersist() {
+        id = UuidCreator.getTimeOrderedEpoch();
         createdAt = LocalDateTime.now(ZoneOffset.UTC);
         updatedAt = LocalDateTime.now(ZoneOffset.UTC);
     }

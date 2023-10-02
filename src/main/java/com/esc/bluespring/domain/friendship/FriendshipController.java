@@ -5,6 +5,7 @@ import com.esc.bluespring.domain.friendship.classes.FriendshipDto.ListElement;
 import com.esc.bluespring.domain.friendship.classes.FriendshipDto.SearchCondition;
 import com.esc.bluespring.domain.friendship.entity.Friendship;
 import com.esc.bluespring.domain.member.entity.Student;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +32,7 @@ public class FriendshipController {
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteFriendship(@PathVariable Long id) {
+    public void deleteFriendship(@PathVariable UUID id) {
         Friendship friendship = friendshipService.find(id);
         friendshipService.deleteFriendship(friendship);
     }

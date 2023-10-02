@@ -18,7 +18,6 @@ public class MeetingOwnerTeamQDR {
     public ConstructorExpression<TeamDto.MainPageListElement> toMainPageListElement(
         QMeetingOwnerTeam team) {
         return Projections.constructor(MainPageListElement.class, team.id, team.title,
-            team.introduce, universityQDR.toMainPageListElement(team.representedUniversity),
-            team.participants);
+            universityQDR.toMainPageListElement(team.representedUniversity), team.participants);
     }
 }

@@ -23,6 +23,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
@@ -56,7 +57,7 @@ public class MeetingController {
         if (!(student instanceof Student) && condition.isMyLocation()) {
             throw new ForbiddenException();
         }
-        assert student instanceof Student;
+        assert student == null || student instanceof Student : "error";
         Slice<MainPageListElement> result = meetingServiceFacade.searchMainPageList(student, condition, pageable)
             .map(meeting -> meetingMapper.toMainPageListElement(meeting, (Student) student));
         return new CustomSlice<>(result);
@@ -84,27 +85,27 @@ public class MeetingController {
     @RolesAllowed({STUDENT})
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(description = "특정 과팅 신청 목록", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
-    public void request(@PathVariable Long id, @Valid @RequestBody MeetingDto.Request dto,
+    public void request(@PathVariable UUID id, @Valid @RequestBody MeetingDto.Request dto,
         Student member) {
-        Meeting meeting = meetingServiceFacade.find(id);
+        Meeting meetingRelation = meetingServiceFacade.find(id);
         MeetingRequesterTeam meetingRequesterTeam = teamMapper.toEntity(dto, member);
-        meetingServiceFacade.addRequest(meeting, meetingRequesterTeam);
+        meetingServiceFacade.addRequest(meetingRelation, meetingRequesterTeam, dto.message());
     }
 
     @PostMapping("{id}/watchlist-items/add")
     @RolesAllowed({STUDENT})
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(description = "과팅 찜하기", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
-    public void addWatchlist(@PathVariable Long id, Student member) {
-        Meeting meeting = meetingServiceFacade.find(id);
-        meetingServiceFacade.addWatchlist(meeting, member);
+    public void addWatchlist(@PathVariable UUID id, Student member) {
+        Meeting meetingRelation = meetingServiceFacade.find(id);
+        meetingServiceFacade.addWatchlist(meetingRelation, member);
     }
 
     @DeleteMapping("{id}/watchlist-items/remove")
     @RolesAllowed({STUDENT})
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(description = "과팅 찜하기 해제", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
-    public void takeOutFromWatchlist(@PathVariable Long id, Student member) {
+    public void takeOutFromWatchlist(@PathVariable UUID id, Student member) {
         MeetingWatchlistItem meetingWatchlistItem = meetingServiceFacade.findWatchlistItem(id,
             member);
         meetingWatchlistItem.validOwner(member);

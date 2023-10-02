@@ -6,12 +6,12 @@ import com.esc.bluespring.domain.meeting.exception.MeetingException.MeetingNotFo
 import com.esc.bluespring.domain.meeting.repository.MeetingRepository;
 import com.esc.bluespring.domain.meeting.request.MeetingRequestService;
 import com.esc.bluespring.domain.meeting.request.entity.MeetingRequest;
-import com.esc.bluespring.domain.meeting.team.TeamServiceFacade;
 import com.esc.bluespring.domain.meeting.team.entity.MeetingRequesterTeam;
 import com.esc.bluespring.domain.meeting.watchlist.MeetingWatchListService;
 import com.esc.bluespring.domain.meeting.watchlist.entity.MeetingWatchlistItem;
 import com.esc.bluespring.domain.member.entity.Member;
 import com.esc.bluespring.domain.member.entity.Student;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -24,7 +24,6 @@ public class MeetingServiceFacade {
 
     private final MeetingRepository repository;
     private final MeetingWatchListService watchListService;
-    private final TeamServiceFacade teamServiceFacade;
     private final MeetingRequestService requestService;
 
     @Transactional
@@ -33,7 +32,7 @@ public class MeetingServiceFacade {
     }
 
     @Transactional(readOnly = true)
-    public Meeting find(Long id) {
+    public Meeting find(UUID id) {
         return repository.findById(id).orElseThrow(MeetingNotFoundException::new);
     }
     @Transactional(readOnly = true)
@@ -48,11 +47,11 @@ public class MeetingServiceFacade {
 
     @Transactional
     public void addWatchlist(Meeting meeting, Student member) {
-        member.addWatchlist(meeting);
+        member.appendWatchlist(meeting);
     }
 
     @Transactional(readOnly = true)
-    public MeetingWatchlistItem findWatchlistItem(Long meetingOwnerTeamId, Member member) {
+    public MeetingWatchlistItem findWatchlistItem(UUID meetingOwnerTeamId, Member member) {
         return watchListService.find(meetingOwnerTeamId, member);
     }
 
@@ -62,13 +61,13 @@ public class MeetingServiceFacade {
     }
 
     @Transactional
-    public void addRequest(Meeting meeting, MeetingRequesterTeam requester) {
-        teamServiceFacade.joinRequest(meeting, requester);
+    public void addRequest(Meeting meeting, MeetingRequesterTeam requester, String message) {
+        requester.requestTo(meeting, message);
+        repository.save(meeting);
     }
 
     @Transactional
     public void acceptRequest(MeetingRequest request) {
-        Meeting meeting = requestService.accept(request);
-        repository.save(meeting);
+        requestService.accept(request);
     }
 }
