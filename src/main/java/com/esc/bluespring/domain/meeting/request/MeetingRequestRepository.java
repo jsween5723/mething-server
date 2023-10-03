@@ -9,7 +9,9 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface MeetingRequestRepository extends JpaRepository<MeetingRequest, UUID> {
 
-    @Modifying(clearAutomatically = true)
-    @Query("select r from MeetingRequest r where r.targetMeeting = :meeting")
+    @Modifying
+    @Query("update MeetingRequest r "
+        + "set r.status = com.esc.bluespring.common.enums.RequestStatus.REJECTED "
+        + "where r.targetMeeting = :meeting ")
     void rejectRemainRequestsOfMeeting(Meeting meeting);
 }
