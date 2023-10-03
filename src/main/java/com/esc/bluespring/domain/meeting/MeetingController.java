@@ -86,7 +86,7 @@ public class MeetingController {
     @Operation(description = "특정 과팅 신청 목록", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public void request(@PathVariable UUID id, @Valid @RequestBody MeetingDto.Request dto,
         Student member) {
-        MeetingRequest request = meetingMapper.toEntity(dto, member);
+        MeetingRequest request = meetingMapper.toRequestEntity(dto, member);
         meetingService.addRequest(id, request);
     }
 
