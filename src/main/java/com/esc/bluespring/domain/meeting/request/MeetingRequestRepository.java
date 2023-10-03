@@ -1,7 +1,7 @@
 package com.esc.bluespring.domain.meeting.request;
 
 import com.esc.bluespring.domain.meeting.entity.Meeting;
-import com.esc.bluespring.domain.meeting.request.entity.MeetingRequest;
+import com.esc.bluespring.domain.meeting.entity.MeetingRequest;
 import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;

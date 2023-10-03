@@ -1,4 +1,4 @@
-package com.esc.bluespring.domain.meeting.team.entity;
+package com.esc.bluespring.domain.meeting.entity;
 
 import com.esc.bluespring.domain.member.entity.Student;
 import com.esc.bluespring.domain.university.entity.University;

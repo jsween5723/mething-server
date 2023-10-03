@@ -1,9 +1,6 @@
 package com.esc.bluespring.domain.meeting.entity;
 
 import com.esc.bluespring.common.entity.BaseEntity;
-import com.esc.bluespring.domain.meeting.request.entity.MeetingRequest;
-import com.esc.bluespring.domain.meeting.team.entity.MeetingOwnerTeam;
-import com.esc.bluespring.domain.meeting.team.entity.MeetingRequesterTeam;
 import com.esc.bluespring.domain.meeting.watchlist.entity.MeetingWatchlistItem;
 import com.esc.bluespring.domain.member.entity.Member;
 import com.esc.bluespring.domain.member.entity.Student;
@@ -37,10 +34,6 @@ public class Meeting extends BaseEntity {
     @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true)
     @BatchSize(size = 50)
     private List<MeetingWatchlistItem> watchlist = new ArrayList<>();
-    @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL)
-    @BatchSize(size = 2)
-    private List<MeetingRelation> relations = new ArrayList<>();
-
 
     public Meeting(UUID id, String introduce, MeetingOwnerTeam ownerTeam) {
         super(id);
@@ -57,13 +50,8 @@ public class Meeting extends BaseEntity {
     }
 
     public void accept(MeetingRequest meetingRequest) {
-        MeetingRelation relation = MeetingRelation.builder()
-            .myTeam(ownerTeam)
-            .otherTeam(meetingRequest.getRequesterTeam())
-            .meeting(this)
-            .build();
-        relations.add(relation);
-        relations.add(relation.generateOppnentRelation());
+        ownerTeam.declareRelation(meetingRequest.getRequesterTeam());
+        delete();
     }
 
     public void appendedWatchlistBy(Student user) {

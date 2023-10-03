@@ -1,6 +1,6 @@
 package com.esc.bluespring.domain.meeting.request;
 
-import com.esc.bluespring.domain.meeting.request.entity.MeetingRequest;
+import com.esc.bluespring.domain.meeting.entity.MeetingRequest;
 import com.esc.bluespring.domain.member.entity.Member;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;

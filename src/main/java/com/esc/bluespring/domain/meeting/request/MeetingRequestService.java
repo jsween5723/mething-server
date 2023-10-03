@@ -1,6 +1,6 @@
 package com.esc.bluespring.domain.meeting.request;
 
-import com.esc.bluespring.domain.meeting.request.entity.MeetingRequest;
+import com.esc.bluespring.domain.meeting.entity.MeetingRequest;
 import com.esc.bluespring.domain.meeting.request.exception.MeetingRequestException.MeetingRequestNotFoundRequestException;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;

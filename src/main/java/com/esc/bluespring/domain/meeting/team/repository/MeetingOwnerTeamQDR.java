@@ -1,8 +1,8 @@
 package com.esc.bluespring.domain.meeting.team.repository;
 
+import com.esc.bluespring.domain.meeting.entity.QMeetingOwnerTeam;
 import com.esc.bluespring.domain.meeting.team.classes.TeamDto;
 import com.esc.bluespring.domain.meeting.team.classes.TeamDto.MainPageListElement;
-import com.esc.bluespring.domain.meeting.team.entity.QMeetingOwnerTeam;
 import com.esc.bluespring.domain.university.repository.UniversityQDRImpl;
 import com.querydsl.core.types.ConstructorExpression;
 import com.querydsl.core.types.Projections;

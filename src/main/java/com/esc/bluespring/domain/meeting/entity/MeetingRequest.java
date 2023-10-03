@@ -1,9 +1,7 @@
-package com.esc.bluespring.domain.meeting.request.entity;
+package com.esc.bluespring.domain.meeting.entity;
 
 import com.esc.bluespring.common.entity.BaseEntity;
 import com.esc.bluespring.common.enums.RequestStatus;
-import com.esc.bluespring.domain.meeting.entity.Meeting;
-import com.esc.bluespring.domain.meeting.team.entity.MeetingRequesterTeam;
 import com.esc.bluespring.domain.member.entity.Member;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;

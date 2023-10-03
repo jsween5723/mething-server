@@ -14,7 +14,7 @@ import com.esc.bluespring.domain.meeting.classes.MeetingDto.MyMeetingPageListEle
 import com.esc.bluespring.domain.meeting.entity.Meeting;
 import com.esc.bluespring.domain.meeting.mapper.MeetingMapper;
 import com.esc.bluespring.domain.meeting.mapper.TeamMapper;
-import com.esc.bluespring.domain.meeting.team.entity.MeetingRequesterTeam;
+import com.esc.bluespring.domain.meeting.entity.MeetingRequesterTeam;
 import com.esc.bluespring.domain.meeting.watchlist.entity.MeetingWatchlistItem;
 import com.esc.bluespring.domain.member.entity.Member;
 import com.esc.bluespring.domain.member.entity.Student;

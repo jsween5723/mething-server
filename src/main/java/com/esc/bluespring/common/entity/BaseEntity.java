@@ -37,6 +37,9 @@ public abstract class BaseEntity {
         this.id = id;
     }
 
+    protected void delete() {
+        deletedAt = LocalDateTime.now(ZoneOffset.UTC);
+    }
     public BaseEntity(UUID id, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
         this.createdAt = createdAt;

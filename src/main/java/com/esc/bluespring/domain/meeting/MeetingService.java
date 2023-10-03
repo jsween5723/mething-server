@@ -4,7 +4,7 @@ import com.esc.bluespring.domain.meeting.classes.MeetingDto.MainPageSearchCondit
 import com.esc.bluespring.domain.meeting.entity.Meeting;
 import com.esc.bluespring.domain.meeting.exception.MeetingException.MeetingNotFoundException;
 import com.esc.bluespring.domain.meeting.repository.MeetingRepository;
-import com.esc.bluespring.domain.meeting.team.entity.MeetingRequesterTeam;
+import com.esc.bluespring.domain.meeting.entity.MeetingRequesterTeam;
 import com.esc.bluespring.domain.meeting.watchlist.MeetingWatchListService;
 import com.esc.bluespring.domain.meeting.watchlist.entity.MeetingWatchlistItem;
 import com.esc.bluespring.domain.member.entity.Member;

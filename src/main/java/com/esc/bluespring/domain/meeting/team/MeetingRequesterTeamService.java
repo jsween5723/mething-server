@@ -1,6 +1,6 @@
 package com.esc.bluespring.domain.meeting.team;
 
-import com.esc.bluespring.domain.meeting.team.entity.MeetingRequesterTeam;
+import com.esc.bluespring.domain.meeting.entity.MeetingRequesterTeam;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

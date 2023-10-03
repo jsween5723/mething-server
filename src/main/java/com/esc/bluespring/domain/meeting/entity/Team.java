@@ -1,4 +1,4 @@
-package com.esc.bluespring.domain.meeting.team.entity;
+package com.esc.bluespring.domain.meeting.entity;
 
 import com.esc.bluespring.common.entity.OwnerEntity;
 import com.esc.bluespring.domain.member.entity.Student;
@@ -12,6 +12,7 @@ import jakarta.persistence.InheritanceType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,12 +36,14 @@ public abstract class Team extends OwnerEntity {
     private University representedUniversity;
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TeamParticipant> participants = new ArrayList<>();
+    @OneToOne(mappedBy = "myTeam", cascade = CascadeType.ALL, orphanRemoval = true)
+    private TeamRelation relation;
 
     Team(UUID id, Student owner, String title, University representedUniversity,
         List<TeamParticipant> participants) {
         super(id, owner);
         this.title = title;
-        this.maxParticipantNumber = participants.size()+1;
+        this.maxParticipantNumber = participants.size() + 1;
         this.representedUniversity = representedUniversity;
         this.participants = participants;
         declareTeam();
@@ -52,5 +55,13 @@ public abstract class Team extends OwnerEntity {
 
     private void declareTeam() {
         participants.forEach(participant -> participant.changeTeam(this));
+    }
+
+    void declareRelation(Team otherTeam) {
+        relation = TeamRelation.builder()
+            .myTeam(this)
+            .otherTeam(otherTeam)
+            .build();
+        otherTeam.relation = relation.getOpponentRelation();
     }
 }

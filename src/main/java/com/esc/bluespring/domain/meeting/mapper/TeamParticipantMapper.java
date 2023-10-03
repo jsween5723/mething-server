@@ -1,7 +1,7 @@
 package com.esc.bluespring.domain.meeting.mapper;
 
 import com.esc.bluespring.domain.meeting.team.classes.TeamParticipantDto.MainPageListElement;
-import com.esc.bluespring.domain.meeting.team.entity.TeamParticipant;
+import com.esc.bluespring.domain.meeting.entity.TeamParticipant;
 import com.esc.bluespring.domain.member.classes.MemberMapper;
 import com.esc.bluespring.domain.member.entity.Student;
 import java.util.UUID;
