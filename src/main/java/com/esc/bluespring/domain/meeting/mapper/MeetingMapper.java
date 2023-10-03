@@ -25,6 +25,7 @@ public interface MeetingMapper {
     @Mapping(target = "ownerTeam", source = "meeting.ownerTeam")
     MainPageListElement toMainPageListElement(Meeting meeting, Student student);
 
+    @Mapping(target = "myTeam", source = "meeting.ownerTeam")
     @Mapping(target = "requestCount", source = "meeting")
     MyMeetingPageListElement toMyMeetingPageListElement(Meeting meeting);
 

@@ -3,6 +3,7 @@ package com.esc.bluespring.domain.meeting.entity;
 import com.esc.bluespring.common.entity.BaseEntity;
 import com.esc.bluespring.domain.meeting.request.entity.MeetingRequest;
 import com.esc.bluespring.domain.meeting.team.entity.MeetingOwnerTeam;
+import com.esc.bluespring.domain.meeting.team.entity.MeetingRequesterTeam;
 import com.esc.bluespring.domain.meeting.watchlist.entity.MeetingWatchlistItem;
 import com.esc.bluespring.domain.member.entity.Member;
 import jakarta.persistence.CascadeType;
@@ -41,7 +42,12 @@ public class Meeting extends BaseEntity {
         this.introduce = introduce;
         this.ownerTeam = ownerTeam;
     }
-    public void addRequest(MeetingRequest request) {
+    public void joiningRequestedBy(MeetingRequesterTeam requester, String message) {
+        MeetingRequest request = MeetingRequest.builder()
+            .targetMeeting(this)
+            .requesterTeam(requester)
+            .message(message)
+            .build();
         joinRequests.add(request);
     }
 

@@ -4,8 +4,6 @@ import com.esc.bluespring.domain.meeting.classes.MeetingDto.MainPageSearchCondit
 import com.esc.bluespring.domain.meeting.entity.Meeting;
 import com.esc.bluespring.domain.meeting.exception.MeetingException.MeetingNotFoundException;
 import com.esc.bluespring.domain.meeting.repository.MeetingRepository;
-import com.esc.bluespring.domain.meeting.request.MeetingRequestService;
-import com.esc.bluespring.domain.meeting.request.entity.MeetingRequest;
 import com.esc.bluespring.domain.meeting.team.entity.MeetingRequesterTeam;
 import com.esc.bluespring.domain.meeting.watchlist.MeetingWatchListService;
 import com.esc.bluespring.domain.meeting.watchlist.entity.MeetingWatchlistItem;
@@ -20,11 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class MeetingServiceFacade {
+public class MeetingService {
 
     private final MeetingRepository repository;
     private final MeetingWatchListService watchListService;
-    private final MeetingRequestService requestService;
 
     @Transactional
     public Meeting save(Meeting meeting) {
@@ -62,12 +59,7 @@ public class MeetingServiceFacade {
 
     @Transactional
     public void addRequest(Meeting meeting, MeetingRequesterTeam requester, String message) {
-        requester.requestTo(meeting, message);
-        repository.save(meeting);
-    }
-
-    @Transactional
-    public void acceptRequest(MeetingRequest request) {
-        requestService.accept(request);
+        Meeting meeting1 = find(meeting.getId());
+        meeting1.joiningRequestedBy(requester, message);
     }
 }

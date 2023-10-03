@@ -4,7 +4,6 @@ import com.esc.bluespring.domain.meeting.team.classes.TeamParticipantDto.MainPag
 import com.esc.bluespring.domain.meeting.team.entity.TeamParticipant;
 import com.esc.bluespring.domain.member.classes.MemberMapper;
 import com.esc.bluespring.domain.member.entity.Student;
-import java.util.List;
 import java.util.UUID;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -20,8 +19,6 @@ public interface TeamParticipantMapper {
     @Mapping(target = "profileImageUrl", source = "member.profileImage.url")
     MainPageListElement toMainPageListElement(Student member, boolean isOwner);
 
-    List<TeamParticipant> toEntities(List<UUID> ids);
-
     @Mapping(target = "member", source = "id")
-    TeamParticipant toEntity(UUID id);
+    TeamParticipant toEntityFromMemberId(UUID id);
 }

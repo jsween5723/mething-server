@@ -14,10 +14,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MeetingOwnerTeam extends Team {
 
-    public MeetingOwnerTeam(UUID id, Student owner,
-        String title, Integer maxParticipantNumber,
-        University representedUniversity,
+    public MeetingOwnerTeam(UUID id, Student owner, String title, University representedUniversity,
         List<TeamParticipant> participants) {
-        super(id, owner, title, maxParticipantNumber, representedUniversity, participants);
+        super(id, owner, title, representedUniversity, participants);
     }
 }

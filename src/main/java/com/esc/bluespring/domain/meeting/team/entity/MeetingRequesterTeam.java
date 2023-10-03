@@ -1,7 +1,5 @@
 package com.esc.bluespring.domain.meeting.team.entity;
 
-import com.esc.bluespring.domain.meeting.entity.Meeting;
-import com.esc.bluespring.domain.meeting.request.entity.MeetingRequest;
 import com.esc.bluespring.domain.member.entity.Student;
 import com.esc.bluespring.domain.university.entity.University;
 import jakarta.persistence.Entity;
@@ -18,15 +16,8 @@ import lombok.NoArgsConstructor;
 public class MeetingRequesterTeam extends Team {
 
     @Builder
-    public MeetingRequesterTeam(UUID id, Student owner, String title, Integer maxParticipantNumber,
+    public MeetingRequesterTeam(UUID id, Student owner, String title,
         University representedUniversity, List<TeamParticipant> participants) {
-        super(id, owner, title, maxParticipantNumber, representedUniversity, participants);
-    }
-
-
-    public void requestTo(Meeting targetMeeting, String message) {
-        MeetingRequest request = MeetingRequest.builder().message(message).requesterTeam(this)
-            .targetMeeting(targetMeeting).build();
-        targetMeeting.addRequest(request);
+        super(id, owner, title, representedUniversity, participants);
     }
 }

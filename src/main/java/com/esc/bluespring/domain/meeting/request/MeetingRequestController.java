@@ -1,6 +1,5 @@
 package com.esc.bluespring.domain.meeting.request;
 
-import com.esc.bluespring.domain.meeting.MeetingServiceFacade;
 import com.esc.bluespring.domain.meeting.request.entity.MeetingRequest;
 import com.esc.bluespring.domain.member.entity.Member;
 import java.util.UUID;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/v1/meeting-requests")
 public class MeetingRequestController {
     private final MeetingRequestService requestService;
-    private final MeetingServiceFacade meetingServiceFacade;
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void cancel(@PathVariable UUID id, Member member) {
@@ -32,7 +30,7 @@ public class MeetingRequestController {
     public void accept(@PathVariable UUID id, Member member) {
         MeetingRequest request = requestService.find(id);
         request.validTargetOwner(member);
-        meetingServiceFacade.acceptRequest(request);
+        requestService.accept(request);
     }
 
     @PatchMapping("{id}/reject")

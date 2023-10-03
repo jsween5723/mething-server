@@ -31,4 +31,8 @@ public class TeamParticipant extends BaseEntity {
         this.team = team;
         this.member = member;
     }
+
+    public void changeTeam(Team source) {
+        team = source;
+    }
 }

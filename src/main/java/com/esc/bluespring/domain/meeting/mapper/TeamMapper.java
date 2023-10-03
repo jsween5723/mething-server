@@ -19,6 +19,7 @@ import org.mapstruct.factory.Mappers;
 public interface TeamMapper {
 
     TeamMapper INSTANCE = Mappers.getMapper(TeamMapper.class);
+    TeamParticipantMapper participantMapper = Mappers.getMapper(TeamParticipantMapper.class);
 
     default MainPageListElement toMainPageListElement(MeetingOwnerTeam team) {
         TeamParticipantDto.MainPageListElement owner = TeamParticipantMapper.INSTANCE.toMainPageListElement(
@@ -40,14 +41,12 @@ public interface TeamMapper {
     MeetingOwnerTeam toEntity(UUID id);
 
     @Mapping(target = "representedUniversity", source = "dto.representedUniversityId")
-    @Mapping(target = "participants", source = "dto.participantIds")
     @Mapping(target = "owner", source = "owner")
-    @Mapping(target = "maxParticipantNumber", expression = "java(dto.participantIds().size()+1)")
+    @Mapping(target = "participants", source = "dto.participantIds")
     MeetingOwnerTeam toEntity(Create dto, Student owner);
 
     @Mapping(target = "representedUniversity", source = "dto.representedUniversityId")
     @Mapping(target = "participants", source = "dto.participantIds")
     @Mapping(target = "owner", source = "owner")
-    @Mapping(target = "maxParticipantNumber", expression = "java(dto.participantIds().size()+1)")
     MeetingRequesterTeam toEntity(Request dto, Student owner);
 }

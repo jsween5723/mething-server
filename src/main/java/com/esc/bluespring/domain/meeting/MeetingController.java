@@ -47,7 +47,7 @@ public class MeetingController {
 
     private final MeetingMapper meetingMapper = MeetingMapper.INSTANCE;
     private final TeamMapper teamMapper = TeamMapper.INSTANCE;
-    private final MeetingServiceFacade meetingServiceFacade;
+    private final MeetingService meetingService;
 
     @GetMapping
     @RolesAllowed({STUDENT, ANONYMOUS, ADMIN})
@@ -58,7 +58,7 @@ public class MeetingController {
             throw new ForbiddenException();
         }
         assert student == null || student instanceof Student : "error";
-        Slice<MainPageListElement> result = meetingServiceFacade.searchMainPageList(student, condition, pageable)
+        Slice<MainPageListElement> result = meetingService.searchMainPageList(student, condition, pageable)
             .map(meeting -> meetingMapper.toMainPageListElement(meeting, (Student) student));
         return new CustomSlice<>(result);
     }
@@ -67,7 +67,7 @@ public class MeetingController {
     @RolesAllowed({STUDENT})
     @Operation(description = "내 과팅 목록", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public CustomSlice<MyMeetingPageListElement> search(Student student, @ParameterObject Pageable pageable) {
-        Slice<MyMeetingPageListElement> result = meetingServiceFacade.searchMyMeetingList(student,
+        Slice<MyMeetingPageListElement> result = meetingService.searchMyMeetingList(student,
             pageable).map(meetingMapper::toMyMeetingPageListElement);
         return new CustomSlice<>(result);
     }
@@ -78,7 +78,7 @@ public class MeetingController {
     @Operation(description = "과팅 생성", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public void create(@Valid @RequestBody Create dto, Student member) {
         Meeting entity = meetingMapper.toEntity(dto, member);
-        meetingServiceFacade.save(entity);
+        meetingService.save(entity);
     }
 
     @PostMapping("{id}/requests")
@@ -87,9 +87,9 @@ public class MeetingController {
     @Operation(description = "특정 과팅 신청 목록", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public void request(@PathVariable UUID id, @Valid @RequestBody MeetingDto.Request dto,
         Student member) {
-        Meeting meetingRelation = meetingServiceFacade.find(id);
+        Meeting meetingRelation = meetingService.find(id);
         MeetingRequesterTeam meetingRequesterTeam = teamMapper.toEntity(dto, member);
-        meetingServiceFacade.addRequest(meetingRelation, meetingRequesterTeam, dto.message());
+        meetingService.addRequest(meetingRelation, meetingRequesterTeam, dto.message());
     }
 
     @PostMapping("{id}/watchlist-items/add")
@@ -97,8 +97,8 @@ public class MeetingController {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(description = "과팅 찜하기", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public void addWatchlist(@PathVariable UUID id, Student member) {
-        Meeting meetingRelation = meetingServiceFacade.find(id);
-        meetingServiceFacade.addWatchlist(meetingRelation, member);
+        Meeting meetingRelation = meetingService.find(id);
+        meetingService.addWatchlist(meetingRelation, member);
     }
 
     @DeleteMapping("{id}/watchlist-items/remove")
@@ -106,9 +106,9 @@ public class MeetingController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(description = "과팅 찜하기 해제", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public void takeOutFromWatchlist(@PathVariable UUID id, Student member) {
-        MeetingWatchlistItem meetingWatchlistItem = meetingServiceFacade.findWatchlistItem(id,
+        MeetingWatchlistItem meetingWatchlistItem = meetingService.findWatchlistItem(id,
             member);
         meetingWatchlistItem.validOwner(member);
-        meetingServiceFacade.removeWatchlistItem(meetingWatchlistItem);
+        meetingService.removeWatchlistItem(meetingWatchlistItem);
     }
 }

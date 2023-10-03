@@ -36,17 +36,21 @@ public abstract class Team extends OwnerEntity {
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TeamParticipant> participants = new ArrayList<>();
 
-    Team(UUID id, Student owner, String title,
-        Integer maxParticipantNumber, University representedUniversity,
+    Team(UUID id, Student owner, String title, University representedUniversity,
         List<TeamParticipant> participants) {
         super(id, owner);
         this.title = title;
-        this.maxParticipantNumber = maxParticipantNumber;
+        this.maxParticipantNumber = participants.size()+1;
         this.representedUniversity = representedUniversity;
         this.participants = participants;
+        declareTeam();
     }
 
     public void mapParticipants(List<TeamParticipant> source) {
         participants = source == null ? new ArrayList<>() : source;
+    }
+
+    private void declareTeam() {
+        participants.forEach(participant -> participant.changeTeam(this));
     }
 }
