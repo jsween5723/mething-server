@@ -4,6 +4,7 @@ import com.esc.bluespring.common.entity.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.UUID;
@@ -24,18 +25,20 @@ public class TeamRelation extends BaseEntity {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "to_team_id", nullable = false)
     private Team otherTeam;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "meeting_id", nullable = false)
+    private Meeting meeting;
 
     @Builder(access = AccessLevel.PACKAGE)
-    TeamRelation(UUID id, Team myTeam, Team otherTeam) {
+    public TeamRelation(UUID id, Team myTeam, Team otherTeam, Meeting meeting) {
         super(id);
         this.myTeam = myTeam;
         this.otherTeam = otherTeam;
+        this.meeting = meeting;
     }
 
+
     TeamRelation getOpponentRelation() {
-        return TeamRelation.builder()
-            .myTeam(otherTeam)
-            .otherTeam(myTeam)
-            .build();
+        return TeamRelation.builder().myTeam(otherTeam).otherTeam(myTeam).meeting(meeting).build();
     }
 }

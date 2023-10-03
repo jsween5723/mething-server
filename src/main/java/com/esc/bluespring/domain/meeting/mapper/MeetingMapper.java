@@ -32,6 +32,7 @@ public interface MeetingMapper {
     MyMeetingPageListElement toMyMeetingPageListElement(Meeting meeting);
 
     @Mapping(target = "ownerTeam", expression = "java(teamMapper.toEntity(dto,owner))")
+    @Mapping(target = "watchlist", ignore = true)
     Meeting toEntity(Create dto, Student owner);
 
     @Mapping(target = "targetMeeting", ignore = true)
