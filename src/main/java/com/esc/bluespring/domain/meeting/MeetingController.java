@@ -14,7 +14,7 @@ import com.esc.bluespring.domain.meeting.classes.MeetingDto.MyMeetingPageListEle
 import com.esc.bluespring.domain.meeting.entity.Meeting;
 import com.esc.bluespring.domain.meeting.entity.MeetingRequest;
 import com.esc.bluespring.domain.meeting.mapper.MeetingMapper;
-import com.esc.bluespring.domain.meeting.watchlist.entity.MeetingWatchlistItem;
+import com.esc.bluespring.domain.meeting.entity.MeetingWatchlistItem;
 import com.esc.bluespring.domain.member.entity.Member;
 import com.esc.bluespring.domain.member.entity.Student;
 import io.swagger.v3.oas.annotations.Operation;
@@ -95,7 +95,8 @@ public class MeetingController {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(description = "과팅 찜하기", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public void addWatchlist(@PathVariable UUID id, Student member) {
-        meetingService.addWatchlist(id, member);
+        MeetingWatchlistItem watchlistItemEntity = meetingMapper.toWatchlistItemEntity(member);
+        meetingService.addWatchlist(id, watchlistItemEntity);
     }
 
     @DeleteMapping("{id}/watchlist-items/remove")

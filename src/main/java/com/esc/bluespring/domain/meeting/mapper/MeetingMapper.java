@@ -8,6 +8,7 @@ import com.esc.bluespring.domain.meeting.classes.MeetingDto.MyMeetingPageListEle
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.Request;
 import com.esc.bluespring.domain.meeting.entity.Meeting;
 import com.esc.bluespring.domain.meeting.entity.MeetingRequest;
+import com.esc.bluespring.domain.meeting.entity.MeetingWatchlistItem;
 import com.esc.bluespring.domain.member.entity.Student;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -38,6 +39,10 @@ public interface MeetingMapper {
     @Mapping(target = "requesterTeam", expression = "java(teamMapper.toEntity(dto,owner))")
     @Mapping(target = "id", ignore = true)
     MeetingRequest toRequestEntity(Request dto, Student owner);
+    @Mapping(target = "owner", source = "owner")
+    @Mapping(target = "meeting", ignore = true)
+    @Mapping(target = "id", ignore = true)
+    MeetingWatchlistItem toWatchlistItemEntity(Student owner);
 
     default Integer getRequestCount(Meeting meeting) {
         return meeting.getJoinRequests().size();

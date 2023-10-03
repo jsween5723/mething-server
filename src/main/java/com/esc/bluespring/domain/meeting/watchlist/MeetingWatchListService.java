@@ -1,6 +1,6 @@
 package com.esc.bluespring.domain.meeting.watchlist;
 
-import com.esc.bluespring.domain.meeting.watchlist.entity.MeetingWatchlistItem;
+import com.esc.bluespring.domain.meeting.entity.MeetingWatchlistItem;
 import com.esc.bluespring.domain.meeting.watchlist.exception.MeetingWatchlistException.MeetingWatchlistItemNotFoundException;
 import com.esc.bluespring.domain.member.entity.Member;
 import java.util.UUID;

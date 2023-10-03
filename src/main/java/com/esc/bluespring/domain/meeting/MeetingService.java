@@ -6,7 +6,7 @@ import com.esc.bluespring.domain.meeting.entity.MeetingRequest;
 import com.esc.bluespring.domain.meeting.exception.MeetingException.MeetingNotFoundException;
 import com.esc.bluespring.domain.meeting.repository.MeetingRepository;
 import com.esc.bluespring.domain.meeting.watchlist.MeetingWatchListService;
-import com.esc.bluespring.domain.meeting.watchlist.entity.MeetingWatchlistItem;
+import com.esc.bluespring.domain.meeting.entity.MeetingWatchlistItem;
 import com.esc.bluespring.domain.member.entity.Member;
 import com.esc.bluespring.domain.member.entity.Student;
 import java.util.UUID;
@@ -43,10 +43,10 @@ public class MeetingService {
     }
 
     @Transactional
-    public void addWatchlist(UUID meetingId, Student member) {
+    public void addWatchlist(UUID meetingId, MeetingWatchlistItem item) {
         //TODO 쿼리DSL로 find쿼리 전환할 것
         Meeting meeting = find(meetingId);
-        meeting.appendedWatchlistBy(member);
+        meeting.addWatchListItem(item);
     }
 
     @Transactional(readOnly = true)

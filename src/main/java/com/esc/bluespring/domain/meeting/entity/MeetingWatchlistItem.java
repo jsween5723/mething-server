@@ -1,7 +1,6 @@
-package com.esc.bluespring.domain.meeting.watchlist.entity;
+package com.esc.bluespring.domain.meeting.entity;
 
 import com.esc.bluespring.common.entity.OwnerEntity;
-import com.esc.bluespring.domain.meeting.entity.Meeting;
 import com.esc.bluespring.domain.member.entity.Student;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -27,5 +26,9 @@ public class MeetingWatchlistItem extends OwnerEntity {
     MeetingWatchlistItem(UUID id, Student owner, Meeting meeting) {
         super(id, owner);
         this.meeting = meeting;
+    }
+
+    void declareMeeting(Meeting source) {
+        meeting = source;
     }
 }

@@ -6,7 +6,7 @@ import com.esc.bluespring.domain.auth.exception.AuthException.ForbiddenException
 import com.esc.bluespring.domain.file.entity.Image;
 import com.esc.bluespring.domain.friendship.entity.Friendship;
 import com.esc.bluespring.domain.friendship.request.entity.FriendshipRequest;
-import com.esc.bluespring.domain.meeting.watchlist.entity.MeetingWatchlistItem;
+import com.esc.bluespring.domain.meeting.entity.MeetingWatchlistItem;
 import com.esc.bluespring.domain.member.exception.MemberException.StudentNotCertificatedException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

@@ -1,9 +1,7 @@
 package com.esc.bluespring.domain.meeting.entity;
 
 import com.esc.bluespring.common.entity.BaseEntity;
-import com.esc.bluespring.domain.meeting.watchlist.entity.MeetingWatchlistItem;
 import com.esc.bluespring.domain.member.entity.Member;
-import com.esc.bluespring.domain.member.entity.Student;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -50,11 +48,8 @@ public class Meeting extends BaseEntity {
         delete();
     }
 
-    public void appendedWatchlistBy(Student user) {
-        MeetingWatchlistItem item = MeetingWatchlistItem.builder()
-            .meeting(this)
-            .owner(user)
-            .build();
+    public void addWatchListItem(MeetingWatchlistItem item) {
+        item.declareMeeting(this);
         watchlist.add(item);
     }
     public void mapWatchlist(List<MeetingWatchlistItem> source) {
