@@ -6,7 +6,6 @@ import com.esc.bluespring.domain.auth.exception.AuthException.ForbiddenException
 import com.esc.bluespring.domain.file.entity.Image;
 import com.esc.bluespring.domain.friendship.entity.Friendship;
 import com.esc.bluespring.domain.friendship.request.entity.FriendshipRequest;
-import com.esc.bluespring.domain.meeting.entity.Meeting;
 import com.esc.bluespring.domain.meeting.watchlist.entity.MeetingWatchlistItem;
 import com.esc.bluespring.domain.member.exception.MemberException.StudentNotCertificatedException;
 import jakarta.persistence.CascadeType;
@@ -92,14 +91,6 @@ public class Student extends Member {
         if (!schoolInformation.isCertificated()) {
             throw new StudentNotCertificatedException();
         }
-    }
-
-    public void appendWatchlist(Meeting meeting) {
-        MeetingWatchlistItem item = MeetingWatchlistItem.builder()
-            .meeting(meeting)
-            .owner(this)
-            .build();
-        watchlist.add(item);
     }
 
     public void friendshipRequestTo(Student target, String message) {

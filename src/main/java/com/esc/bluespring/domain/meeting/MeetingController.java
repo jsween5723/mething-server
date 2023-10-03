@@ -87,9 +87,8 @@ public class MeetingController {
     @Operation(description = "특정 과팅 신청 목록", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public void request(@PathVariable UUID id, @Valid @RequestBody MeetingDto.Request dto,
         Student member) {
-        Meeting meetingRelation = meetingService.find(id);
         MeetingRequesterTeam meetingRequesterTeam = teamMapper.toEntity(dto, member);
-        meetingService.addRequest(meetingRelation, meetingRequesterTeam, dto.message());
+        meetingService.addRequest(id, meetingRequesterTeam, dto.message());
     }
 
     @PostMapping("{id}/watchlist-items/add")
@@ -97,8 +96,7 @@ public class MeetingController {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(description = "과팅 찜하기", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public void addWatchlist(@PathVariable UUID id, Student member) {
-        Meeting meetingRelation = meetingService.find(id);
-        meetingService.addWatchlist(meetingRelation, member);
+        meetingService.addWatchlist(id, member);
     }
 
     @DeleteMapping("{id}/watchlist-items/remove")

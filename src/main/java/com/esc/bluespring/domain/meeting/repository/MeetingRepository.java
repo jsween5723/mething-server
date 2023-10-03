@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface MeetingRepository extends JpaRepository<Meeting, UUID>, MeetingQDR {
 
     @Override
-    @EntityGraph(attributePaths = {"ownerTeam","watchlist", "joinRequests"})
+    @EntityGraph(attributePaths = {"ownerTeam"})
     Optional<Meeting> findById(UUID aLong);
 }

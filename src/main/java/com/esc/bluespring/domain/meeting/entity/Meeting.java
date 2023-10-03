@@ -6,6 +6,7 @@ import com.esc.bluespring.domain.meeting.team.entity.MeetingOwnerTeam;
 import com.esc.bluespring.domain.meeting.team.entity.MeetingRequesterTeam;
 import com.esc.bluespring.domain.meeting.watchlist.entity.MeetingWatchlistItem;
 import com.esc.bluespring.domain.member.entity.Member;
+import com.esc.bluespring.domain.member.entity.Student;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -19,6 +20,7 @@ import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Table(name = "meetings")
@@ -30,10 +32,13 @@ public class Meeting extends BaseEntity {
     @JoinColumn(name = "owner_team_id", nullable = false)
     private MeetingOwnerTeam ownerTeam;
     @OneToMany(mappedBy = "targetMeeting", cascade = CascadeType.ALL, orphanRemoval = true)
+    @BatchSize(size = 50)
     private List<MeetingRequest> joinRequests = new ArrayList<>();
     @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true)
+    @BatchSize(size = 50)
     private List<MeetingWatchlistItem> watchlist = new ArrayList<>();
     @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL)
+    @BatchSize(size = 2)
     private List<MeetingRelation> relations = new ArrayList<>();
 
 
@@ -59,6 +64,14 @@ public class Meeting extends BaseEntity {
             .build();
         relations.add(relation);
         relations.add(relation.generateOppnentRelation());
+    }
+
+    public void appendedWatchlistBy(Student user) {
+        MeetingWatchlistItem item = MeetingWatchlistItem.builder()
+            .meeting(this)
+            .owner(user)
+            .build();
+        watchlist.add(item);
     }
     public void mapWatchlist(List<MeetingWatchlistItem> source) {
         watchlist = source == null ? new ArrayList<>() : source;

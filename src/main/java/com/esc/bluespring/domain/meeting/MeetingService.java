@@ -43,8 +43,10 @@ public class MeetingService {
     }
 
     @Transactional
-    public void addWatchlist(Meeting meeting, Student member) {
-        member.appendWatchlist(meeting);
+    public void addWatchlist(UUID meetingId, Student member) {
+        //TODO 쿼리DSL로 find쿼리 전환할 것
+        Meeting meeting = find(meetingId);
+        meeting.appendedWatchlistBy(member);
     }
 
     @Transactional(readOnly = true)
@@ -58,8 +60,8 @@ public class MeetingService {
     }
 
     @Transactional
-    public void addRequest(Meeting meeting, MeetingRequesterTeam requester, String message) {
-        Meeting meeting1 = find(meeting.getId());
-        meeting1.joiningRequestedBy(requester, message);
+    public void addRequest(UUID meetingId, MeetingRequesterTeam requester, String message) {
+        Meeting meeting = find(meetingId);
+        meeting.joiningRequestedBy(requester, message);
     }
 }
