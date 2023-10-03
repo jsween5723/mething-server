@@ -28,16 +28,12 @@ public class MeetingRequestController {
     @PatchMapping("{id}/accept")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void accept(@PathVariable UUID id, Member member) {
-        MeetingRequest request = requestService.find(id);
-        request.validTargetOwner(member);
-        requestService.accept(request);
+        requestService.accept(id, member);
     }
 
     @PatchMapping("{id}/reject")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void reject(@PathVariable UUID id, Member member) {
-        MeetingRequest request = requestService.find(id);
-        request.validTargetOwner(member);
-        requestService.reject(request);
+        requestService.reject(id, member);
     }
 }

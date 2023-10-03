@@ -9,10 +9,8 @@ import static com.esc.bluespring.domain.meeting.entity.QTeam.team;
 import static com.esc.bluespring.domain.meeting.entity.QTeamParticipant.teamParticipant;
 import static com.esc.bluespring.domain.member.entity.QStudent.student;
 import static com.esc.bluespring.domain.university.entity.QUniversity.university;
-import static com.querydsl.core.types.ExpressionUtils.count;
 
 import com.esc.bluespring.common.utils.querydsl.RepositorySlicer;
-import com.esc.bluespring.domain.meeting.classes.MeetingDto.MainPageListElement;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.MainPageSearchCondition;
 import com.esc.bluespring.domain.meeting.entity.Meeting;
 import com.esc.bluespring.domain.meeting.entity.MeetingRequest;
@@ -20,15 +18,11 @@ import com.esc.bluespring.domain.meeting.entity.MeetingWatchlistItem;
 import com.esc.bluespring.domain.meeting.entity.QMeetingOwnerTeam;
 import com.esc.bluespring.domain.meeting.entity.Team;
 import com.esc.bluespring.domain.meeting.entity.TeamParticipant;
-import com.esc.bluespring.domain.meeting.team.repository.MeetingOwnerTeamQDR;
 import com.esc.bluespring.domain.member.entity.Member;
-import com.esc.bluespring.domain.member.entity.QMember;
 import com.esc.bluespring.domain.member.entity.QStudent;
 import com.esc.bluespring.domain.member.entity.Student;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.group.GroupBy;
-import com.querydsl.core.types.ConstructorExpression;
-import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Map;
@@ -41,8 +35,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class MeetingQDRImpl implements MeetingQDR {
 
     private final JPAQueryFactory query;
-    private final MeetingOwnerTeamQDR meetingOwnerTeamQDR;
-
     @Transactional(readOnly = true)
     public Slice<Meeting> searchMainPageList(Member user, MainPageSearchCondition condition,
         Pageable pageable) {
@@ -106,14 +98,5 @@ public class MeetingQDRImpl implements MeetingQDR {
                     .getId()));
         }
         return builder;
-    }
-
-    public ConstructorExpression<MainPageListElement> toMainPageListElement(Student student,
-        QMember owner) {
-        return Projections.constructor(MainPageListElement.class, meeting.id,
-            meetingOwnerTeamQDR.toMainPageListElement(meetingOwnerTeam), count(meeting.watchlist),
-            query.select(meetingWatchlistItem.owner.eq(student)
-                .and(meetingWatchlistItem.meeting.eq(meeting))).from(meetingWatchlistItem),
-            meeting.createdAt.milliSecond().castToNum(Long.class).multiply(1000));
     }
 }

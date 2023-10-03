@@ -15,11 +15,6 @@ public class MeetingWatchListService {
     private final MeetingWatchListRepository repository;
 
     @Transactional
-    public MeetingWatchlistItem save(MeetingWatchlistItem entity) {
-        return repository.save(entity);
-    }
-
-    @Transactional
     public MeetingWatchlistItem find(UUID meetingId, Member member) {
         return repository.findByMeeting_IdAndOwner(meetingId, member)
             .orElseThrow(MeetingWatchlistItemNotFoundException::new);
