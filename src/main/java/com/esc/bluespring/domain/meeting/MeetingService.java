@@ -2,9 +2,9 @@ package com.esc.bluespring.domain.meeting;
 
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.MainPageSearchCondition;
 import com.esc.bluespring.domain.meeting.entity.Meeting;
+import com.esc.bluespring.domain.meeting.entity.MeetingRequest;
 import com.esc.bluespring.domain.meeting.exception.MeetingException.MeetingNotFoundException;
 import com.esc.bluespring.domain.meeting.repository.MeetingRepository;
-import com.esc.bluespring.domain.meeting.entity.MeetingRequesterTeam;
 import com.esc.bluespring.domain.meeting.watchlist.MeetingWatchListService;
 import com.esc.bluespring.domain.meeting.watchlist.entity.MeetingWatchlistItem;
 import com.esc.bluespring.domain.member.entity.Member;
@@ -60,8 +60,8 @@ public class MeetingService {
     }
 
     @Transactional
-    public void addRequest(UUID meetingId, MeetingRequesterTeam requester, String message) {
+    public void addRequest(UUID meetingId, MeetingRequest request) {
         Meeting meeting = find(meetingId);
-        meeting.joiningRequestedBy(requester, message);
+        meeting.addRequest(request);
     }
 }

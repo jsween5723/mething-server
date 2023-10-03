@@ -60,4 +60,7 @@ public class MeetingRequest extends BaseEntity {
     public void validTargetOwner(Member member) {
         targetMeeting.validOwner(member);
     }
+    void declareTargetMeeting(Meeting source) {
+        targetMeeting = source;
+    }
 }

@@ -40,12 +40,8 @@ public class Meeting extends BaseEntity {
         this.introduce = introduce;
         this.ownerTeam = ownerTeam;
     }
-    public void joiningRequestedBy(MeetingRequesterTeam requester, String message) {
-        MeetingRequest request = MeetingRequest.builder()
-            .targetMeeting(this)
-            .requesterTeam(requester)
-            .message(message)
-            .build();
+    public void addRequest(MeetingRequest request) {
+        request.declareTargetMeeting(this);
         joinRequests.add(request);
     }
 

@@ -12,9 +12,8 @@ import com.esc.bluespring.domain.meeting.classes.MeetingDto.MainPageListElement;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.MainPageSearchCondition;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.MyMeetingPageListElement;
 import com.esc.bluespring.domain.meeting.entity.Meeting;
+import com.esc.bluespring.domain.meeting.entity.MeetingRequest;
 import com.esc.bluespring.domain.meeting.mapper.MeetingMapper;
-import com.esc.bluespring.domain.meeting.mapper.TeamMapper;
-import com.esc.bluespring.domain.meeting.entity.MeetingRequesterTeam;
 import com.esc.bluespring.domain.meeting.watchlist.entity.MeetingWatchlistItem;
 import com.esc.bluespring.domain.member.entity.Member;
 import com.esc.bluespring.domain.member.entity.Student;
@@ -44,9 +43,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @Tag(name = "미팅 컨트롤러")
 public class MeetingController {
-
     private final MeetingMapper meetingMapper = MeetingMapper.INSTANCE;
-    private final TeamMapper teamMapper = TeamMapper.INSTANCE;
     private final MeetingService meetingService;
 
     @GetMapping
@@ -89,8 +86,8 @@ public class MeetingController {
     @Operation(description = "특정 과팅 신청 목록", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public void request(@PathVariable UUID id, @Valid @RequestBody MeetingDto.Request dto,
         Student member) {
-        MeetingRequesterTeam meetingRequesterTeam = teamMapper.toEntity(dto, member);
-        meetingService.addRequest(id, meetingRequesterTeam, dto.message());
+        MeetingRequest request = meetingMapper.toEntity(dto, member);
+        meetingService.addRequest(id, request);
     }
 
     @PostMapping("{id}/watchlist-items/add")

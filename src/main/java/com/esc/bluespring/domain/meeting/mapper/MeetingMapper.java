@@ -5,7 +5,9 @@ import com.esc.bluespring.common.utils.time.TimeMapper;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.Create;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.MainPageListElement;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.MyMeetingPageListElement;
+import com.esc.bluespring.domain.meeting.classes.MeetingDto.Request;
 import com.esc.bluespring.domain.meeting.entity.Meeting;
+import com.esc.bluespring.domain.meeting.entity.MeetingRequest;
 import com.esc.bluespring.domain.meeting.team.classes.TeamDto;
 import com.esc.bluespring.domain.meeting.entity.MeetingOwnerTeam;
 import com.esc.bluespring.domain.meeting.entity.Team;
@@ -45,5 +47,9 @@ public interface MeetingMapper {
     @Mapping(target = "ownerTeam", expression = "java(teamMapper.toEntity(dto,owner))")
     Meeting toEntity(Create dto, Student owner);
 
-
+    @Mapping(target = "targetMeeting", ignore = true)
+    @Mapping(target = "status", ignore = true)
+    @Mapping(target = "requesterTeam", expression = "java(teamMapper.toEntity(dto,owner))")
+    @Mapping(target = "id", ignore = true)
+    MeetingRequest toEntity(Request dto, Student owner);
 }
