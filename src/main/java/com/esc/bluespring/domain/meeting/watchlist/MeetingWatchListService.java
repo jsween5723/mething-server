@@ -20,8 +20,8 @@ public class MeetingWatchListService {
     }
 
     @Transactional
-    public MeetingWatchlistItem find(UUID meetingOwnerTeamId, Member member) {
-        return repository.findByMeeting_IdAndOwner(meetingOwnerTeamId, member)
+    public MeetingWatchlistItem find(UUID meetingId, Member member) {
+        return repository.findByMeeting_IdAndOwner(meetingId, member)
             .orElseThrow(MeetingWatchlistItemNotFoundException::new);
     }
 

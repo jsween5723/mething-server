@@ -50,8 +50,8 @@ public class MeetingService {
     }
 
     @Transactional(readOnly = true)
-    public MeetingWatchlistItem findWatchlistItem(UUID meetingOwnerTeamId, Member member) {
-        return watchListService.find(meetingOwnerTeamId, member);
+    public MeetingWatchlistItem findWatchlistItem(UUID meetingId, Member member) {
+        return watchListService.find(meetingId, member);
     }
 
     @Transactional
