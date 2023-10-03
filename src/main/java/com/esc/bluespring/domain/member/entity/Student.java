@@ -46,13 +46,13 @@ public class Student extends Member {
     private MBTI mbti;
     @Embedded
     private SchoolInformation schoolInformation;
-    @OneToMany(mappedBy = "owner", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.PERSIST)
     @BatchSize(size = 50)
     private List<MeetingWatchlistItem> watchlist = new ArrayList<>();
-    @OneToMany(mappedBy = "requester", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "requester", cascade = CascadeType.ALL, orphanRemoval = true)
     @BatchSize(size = 50)
     private List<FriendshipRequest> friendshipRequests = new ArrayList<>();
-    @OneToMany(mappedBy = "member", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     @BatchSize(size = 50)
     private List<Friendship> friendships = new ArrayList<>();
 

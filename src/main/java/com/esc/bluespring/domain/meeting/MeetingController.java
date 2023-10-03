@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -29,7 +30,6 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
-import jakarta.annotation.security.RolesAllowed;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -53,20 +53,22 @@ public class MeetingController {
     @RolesAllowed({STUDENT, ANONYMOUS, ADMIN})
     @Operation(description = "메인 화면 과팅 목록", parameters = @Parameter(in = ParameterIn.HEADER, name = "Authorization"))
     public CustomSlice<MainPageListElement> search(
-        @ParameterObject MainPageSearchCondition condition, Member student, @ParameterObject Pageable pageable) {
-        if (!(student instanceof Student) && condition.isMyLocation()) {
+        @ParameterObject MainPageSearchCondition condition, Member user,
+        @ParameterObject Pageable pageable) {
+        if (!(user instanceof Student) && condition.isMyLocation()) {
             throw new ForbiddenException();
         }
-        assert student == null || student instanceof Student : "error";
-        Slice<MainPageListElement> result = meetingService.searchMainPageList(student, condition, pageable)
-            .map(meeting -> meetingMapper.toMainPageListElement(meeting, (Student) student));
+        Slice<MainPageListElement> result = meetingService.searchMainPageList(user, condition,
+            pageable).map(meeting -> meetingMapper.toMainPageListElement(meeting,
+            user instanceof Student student ? student : null));
         return new CustomSlice<>(result);
     }
 
     @GetMapping("/me")
     @RolesAllowed({STUDENT})
     @Operation(description = "내 과팅 목록", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
-    public CustomSlice<MyMeetingPageListElement> search(Student student, @ParameterObject Pageable pageable) {
+    public CustomSlice<MyMeetingPageListElement> search(Student student,
+        @ParameterObject Pageable pageable) {
         Slice<MyMeetingPageListElement> result = meetingService.searchMyMeetingList(student,
             pageable).map(meetingMapper::toMyMeetingPageListElement);
         return new CustomSlice<>(result);
@@ -104,8 +106,7 @@ public class MeetingController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(description = "과팅 찜하기 해제", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public void takeOutFromWatchlist(@PathVariable UUID id, Student member) {
-        MeetingWatchlistItem meetingWatchlistItem = meetingService.findWatchlistItem(id,
-            member);
+        MeetingWatchlistItem meetingWatchlistItem = meetingService.findWatchlistItem(id, member);
         meetingWatchlistItem.validOwner(member);
         meetingService.removeWatchlistItem(meetingWatchlistItem);
     }

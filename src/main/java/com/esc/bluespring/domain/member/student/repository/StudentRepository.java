@@ -2,10 +2,11 @@ package com.esc.bluespring.domain.member.student.repository;
 
 import com.esc.bluespring.domain.member.entity.Student;
 import java.util.Optional;
+import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-public interface StudentRepository extends JpaRepository<Student, Long>, StudentQDR {
+public interface StudentRepository extends JpaRepository<Student, UUID>, StudentQDR {
 
     Optional<Student> findByEmail(String email);
 
@@ -18,5 +19,5 @@ public interface StudentRepository extends JpaRepository<Student, Long>, Student
         + "left join fetch s.schoolInformation.major "
         + "left join fetch s.schoolInformation.major.university "
         + "where s.id=:id")
-    Optional<Student> findById(Long id);
+    Optional<Student> findById(UUID id);
 }

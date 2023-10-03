@@ -32,7 +32,7 @@ public class AuthenticationResolver implements HandlerMethodArgumentResolver {
         NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList()
-            .contains(ANONYMOUS)) {
+            .contains("ROLE_"+ANONYMOUS)) {
             return null;
         }
         Member principal = authentication.getDetails() instanceof Member member ? member : null;

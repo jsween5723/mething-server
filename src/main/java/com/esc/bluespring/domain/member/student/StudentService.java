@@ -6,6 +6,7 @@ import com.esc.bluespring.domain.member.exception.MemberException.DuplicateSchoo
 import com.esc.bluespring.domain.member.exception.MemberException.MemberNotFoundException;
 import com.esc.bluespring.domain.member.student.classes.StudentDto.SearchCondition;
 import com.esc.bluespring.domain.member.student.repository.StudentRepository;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -44,7 +45,7 @@ public class StudentService {
     }
 
     @Transactional(readOnly = true)
-    public Student find(Long id) {
+    public Student find(UUID id) {
         return repository.findById(id).orElseThrow(MemberNotFoundException::new);
     }
 
