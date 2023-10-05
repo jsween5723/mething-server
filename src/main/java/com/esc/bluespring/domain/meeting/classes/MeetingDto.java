@@ -15,13 +15,16 @@ public record MeetingDto() {
     }
 
 
-    public record MainPageListElement(UUID id, String introduce, TeamDto.MainPageListElement ownerTeam,
-                                      Integer likeCount, Boolean isLiked, Long createdAt) {
+    public record MainPageListElement(UUID id, String introduce,
+                                      TeamDto.MainPageListElement ownerTeam, Integer likeCount,
+                                      Boolean isLiked, Long createdAt) {
 
     }
 
-    public record Detail(UUID id, TeamDto.MainPageListElement ownerTeam,
-                         Integer likeCount, Boolean isLiked, Long createdAt) {}
+    public record ChatListElement(UUID id, TeamDto.MainPageListElement ownerTeam,
+                                  TeamDto.MainPageListElement engagedTeam, Long createdAt) {
+
+    }
 
     public record MyMeetingPageListElement(UUID id, TeamDto.MainPageListElement myTeam,
                                            Integer requestCount, Long createdAt) {

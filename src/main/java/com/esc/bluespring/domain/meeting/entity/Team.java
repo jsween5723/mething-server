@@ -53,4 +53,5 @@ public abstract class Team extends OwnerEntity {
     private void declareTeam() {
         participants.forEach(participant -> participant.changeTeam(this));
     }
+    abstract public boolean isOwner();
 }

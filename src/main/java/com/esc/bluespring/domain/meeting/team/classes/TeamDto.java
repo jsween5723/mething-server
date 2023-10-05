@@ -7,7 +7,7 @@ public record TeamDto() {
 
     public record MainPageListElement(Long id, String title, Integer maxParticipantNumber,
                                       UniversityDto.MainPageListElement representedUniversity,
-                                      List<TeamParticipantDto.MainPageListElement> participants) {
+                                      List<TeamParticipantDto.MainPageListElement> participants, boolean isOwner) {
 
     }
 }
