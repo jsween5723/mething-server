@@ -46,7 +46,7 @@ public class MeetingRequest extends BaseEntity {
 
     public void accept() {
         this.status = RequestStatus.ACCEPTED;
-        targetMeeting.accept(this);
+        targetMeeting.engageTeam(requesterTeam);
     }
 
     public void reject() {

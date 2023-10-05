@@ -35,6 +35,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class MeetingQDRImpl implements MeetingQDR {
 
     private final JPAQueryFactory query;
+
     @Transactional(readOnly = true)
     public Slice<Meeting> searchMainPageList(Member user, MainPageSearchCondition condition,
         Pageable pageable) {
@@ -43,7 +44,7 @@ public class MeetingQDRImpl implements MeetingQDR {
             .leftJoin(meetingOwnerTeam.owner.as(QStudent.class), student).fetchJoin()
             .leftJoin(meetingOwnerTeam.representedUniversity, university).fetchJoin()
             .leftJoin(university.locationDistrict, locationDistrict).fetchJoin().fetchJoin()
-            .where(toWhereCondition(condition, user)).offset(pageable.getOffset())
+            .where(meeting.engagedTeam.isNull(), toWhereCondition(condition, user)).offset(pageable.getOffset())
             .limit(pageable.getPageSize() + 1).fetch();
         List<Team> teams = meetings.stream().map(Meeting::getOwnerTeam).map(team -> (Team) team)
             .toList();
@@ -77,7 +78,8 @@ public class MeetingQDRImpl implements MeetingQDR {
             .leftJoin(meetingOwnerTeam.owner.as(QStudent.class), student).fetchJoin()
             .leftJoin(meetingOwnerTeam.representedUniversity, university).fetchJoin()
             .leftJoin(university.locationDistrict, locationDistrict).fetchJoin()
-            .where(meetingOwnerTeam.owner.eq(user).or(teamParticipant.member.eq(user)))
+            .where(meeting.engagedTeam.isNull(),
+                meetingOwnerTeam.owner.eq(user).or(teamParticipant.member.eq(user)))
             .offset(pageable.getOffset()).limit(pageable.getPageSize() + 1).fetch();
         List<Team> teams = meetings.stream().map(Meeting::getOwnerTeam).map(team -> (Team) team)
             .toList();
