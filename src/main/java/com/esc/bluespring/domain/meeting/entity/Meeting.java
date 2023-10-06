@@ -15,7 +15,6 @@ import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Table(name = "meetings")
@@ -28,13 +27,11 @@ public class Meeting extends BaseEntity {
     @JoinColumn(name = "owner_team_id", nullable = false)
     private MeetingOwnerTeam ownerTeam;
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "engaged_team_id", nullable = false)
+    @JoinColumn(name = "engaged_team_id")
     private MeetingRequesterTeam engagedTeam;
     @OneToMany(mappedBy = "targetMeeting", cascade = CascadeType.ALL, orphanRemoval = true)
-    @BatchSize(size = 50)
     private List<MeetingRequest> joinRequests = new ArrayList<>();
     @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true)
-    @BatchSize(size = 50)
     private List<MeetingWatchlistItem> watchlist = new ArrayList<>();
 
     public Meeting(UUID id, String introduce, MeetingOwnerTeam ownerTeam) {
