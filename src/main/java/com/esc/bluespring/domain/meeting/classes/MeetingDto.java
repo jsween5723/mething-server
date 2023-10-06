@@ -21,8 +21,9 @@ public record MeetingDto() {
 
     }
 
-    public record ChatListElement(UUID id, TeamDto.MainPageListElement ownerTeam,
-                                  TeamDto.MainPageListElement engagedTeam, Long createdAt) {
+    public record Detail(Integer likeCount, Boolean isLiked, UUID id,
+                         TeamDto.MainPageListElement ownerTeam,
+                         TeamDto.MainPageListElement engagedTeam, Long createdAt) {
 
     }
 
