@@ -3,10 +3,9 @@ package com.esc.bluespring.domain.meeting;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.MainPageSearchCondition;
 import com.esc.bluespring.domain.meeting.entity.Meeting;
 import com.esc.bluespring.domain.meeting.entity.MeetingRequest;
-import com.esc.bluespring.domain.meeting.exception.MeetingException.MeetingNotFoundException;
+import com.esc.bluespring.domain.meeting.entity.MeetingWatchlistItem;
 import com.esc.bluespring.domain.meeting.repository.MeetingRepository;
 import com.esc.bluespring.domain.meeting.watchlist.MeetingWatchListService;
-import com.esc.bluespring.domain.meeting.entity.MeetingWatchlistItem;
 import com.esc.bluespring.domain.member.entity.Member;
 import com.esc.bluespring.domain.member.entity.Student;
 import java.util.UUID;
@@ -30,7 +29,7 @@ public class MeetingService {
 
     @Transactional(readOnly = true)
     public Meeting find(UUID id) {
-        return repository.findById(id).orElseThrow(MeetingNotFoundException::new);
+        return repository.find(id);
     }
     @Transactional(readOnly = true)
     public Slice<Meeting> searchMainPageList(Member student, MainPageSearchCondition condition, Pageable pageable) {
