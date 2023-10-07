@@ -1,14 +1,16 @@
 package com.esc.bluespring.domain.locationDistrict;
 
+import com.esc.bluespring.common.LazyLoadingAwareMapper;
 import com.esc.bluespring.domain.locationDistrict.classes.LocationDistrictDto.NoParent;
 import com.esc.bluespring.domain.locationDistrict.classes.LocationDistrictDto.SearchListElement;
 import com.esc.bluespring.domain.locationDistrict.entity.LocationDistrict;
 import java.util.regex.Pattern;
+import org.mapstruct.Condition;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
-public interface LocationDistrictMapper {
+public interface LocationDistrictMapper extends LazyLoadingAwareMapper {
     LocationDistrictMapper INSTANCE = Mappers.getMapper(LocationDistrictMapper.class);
     String SI_DO = "시도명";
     String SI_DO_CODE = "시도코드";
@@ -56,4 +58,10 @@ public interface LocationDistrictMapper {
 //        }
 //        return parent.getChildren().stream().filter(c -> c.equals(child)).findFirst().get();
 //    }
+
+    @Condition
+    default boolean isNotLazyLoadedParent(
+        LocationDistrict parent) {
+        return isNotLazyLoaded(parent);
+    }
 }

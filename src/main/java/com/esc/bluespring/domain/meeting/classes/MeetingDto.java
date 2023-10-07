@@ -1,6 +1,5 @@
 package com.esc.bluespring.domain.meeting.classes;
 
-import com.esc.bluespring.domain.meeting.classes.MeetingRequestDto.MeetingDetailRequestListElement;
 import com.esc.bluespring.domain.meeting.team.classes.TeamDto;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -24,7 +23,7 @@ public record MeetingDto() {
 
     public record Detail(Integer likeCount, Boolean isLiked, UUID id, String introduce, Integer requestCount,
                          TeamDto.MainPageListElement ownerTeam,
-                         TeamDto.MainPageListElement engagedTeam, Long createdAt, List<MeetingDetailRequestListElement> requests) {
+                         TeamDto.MainPageListElement engagedTeam, Long createdAt) {
 
     }
 

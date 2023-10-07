@@ -23,8 +23,8 @@ public class MeetingService {
     private final MeetingWatchListService watchListService;
 
     @Transactional
-    public Meeting save(Meeting meeting) {
-        return repository.save(meeting);
+    public void save(Meeting meeting) {
+        repository.save(meeting);
     }
 
     @Transactional(readOnly = true)
@@ -42,10 +42,10 @@ public class MeetingService {
     }
 
     @Transactional
-    public void addWatchlist(UUID meetingId, MeetingWatchlistItem item) {
+    public void addWatchlist(Meeting meeting, MeetingWatchlistItem item) {
         //TODO 쿼리DSL로 find쿼리 전환할 것
-        Meeting meeting = find(meetingId);
         meeting.addWatchListItem(item);
+        save(meeting);
     }
 
     @Transactional(readOnly = true)
@@ -59,8 +59,8 @@ public class MeetingService {
     }
 
     @Transactional
-    public void addRequest(UUID meetingId, MeetingRequest request) {
-        Meeting meeting = find(meetingId);
+    public void addRequest(Meeting meeting, MeetingRequest request) {
         meeting.addRequest(request);
+        save(meeting);
     }
 }

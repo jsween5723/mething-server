@@ -62,7 +62,6 @@ public class StudentQDRImpl implements StudentQDR {
     query.leftJoin(student.schoolInformation.major, qMajor).fetchJoin()
         .leftJoin(qMajor.university, qUniversity).fetchJoin()
         .leftJoin(qUniversity.locationDistrict, qLocationDistrict).fetchJoin()
-        .leftJoin(qLocationDistrict.parent).fetchJoin()
     ;
   }
 }

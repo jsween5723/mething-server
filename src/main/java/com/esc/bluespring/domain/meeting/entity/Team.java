@@ -13,9 +13,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -35,10 +34,10 @@ public abstract class Team extends OwnerEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private University representedUniversity;
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TeamParticipant> participants = new ArrayList<>();
+    private Set<TeamParticipant> participants = new LinkedHashSet<>();
 
     Team(UUID id, Student owner, String title, University representedUniversity,
-        List<TeamParticipant> participants) {
+        Set<TeamParticipant> participants) {
         super(id, owner);
         this.title = title;
         this.maxParticipantNumber = participants.size() + 1;
@@ -47,8 +46,12 @@ public abstract class Team extends OwnerEntity {
         declareTeam();
     }
 
-    public void mapParticipants(List<TeamParticipant> source) {
-        participants = source == null ? new ArrayList<>() : source;
+    public void mapParticipants(Set<TeamParticipant> source) {
+        if (source == null){
+            return;
+        }
+        participants = source;
+        declareTeam();
     }
 
     private void declareTeam() {

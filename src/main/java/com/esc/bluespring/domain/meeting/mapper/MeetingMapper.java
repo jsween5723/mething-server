@@ -1,9 +1,10 @@
 package com.esc.bluespring.domain.meeting.mapper;
 
+import com.esc.bluespring.common.LazyLoadingAwareMapper;
 import com.esc.bluespring.common.entity.OwnerEntity;
 import com.esc.bluespring.common.utils.time.TimeMapper;
-import com.esc.bluespring.domain.meeting.classes.MeetingDto.Detail;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.Create;
+import com.esc.bluespring.domain.meeting.classes.MeetingDto.Detail;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.MainPageListElement;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.MyMeetingPageListElement;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.Request;
@@ -12,56 +13,70 @@ import com.esc.bluespring.domain.meeting.entity.MeetingRequest;
 import com.esc.bluespring.domain.meeting.entity.MeetingWatchlistItem;
 import com.esc.bluespring.domain.member.entity.Member;
 import com.esc.bluespring.domain.member.entity.Student;
+import java.util.Collection;
+import org.mapstruct.Condition;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(uses = {TimeMapper.class, TeamMapper.class})
-public interface MeetingMapper {
+@Mapper(uses = {TimeMapper.class, TeamMapper.class, MeetingRequestMapper.class})
+public interface MeetingMapper extends LazyLoadingAwareMapper {
 
-    MeetingMapper INSTANCE = Mappers.getMapper(MeetingMapper.class);
-    TeamMapper teamMapper = Mappers.getMapper(TeamMapper.class);
+  MeetingMapper INSTANCE = Mappers.getMapper(MeetingMapper.class);
+  TeamMapper teamMapper = Mappers.getMapper(TeamMapper.class);
 
-    @Mapping(target = "likeCount", expression = "java(meeting.getWatchlist().size())")
-    @Mapping(target = "isLiked", expression = "java(toIsLiked(meeting, member))")
-    @Mapping(target = "id", source = "meeting.id")
-    @Mapping(target = "createdAt", source = "meeting.createdAt")
-    @Mapping(target = "ownerTeam", source = "meeting.ownerTeam")
-    @Mapping(target = "introduce", source = "meeting.introduce")
-    MainPageListElement toMainPageListElement(Meeting meeting, Student member);
-    @Mapping(target = "likeCount", expression = "java(meeting.getWatchlist().size())")
-    @Mapping(target = "isLiked", expression = "java(toIsLiked(meeting, member))")
-    @Mapping(target = "id", source = "meeting.id")
-    @Mapping(target = "createdAt", source = "meeting.createdAt")
-    @Mapping(target = "requestCount", source = "meeting")
-    @Mapping(target = "introduce", source = "meeting.introduce")
-    Detail toDetail(Meeting meeting, Member member);
+  @Mapping(target = "likeCount", expression = "java(meeting.getWatchlist().size())")
+  @Mapping(target = "isLiked", expression = "java(toIsLiked(meeting, member))")
+  @Mapping(target = "id", source = "meeting.id")
+  @Mapping(target = "createdAt", source = "meeting.createdAt")
+  @Mapping(target = "ownerTeam", source = "meeting.ownerTeam")
+  @Mapping(target = "introduce", source = "meeting.introduce")
+  MainPageListElement toMainPageListElement(Meeting meeting, Student member);
 
-    @Mapping(target = "myTeam", source = "meeting.ownerTeam")
-    @Mapping(target = "requestCount", source = "meeting")
-    MyMeetingPageListElement toMyMeetingPageListElement(Meeting meeting);
+  @Mapping(target = "likeCount", expression = "java(meeting.getWatchlist().size())")
+  @Mapping(target = "isLiked", expression = "java(toIsLiked(meeting, member))")
+  @Mapping(target = "id", source = "meeting.id")
+  @Mapping(target = "createdAt", source = "meeting.createdAt")
+  @Mapping(target = "requestCount", source = "meeting")
+  @Mapping(target = "introduce", source = "meeting.introduce")
+  Detail toDetail(Meeting meeting, Member member);
 
-    @Mapping(target = "ownerTeam", expression = "java(teamMapper.toEntity(dto,owner))")
-    @Mapping(target = "watchlist", ignore = true)
-    @Mapping(target = "introduce", source = "dto.introduce")
-    Meeting toEntity(Create dto, Student owner);
+  @Mapping(target = "myTeam", source = "meeting.ownerTeam")
+  @Mapping(target = "requestCount", source = "meeting")
+  MyMeetingPageListElement toMyMeetingPageListElement(Meeting meeting);
 
-    @Mapping(target = "targetMeeting", ignore = true)
-    @Mapping(target = "status", ignore = true)
-    @Mapping(target = "requesterTeam", expression = "java(teamMapper.toEntity(dto,owner))")
-    @Mapping(target = "id", ignore = true)
-    MeetingRequest toRequestEntity(Request dto, Student owner);
-    @Mapping(target = "owner", source = "owner")
-    @Mapping(target = "meeting", ignore = true)
-    @Mapping(target = "id", ignore = true)
-    MeetingWatchlistItem toWatchlistItemEntity(Student owner);
+  @Mapping(target = "ownerTeam", expression = "java(teamMapper.toEntity(dto,owner))")
+  @Mapping(target = "watchlist", ignore = true)
+  @Mapping(target = "introduce", source = "dto.introduce")
+  Meeting toEntity(Create dto, Student owner);
 
-    default Integer getRequestCount(Meeting meeting) {
-        return meeting.getJoinRequests().size();
-    }
+  @Mapping(target = "targetMeeting", ignore = true)
+  @Mapping(target = "status", ignore = true)
+  @Mapping(target = "requesterTeam", expression = "java(teamMapper.toEntity(dto,owner))")
+  @Mapping(target = "id", ignore = true)
+  MeetingRequest toRequestEntity(Request dto, Student owner);
 
-    default boolean toIsLiked(Meeting meeting, Member member) {
-        return meeting.getWatchlist().stream().map(OwnerEntity::getOwner).toList()
-            .contains(member);
-    }
+  @Mapping(target = "owner", source = "owner")
+  @Mapping(target = "meeting", ignore = true)
+  @Mapping(target = "id", ignore = true)
+  MeetingWatchlistItem toWatchlistItemEntity(Student owner);
+
+  default Integer getRequestCount(Meeting meeting) {
+    return meeting.getJoinRequests().size();
+  }
+
+  default boolean toIsLiked(Meeting meeting, Member member) {
+    return meeting.getWatchlist().stream().map(OwnerEntity::getOwner).toList().contains(member);
+  }
+
+  @Condition
+  default boolean isNotLazyLoadedWatchlist(
+      Collection<MeetingWatchlistItem> sourceCollection) {
+    return isNotLazyLoaded(sourceCollection);
+  }
+  @Condition
+  default boolean isNotLazyLoadedRequests(
+      Collection<MeetingRequest> sourceCollection) {
+    return isNotLazyLoaded(sourceCollection);
+  }
 }

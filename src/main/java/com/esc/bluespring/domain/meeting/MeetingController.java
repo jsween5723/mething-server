@@ -94,7 +94,8 @@ public class MeetingController {
   public void request(@PathVariable UUID id, @Valid @RequestBody MeetingDto.Request dto,
                       Student member) {
     MeetingRequest request = meetingMapper.toRequestEntity(dto, member);
-    meetingService.addRequest(id, request);
+    Meeting meeting = meetingService.find(id);
+    meetingService.addRequest(meeting, request);
   }
 
   @PostMapping("{id}/watchlist-items/add")
@@ -103,7 +104,8 @@ public class MeetingController {
   @Operation(description = "과팅 찜하기", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
   public void addWatchlist(@PathVariable UUID id, Student member) {
     MeetingWatchlistItem watchlistItemEntity = meetingMapper.toWatchlistItemEntity(member);
-    meetingService.addWatchlist(id, watchlistItemEntity);
+    Meeting meeting = meetingService.find(id);
+    meetingService.addWatchlist(meeting, watchlistItemEntity);
   }
 
   @DeleteMapping("{id}/watchlist-items/remove")

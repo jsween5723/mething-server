@@ -1,5 +1,6 @@
 package com.esc.bluespring.domain.university.major.classes;
 
+import com.esc.bluespring.domain.university.classes.UniversityMapper;
 import com.esc.bluespring.domain.university.entity.University;
 import com.esc.bluespring.domain.university.major.classes.MajorDto.SearchListElement;
 import com.esc.bluespring.domain.university.major.entity.Major;
@@ -7,7 +8,7 @@ import java.util.Set;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-@Mapper
+@Mapper(uses = {UniversityMapper.class})
 public interface MajorMapper {
     MajorMapper INSTANCE = Mappers.getMapper(MajorMapper.class);
     String PK_FIELD = "식별번호";
