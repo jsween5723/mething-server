@@ -1,6 +1,6 @@
 package com.esc.bluespring.domain.friendship.request.classes;
 
-import com.esc.bluespring.domain.member.classes.MemberDto;
+import com.esc.bluespring.domain.member.student.classes.StudentDto;
 import java.util.UUID;
 import lombok.Builder;
 
@@ -11,7 +11,7 @@ public record FriendshipRequestDto() {
         }
     }
 
-    public record ListElement(UUID id, MemberDto.Detail requester, String message) {
+    public record ListElement(UUID id, StudentDto.TeamListElement requester, String message) {
 
         @Builder
         public ListElement {

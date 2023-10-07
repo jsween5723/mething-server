@@ -21,8 +21,7 @@ public interface TeamParticipantMapper {
     return toMainPageListElement(participant.getMember(), false);
   }
 
-  @Mapping(target = "major", source = "member.schoolInformation.major")
-  @Mapping(target = "profileImageUrl", source = "member.profileImage.url")
+  @Mapping(target = "student", source = "member")
   MainPageListElement toMainPageListElement(Student member, boolean isOwner);
 
   default Set<MainPageListElement> participants(Student owner, Set<TeamParticipant> participants) {

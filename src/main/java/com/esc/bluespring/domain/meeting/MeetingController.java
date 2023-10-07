@@ -12,6 +12,8 @@ import com.esc.bluespring.domain.meeting.classes.MeetingDto.Detail;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.MainPageListElement;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.MainPageSearchCondition;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.MyMeetingPageListElement;
+import com.esc.bluespring.domain.meeting.classes.MeetingRequestDto;
+import com.esc.bluespring.domain.meeting.classes.MeetingRequestDto.SearchCondition;
 import com.esc.bluespring.domain.meeting.entity.Meeting;
 import com.esc.bluespring.domain.meeting.entity.MeetingRequest;
 import com.esc.bluespring.domain.meeting.entity.MeetingWatchlistItem;
@@ -63,7 +65,8 @@ public class MeetingController {
   }
 
   @GetMapping("{id}")
-  public Detail getDetail(@PathVariable UUID id, Member user, @Parameter(description = "채팅 서버용 파라미터") Boolean requireEngagedTeam) {
+  public Detail getDetail(@PathVariable UUID id, Member user,
+                          @Parameter(description = "채팅 서버용 파라미터") Boolean requireEngagedTeam) {
     Meeting meeting = meetingService.find(id, requireEngagedTeam != null);
     return meetingMapper.toDetail(meeting, user instanceof Student student ? student : null);
   }
@@ -90,12 +93,24 @@ public class MeetingController {
   @PostMapping("{id}/requests")
   @RolesAllowed({STUDENT})
   @ResponseStatus(HttpStatus.CREATED)
-  @Operation(description = "특정 과팅 신청 목록", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
+  @Operation(description = "과팅 신청하기", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
   public void request(@PathVariable UUID id, @Valid @RequestBody MeetingDto.Request dto,
                       Student member) {
     MeetingRequest request = meetingMapper.toRequestEntity(dto, member);
     Meeting meeting = meetingService.find(id);
     meetingService.addRequest(meeting, request);
+  }
+
+  @GetMapping("{id}/requests")
+  @RolesAllowed({STUDENT, ADMIN})
+  @Operation(description = "특정 과팅 신청 목록 조회", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
+  public Slice<MeetingRequestDto.Detail> searchRequestsWithMeeting(@PathVariable UUID id, SearchCondition condition, Member user,
+                                                                   Pageable pageable) {
+    Meeting meeting = meetingService.find(id);
+//    meeting.validOwner(user);
+    Slice<MeetingRequest> result = meetingService.searchRequestsWithMeeting(meeting,
+        condition, pageable);
+    return result.map(meetingMapper.requestMapper::toDetail);
   }
 
   @PostMapping("{id}/watchlist-items/add")

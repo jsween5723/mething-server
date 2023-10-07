@@ -7,7 +7,7 @@ import com.esc.bluespring.common.CustomSlice;
 import com.esc.bluespring.domain.member.classes.MemberMapper;
 import com.esc.bluespring.domain.member.entity.Student;
 import com.esc.bluespring.domain.member.student.classes.StudentDto;
-import com.esc.bluespring.domain.member.student.classes.StudentDto.SchoolInformationListElement;
+import com.esc.bluespring.domain.member.student.classes.StudentDto.TeamListElement;
 import com.esc.bluespring.domain.member.student.classes.StudentDto.SearchCondition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -36,9 +36,9 @@ public class StudentController {
     @GetMapping("school-informations")
     @RolesAllowed({ADMIN})
     @Operation(description = "학생증 인증을 위한 어드민용 학생정보 조회 API입니다.")
-    public CustomSlice<SchoolInformationListElement> search(
+    public CustomSlice<TeamListElement> search(
         @ParameterObject SearchCondition condition, @ParameterObject Pageable pageable) {
-        Slice<SchoolInformationListElement> result = studentService.searchForAdmin(condition,
+        Slice<TeamListElement> result = studentService.searchForAdmin(condition,
             pageable).map(mapper::toSchoolInformationListElement);
         return new CustomSlice<>(result);
     }

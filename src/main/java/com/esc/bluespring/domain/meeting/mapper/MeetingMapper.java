@@ -24,6 +24,7 @@ public interface MeetingMapper extends LazyLoadingAwareMapper {
 
   MeetingMapper INSTANCE = Mappers.getMapper(MeetingMapper.class);
   TeamMapper teamMapper = Mappers.getMapper(TeamMapper.class);
+  MeetingRequestMapper requestMapper = Mappers.getMapper(MeetingRequestMapper.class);
 
   @Mapping(target = "likeCount", expression = "java(meeting.getWatchlist().size())")
   @Mapping(target = "isLiked", expression = "java(toIsLiked(meeting, member))")
