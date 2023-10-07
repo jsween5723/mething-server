@@ -13,6 +13,7 @@ import com.esc.bluespring.domain.meeting.classes.MeetingDto.MainPageSearchCondit
 import com.esc.bluespring.domain.meeting.entity.Meeting;
 import com.esc.bluespring.domain.meeting.entity.QMeetingOwnerTeam;
 import com.esc.bluespring.domain.meeting.entity.Team;
+import com.esc.bluespring.domain.meeting.exception.MeetingException.MeetingNotFoundException;
 import com.esc.bluespring.domain.member.entity.Member;
 import com.esc.bluespring.domain.member.entity.QStudent;
 import com.esc.bluespring.domain.member.entity.Student;
@@ -52,16 +53,29 @@ public class MeetingQDRImpl implements MeetingQDR {
   }
 
   @Transactional(readOnly = true)
-  public Meeting find(UUID id) {
+  public Meeting find(UUID id, boolean requireEngagedTeam) {
     JPAQuery<Meeting> dsl = query.selectFrom(meeting).leftJoin(meeting.ownerTeam, meetingOwnerTeam)
-        .fetchJoin().leftJoin(meeting.engagedTeam, meetingRequesterTeam).fetchJoin();
+        .fetchJoin();
+    if (requireEngagedTeam) {
+      dsl.innerJoin(meeting.engagedTeam, meetingRequesterTeam).fetchJoin();
+    } else {
+      dsl.leftJoin(meeting.engagedTeam, meetingRequesterTeam).fetchJoin();
+    }
     teamQDR.fetchJoinTeam(dsl, meetingOwnerTeam, "owner");
     teamQDR.fetchJoinTeam(dsl, meetingRequesterTeam, "requester");
     Meeting result = dsl.where(meeting.id.eq(id)).fetchFirst();
+    if (result == null) {
+      throw new MeetingNotFoundException();
+    }
     participantQDR.mapParticipantsTo(extractTeam(result));
     watchlistQDR.mapWatchlistTo(result);
     requestQDR.mapRequestsToForCount(result);
     return result;
+  }
+
+  @Transactional(readOnly = true)
+  public Meeting find(UUID id) {
+    return find(id, false);
   }
 
   private Set<Team> extractTeam(List<Meeting> meetings) {

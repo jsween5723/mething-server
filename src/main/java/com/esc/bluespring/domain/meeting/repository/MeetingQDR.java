@@ -13,4 +13,5 @@ public interface MeetingQDR {
     Slice<Meeting> searchMainPageList(Member student, MainPageSearchCondition condition, Pageable pageable);
     Slice<Meeting> searchMyMeetingList(Student student, Pageable pageable);
     Meeting find(UUID id);
+    Meeting find(UUID id, boolean requireEngagedTeam);
 }

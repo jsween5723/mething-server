@@ -28,8 +28,13 @@ public class MeetingService {
     }
 
     @Transactional(readOnly = true)
+    public Meeting find(UUID id, boolean requireEngagedTeam) {
+        return repository.find(id, requireEngagedTeam);
+    }
+
+    @Transactional(readOnly = true)
     public Meeting find(UUID id) {
-        return repository.find(id);
+        return find(id, false);
     }
     @Transactional(readOnly = true)
     public Slice<Meeting> searchMainPageList(Member student, MainPageSearchCondition condition, Pageable pageable) {

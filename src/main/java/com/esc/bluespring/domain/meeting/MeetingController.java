@@ -63,8 +63,8 @@ public class MeetingController {
   }
 
   @GetMapping("{id}")
-  public Detail getDetail(@PathVariable UUID id, Member user) {
-    Meeting meeting = meetingService.find(id);
+  public Detail getDetail(@PathVariable UUID id, Member user, @Parameter(description = "채팅 서버용 파라미터") Boolean requireEngagedTeam) {
+    Meeting meeting = meetingService.find(id, requireEngagedTeam != null);
     return meetingMapper.toDetail(meeting, user instanceof Student student ? student : null);
   }
 
