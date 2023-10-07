@@ -18,7 +18,10 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Transient;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -34,6 +37,7 @@ public class Student extends Member {
 
     @Column(nullable = false)
     private String nickname;
+    private String introduce;
     @Column(nullable = false)
     private LocalDate birthday;
     @JoinColumn(name = "profile_image_url", referencedColumnName = "url")
@@ -56,15 +60,23 @@ public class Student extends Member {
     @BatchSize(size = 50)
     private List<Friendship> friendships = new ArrayList<>();
 
-    public Student(UUID id, String email, String password, String nickname, LocalDate birthday,
-        Image profileImage, Gender gender, MBTI mbti, SchoolInformation schoolInformation) {
+    public Student(UUID id, String email, String password, String nickname, String introduce,
+                   LocalDate birthday, Image profileImage, Gender gender, MBTI mbti,
+                   SchoolInformation schoolInformation) {
         super(id, email, password);
         this.nickname = nickname;
+        this.introduce = introduce;
         this.birthday = birthday;
         this.profileImage = profileImage;
         this.gender = gender;
         this.mbti = mbti;
         this.schoolInformation = schoolInformation;
+    }
+
+    @Transient
+    public Integer getAge() {
+        long between = ChronoUnit.YEARS.between(birthday, LocalDate.now(ZoneId.of("Asia/Seoul")));
+        return Math.toIntExact(between);
     }
 
     @Override

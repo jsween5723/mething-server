@@ -20,6 +20,7 @@ public interface TeamParticipantMapper {
         return toMainPageListElement(participant.getMember(), false);
     }
 
+    @Mapping(target = "major", source = "member.schoolInformation.major")
     @Mapping(target = "profileImageUrl", source = "member.profileImage.url")
     MainPageListElement toMainPageListElement(Student member, boolean isOwner);
 

@@ -28,7 +28,9 @@ public class MeetingRequestQDR {
 
     private Map<Meeting, List<MeetingRequest>> getRequestsMap(List<Meeting> meetings) {
         return query.selectFrom(meetingRequest)
-            .innerJoin(meetingRequest.targetMeeting, meeting).where(meeting.in(meetings))
+            .innerJoin(meetingRequest.targetMeeting, meeting)
+            .leftJoin(meetingRequest.requesterTeam)
+            .where(meeting.in(meetings))
             .transform(GroupBy.groupBy(meeting).as(GroupBy.list(meetingRequest)));
     }
 }

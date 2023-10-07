@@ -27,11 +27,14 @@ public interface MeetingMapper {
     @Mapping(target = "id", source = "meeting.id")
     @Mapping(target = "createdAt", source = "meeting.createdAt")
     @Mapping(target = "ownerTeam", source = "meeting.ownerTeam")
+    @Mapping(target = "introduce", source = "meeting.introduce")
     MainPageListElement toMainPageListElement(Meeting meeting, Student member);
     @Mapping(target = "likeCount", expression = "java(meeting.getWatchlist().size())")
     @Mapping(target = "isLiked", expression = "java(toIsLiked(meeting, member))")
     @Mapping(target = "id", source = "meeting.id")
     @Mapping(target = "createdAt", source = "meeting.createdAt")
+    @Mapping(target = "requestCount", source = "meeting")
+    @Mapping(target = "introduce", source = "meeting.introduce")
     Detail toDetail(Meeting meeting, Member member);
 
     @Mapping(target = "myTeam", source = "meeting.ownerTeam")
@@ -40,6 +43,7 @@ public interface MeetingMapper {
 
     @Mapping(target = "ownerTeam", expression = "java(teamMapper.toEntity(dto,owner))")
     @Mapping(target = "watchlist", ignore = true)
+    @Mapping(target = "introduce", source = "dto.introduce")
     Meeting toEntity(Create dto, Student owner);
 
     @Mapping(target = "targetMeeting", ignore = true)
