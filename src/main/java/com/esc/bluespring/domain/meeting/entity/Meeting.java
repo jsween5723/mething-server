@@ -22,47 +22,51 @@ import lombok.NoArgsConstructor;
 @Getter
 public class Meeting extends BaseEntity {
 
-    private String introduce;
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "owner_team_id", nullable = false)
-    private MeetingOwnerTeam ownerTeam;
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "engaged_team_id")
-    private MeetingRequesterTeam engagedTeam;
-    @OneToMany(mappedBy = "targetMeeting", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MeetingRequest> joinRequests = new ArrayList<>();
-    @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MeetingWatchlistItem> watchlist = new ArrayList<>();
+  private String introduce;
+  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "owner_team_id", nullable = false)
+  private MeetingOwnerTeam ownerTeam;
+  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+  @JoinColumn(name = "engaged_team_id")
+  private MeetingRequesterTeam engagedTeam;
+  @OneToMany(mappedBy = "targetMeeting", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<MeetingRequest> joinRequests = new ArrayList<>();
+  @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL, orphanRemoval = true)
+  private List<MeetingWatchlistItem> watchlist = new ArrayList<>();
 
-    public Meeting(UUID id, String introduce, MeetingOwnerTeam ownerTeam) {
-        super(id);
-        this.introduce = introduce;
-        this.ownerTeam = ownerTeam;
-    }
+  public Meeting(UUID id, String introduce, MeetingOwnerTeam ownerTeam) {
+    super(id);
+    this.introduce = introduce;
+    this.ownerTeam = ownerTeam;
+  }
 
-    public void addRequest(MeetingRequest request) {
-        request.declareTargetMeeting(this);
-        joinRequests.add(request);
-    }
+  public void addRequest(MeetingRequest request) {
+    request.declareTargetMeeting(this);
+    joinRequests.add(request);
+  }
 
-    public void engageTeam(MeetingRequesterTeam team) {
-        engagedTeam = team;
-    }
+  public void engageTeam(MeetingRequesterTeam team) {
+    engagedTeam = team;
+  }
 
-    public void addWatchListItem(MeetingWatchlistItem item) {
-        item.declareMeeting(this);
-        watchlist.add(item);
-    }
+  public void addWatchListItem(MeetingWatchlistItem item) {
+    item.declareMeeting(this);
+    watchlist.add(item);
+  }
 
-    public void mapWatchlist(List<MeetingWatchlistItem> source) {
-        watchlist = source == null ? new ArrayList<>() : source;
-    }
+  public void mapWatchlist(List<MeetingWatchlistItem> source) {
+    watchlist = source == null ? new ArrayList<>() : source;
+  }
 
-    public void mapMeetingRequests(List<MeetingRequest> source) {
-        joinRequests = source == null ? new ArrayList<>() : source;
-    }
+  public void mapMeetingRequests(List<MeetingRequest> source) {
+    joinRequests = source == null ? new ArrayList<>() : source;
+  }
 
-    public void validOwner(Member member) {
-        getOwnerTeam().validOwner(member);
-    }
+  public void validOwner(Member member) {
+    getOwnerTeam().validOwner(member);
+  }
+
+  public boolean isOwner(Member member) {
+    return getOwnerTeam().isOwner(member);
+  }
 }

@@ -29,11 +29,15 @@ public abstract class OwnerEntity extends BaseEntity{
     }
 
     public void validOwner(Member member) {
-        if (member.isAdmin()) {
-            return;
-        }
-        if (!owner.getId().equals(member.getId())) {
+        if (isOwner(member)) {
             throw new NotOwnerException();
         }
+    }
+
+    public boolean isOwner(Member member) {
+        if (member.isAdmin()) {
+            return true;
+        }
+        return owner.getId().equals(member.getId());
     }
 }

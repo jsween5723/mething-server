@@ -2,6 +2,7 @@ package com.esc.bluespring.domain.meeting.entity;
 
 import com.esc.bluespring.common.entity.BaseEntity;
 import com.esc.bluespring.common.enums.RequestStatus;
+import com.esc.bluespring.common.exception.RequestException.NotOwnerException;
 import com.esc.bluespring.domain.member.entity.Member;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -24,43 +25,50 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MeetingRequest extends BaseEntity {
 
-    @JoinColumn(name = "requester_team_id", updatable = false)
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private MeetingRequesterTeam requesterTeam;
-    @JoinColumn(name = "target_meeting_id", updatable = false)
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Meeting targetMeeting;
-    @Enumerated(EnumType.STRING)
-    private RequestStatus status;
-    private String message;
+  @JoinColumn(name = "requester_team_id", updatable = false)
+  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  private MeetingRequesterTeam requesterTeam;
+  @JoinColumn(name = "target_meeting_id", updatable = false)
+  @ManyToOne(fetch = FetchType.LAZY)
+  private Meeting targetMeeting;
+  @Enumerated(EnumType.STRING)
+  private RequestStatus status;
+  private String message;
 
-    @Builder
-    public MeetingRequest(UUID id, MeetingRequesterTeam requesterTeam, Meeting targetMeeting,
-        RequestStatus status, String message) {
-        super(id);
-        this.requesterTeam = requesterTeam;
-        this.targetMeeting = targetMeeting;
-        this.status = status != null ? status : RequestStatus.PENDING;
-        this.message = message;
-    }
+  @Builder
+  public MeetingRequest(UUID id, MeetingRequesterTeam requesterTeam, Meeting targetMeeting,
+                        RequestStatus status, String message) {
+    super(id);
+    this.requesterTeam = requesterTeam;
+    this.targetMeeting = targetMeeting;
+    this.status = status != null ? status : RequestStatus.PENDING;
+    this.message = message;
+  }
 
-    public void accept() {
-        this.status = RequestStatus.ACCEPTED;
-        targetMeeting.engageTeam(requesterTeam);
-    }
+  public void accept() {
+    this.status = RequestStatus.ACCEPTED;
+    targetMeeting.engageTeam(requesterTeam);
+  }
 
-    public void reject() {
-        this.status = RequestStatus.REJECTED;
-    }
+  public void reject() {
+    this.status = RequestStatus.REJECTED;
+  }
 
-    public void validRequesterOwner(Member member) {
-        requesterTeam.validOwner(member);
-    }
+  public void validRequesterOwner(Member member) {
+    requesterTeam.validOwner(member);
+  }
 
-    public void validTargetOwner(Member member) {
-        targetMeeting.validOwner(member);
+  public void validTargetOwner(Member member) {
+    targetMeeting.validOwner(member);
+  }
+
+  public void validPermission(Member member) {
+    if (!requesterTeam.isOwner(member) && !targetMeeting.isOwner(member)) {
+      throw new NotOwnerException();
     }
-    void declareTargetMeeting(Meeting source) {
-        targetMeeting = source;
-    }
+  }
+
+  void declareTargetMeeting(Meeting source) {
+    targetMeeting = source;
+  }
 }

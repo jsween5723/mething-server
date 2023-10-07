@@ -1,7 +1,7 @@
 package com.esc.bluespring.domain.meeting.request;
 
 import com.esc.bluespring.domain.meeting.entity.MeetingRequest;
-import com.esc.bluespring.domain.meeting.request.exception.MeetingRequestException.MeetingRequestNotFoundRequestException;
+import com.esc.bluespring.domain.meeting.repository.MeetingRequestQDR;
 import com.esc.bluespring.domain.member.entity.Member;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -12,10 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class MeetingRequestService {
     private final MeetingRequestRepository repository;
+    private final MeetingRequestQDR requestQDR;
 
     @Transactional(readOnly = true)
     public MeetingRequest find(UUID id) {
-        return repository.findById(id).orElseThrow(MeetingRequestNotFoundRequestException::new);
+        return requestQDR.find(id);
     }
 
     @Transactional

@@ -6,6 +6,7 @@ import static com.esc.bluespring.domain.meeting.entity.QMeetingRequest.meetingRe
 import static com.esc.bluespring.domain.meeting.entity.QMeetingRequesterTeam.meetingRequesterTeam;
 
 import com.esc.bluespring.common.enums.RequestStatus;
+import com.esc.bluespring.common.exception.RequestException.RequestNotFoundException;
 import com.esc.bluespring.common.utils.querydsl.RepositorySlicer;
 import com.esc.bluespring.domain.meeting.classes.MeetingRequestDto.SearchCondition;
 import com.esc.bluespring.domain.meeting.entity.Meeting;
@@ -19,6 +20,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -33,6 +35,7 @@ public class MeetingRequestQDR {
   private final JPAQueryFactory query;
   private final TeamQDR teamQDR;
   private final TeamParticipantQDR participantQDR;
+  private final MeetingWatchlistQDR watchlistQDR;
 
   public void mapRequestsToForCount(List<Meeting> meetings) {
     Map<Meeting, List<MeetingRequest>> requestsMap = getRequestsMap(meetings);
@@ -64,6 +67,23 @@ public class MeetingRequestQDR {
         .limit(pageable.getPageSize() + 1).fetch();
     participantQDR.mapParticipantsTo(extractTeams(result));
     return RepositorySlicer.toSlice(result, pageable);
+  }
+
+  @Transactional(readOnly = true)
+  public MeetingRequest find(UUID id) {
+    JPAQuery<MeetingRequest> dsl = query.selectFrom(meetingRequest)
+        .leftJoin(meetingRequest.requesterTeam, meetingRequesterTeam).fetchJoin()
+        .leftJoin(meetingRequest.targetMeeting, meeting).fetchJoin()
+        .leftJoin(meeting.ownerTeam, meetingOwnerTeam).fetchJoin();
+    teamQDR.fetchJoinTeam(dsl, meetingRequesterTeam, "requester");
+    teamQDR.fetchJoinTeam(dsl, meetingOwnerTeam, "owner");
+    MeetingRequest result = dsl.where(meetingRequest.id.eq(id)).fetchFirst();
+    if (result == null) {
+      throw new RequestNotFoundException();
+    }
+    participantQDR.mapParticipantsTo(extractTeams(result));
+    watchlistQDR.mapWatchlistTo(result.getTargetMeeting());
+    return result;
   }
 
   private BooleanBuilder toWhereCondition(SearchCondition condition) {
