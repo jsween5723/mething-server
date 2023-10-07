@@ -104,13 +104,13 @@ public class MeetingController {
   @GetMapping("{id}/requests")
   @RolesAllowed({STUDENT, ADMIN})
   @Operation(description = "특정 과팅 신청 목록 조회", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
-  public Slice<MeetingRequestDto.Detail> searchRequestsWithMeeting(@PathVariable UUID id, SearchCondition condition, Member user,
+  public CustomSlice<MeetingRequestDto.Detail> searchRequestsWithMeeting(@PathVariable UUID id, SearchCondition condition, Member user,
                                                                    Pageable pageable) {
     Meeting meeting = meetingService.find(id);
 //    meeting.validOwner(user);
-    Slice<MeetingRequest> result = meetingService.searchRequestsWithMeeting(meeting,
-        condition, pageable);
-    return result.map(meetingMapper.requestMapper::toDetail);
+    Slice<MeetingRequestDto.Detail> result = meetingService.searchRequestsWithMeeting(meeting,
+        condition, pageable).map(meetingMapper.requestMapper::toDetail);
+    return new CustomSlice<>(result);
   }
 
   @PostMapping("{id}/watchlist-items/add")
