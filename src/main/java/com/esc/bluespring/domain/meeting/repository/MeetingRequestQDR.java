@@ -17,12 +17,15 @@ import com.querydsl.core.group.GroupBy;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.Hibernate;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Component;
@@ -30,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class MeetingRequestQDR {
 
   private final JPAQueryFactory query;
@@ -56,12 +60,10 @@ public class MeetingRequestQDR {
   @Transactional(readOnly = true)
   public Slice<MeetingRequest> searchWithMeeting(Meeting targetMeeting, SearchCondition condition,
                                                  Pageable pageable) {
+    log.info("start");
     JPAQuery<MeetingRequest> dsl = query.selectFrom(meetingRequest)
-        .leftJoin(meetingRequest.requesterTeam, meetingRequesterTeam).fetchJoin()
-        .leftJoin(meetingRequest.targetMeeting, meeting).fetchJoin()
-        .leftJoin(meeting.ownerTeam, meetingOwnerTeam).fetchJoin();
+        .leftJoin(meetingRequest.requesterTeam, meetingRequesterTeam).fetchJoin();
     teamQDR.fetchJoinTeam(dsl, meetingRequesterTeam, "requester");
-    teamQDR.fetchJoinTeam(dsl, meetingOwnerTeam, "owner");
     List<MeetingRequest> result = dsl.where(toWhereCondition(condition),
             meetingRequest.targetMeeting.eq(targetMeeting)).offset(pageable.getOffset())
         .limit(pageable.getPageSize() + 1).fetch();
@@ -71,6 +73,7 @@ public class MeetingRequestQDR {
 
   @Transactional(readOnly = true)
   public MeetingRequest find(UUID id) {
+    log.info("start");
     JPAQuery<MeetingRequest> dsl = query.selectFrom(meetingRequest)
         .leftJoin(meetingRequest.requesterTeam, meetingRequesterTeam).fetchJoin()
         .leftJoin(meetingRequest.targetMeeting, meeting).fetchJoin()
@@ -95,7 +98,15 @@ public class MeetingRequestQDR {
   }
 
   private Set<Team> extractTeams(MeetingRequest request) {
-    return Set.of(request.getRequesterTeam(), request.getTargetMeeting().getOwnerTeam());
+    LinkedHashSet<Team> teams = new LinkedHashSet<>();
+    if (Hibernate.isInitialized(request.getRequesterTeam())) {
+      teams.add(request.getRequesterTeam());
+    }
+    if (Hibernate.isInitialized(request.getTargetMeeting()) && Hibernate.isInitialized(
+        request.getTargetMeeting().getOwnerTeam())) {
+      teams.add(request.getTargetMeeting().getOwnerTeam());
+    }
+    return teams;
   }
 
   private Set<Team> extractTeams(List<MeetingRequest> request) {
