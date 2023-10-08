@@ -100,7 +100,7 @@ public class MeetingQDRImpl implements MeetingQDR {
         .leftJoin(meetingOwnerTeam.representedUniversity, university).fetchJoin()
         .leftJoin(university.locationDistrict, locationDistrict).fetchJoin()
         .where(meeting.engagedTeam.isNull(),
-            meetingOwnerTeam.owner.eq(user).or(teamParticipant.member.eq(user)))
+            meetingOwnerTeam.owner.eq(user).or(teamParticipant.participant.eq(user)))
         .offset(pageable.getOffset()).limit(pageable.getPageSize() + 1).fetch();
     participantQDR.mapParticipantsTo(extractTeam(meetings));
     requestQDR.mapRequestsToForCount(meetings);

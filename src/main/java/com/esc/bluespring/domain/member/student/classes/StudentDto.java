@@ -16,7 +16,7 @@ public record StudentDto() {
 
   }
 
-  public record Detail(UUID id, String introduce, String profileImageUrl,
+  public record Detail(UUID id, String email, String introduce, String profileImageUrl,
                        SchoolInformationForDetail schoolInformation, String nickname,
                        Long createdAt) {
 
@@ -28,7 +28,7 @@ public record StudentDto() {
   }
 
   public record SchoolInformationForDetail(String name, MajorDto.SearchListElement major,
-                                           String studentCertificationImageUrl, String email,
+                                           String studentCertificationImageUrl,
                                            boolean isCertificated) {
 
   }

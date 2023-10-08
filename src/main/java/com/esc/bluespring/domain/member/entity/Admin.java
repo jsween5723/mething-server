@@ -20,4 +20,9 @@ public class Admin extends Member {
         return Role.ADMIN;
     }
 
+    @Override
+    public void valid() {
+
+    }
+
 }

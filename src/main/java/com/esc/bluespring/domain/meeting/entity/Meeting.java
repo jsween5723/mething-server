@@ -5,6 +5,7 @@ import com.esc.bluespring.domain.member.entity.Member;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
@@ -17,14 +18,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "meetings")
+@Table(name = "meetings", indexes = @Index(name = "created_at_index", columnList = "createdAt"))
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 public class Meeting extends BaseEntity {
 
   private String introduce;
   @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-  @JoinColumn(name = "owner_team_id", nullable = false)
+  @JoinColumn(name = "owner_team_id", nullable = false, unique = true, updatable = false)
   private MeetingOwnerTeam ownerTeam;
   @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
   @JoinColumn(name = "engaged_team_id")

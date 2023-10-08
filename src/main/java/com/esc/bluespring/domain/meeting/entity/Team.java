@@ -19,6 +19,7 @@ import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Table(name = "teams")
@@ -34,6 +35,7 @@ public abstract class Team extends OwnerEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private University representedUniversity;
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
+    @BatchSize(size = 20)
     private Set<TeamParticipant> participants = new LinkedHashSet<>();
 
     Team(UUID id, Student owner, String title, University representedUniversity,

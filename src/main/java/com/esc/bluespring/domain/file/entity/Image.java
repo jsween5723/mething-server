@@ -4,7 +4,6 @@ import com.esc.bluespring.common.utils.file.exception.FileException.FileContentT
 import com.esc.bluespring.common.utils.file.exception.FileException.FileFormatException;
 import com.esc.bluespring.common.utils.file.exception.FileException.NoAttachmentException;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
 import java.util.Arrays;
 import java.util.Objects;
 import lombok.AccessLevel;
@@ -14,7 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "images")
 public class Image extends FileMetadata {
 
   private static final String CONTENT_TYPE = "image";

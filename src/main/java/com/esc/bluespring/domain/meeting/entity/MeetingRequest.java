@@ -9,6 +9,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
@@ -21,7 +22,8 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
-@Table(name = "meeting_requests")
+@Table(name = "meeting_requests", indexes = {@Index(name = "status", columnList = "status"),
+    @Index(name = "created_at_index", columnList = "createdAt")})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class MeetingRequest extends BaseEntity {
 

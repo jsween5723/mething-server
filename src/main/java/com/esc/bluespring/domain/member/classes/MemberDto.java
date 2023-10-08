@@ -17,6 +17,7 @@ public record MemberDto() {
     public record Join(@RequestPart("profileImage") MultipartFile profileImage,
                        @NotBlank @Length(min = 2, max = 10, message = "닉네임은 2~10 글자입니다.") @NotNull String nickname,
                        @NotNull @NotBlank String name,
+                       @NotNull String introduce,
                        @NotNull @NotBlank String password,
                        @NotNull @DateTimeFormat(iso = ISO.DATE) LocalDate birthday,
                        @NotNull Long majorId, @NotNull @Email String email,
@@ -27,6 +28,7 @@ public record MemberDto() {
 
     public record Patch(@RequestPart("profileImage") MultipartFile profileImage,
                         @NotBlank @Length(min = 2, max = 10, message = "닉네임은 2~10 글자입니다.") String nickname,
+                        String introduce,
                         @NotBlank String password,
                         @DateTimeFormat(iso = ISO.DATE) LocalDate birthday,
                         Long majorId, @Email String email,

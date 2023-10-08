@@ -18,7 +18,7 @@ public interface TeamParticipantMapper {
   TeamParticipantMapper INSTANCE = Mappers.getMapper(TeamParticipantMapper.class);
 
   default MainPageListElement toMainPageListElement(TeamParticipant participant) {
-    return toMainPageListElement(participant.getMember(), false);
+    return toMainPageListElement(participant.getParticipant(), false);
   }
 
   @Mapping(target = "profileImageUrl", source = "member.profileImage.url")
@@ -31,6 +31,6 @@ public interface TeamParticipantMapper {
     return result;
   }
 
-  @Mapping(target = "member", source = "id")
+  @Mapping(target = "participant", source = "id")
   TeamParticipant toEntityFromMemberId(UUID id);
 }

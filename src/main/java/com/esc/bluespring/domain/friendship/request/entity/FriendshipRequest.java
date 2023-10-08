@@ -24,52 +24,52 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class FriendshipRequest extends BaseEntity {
 
-    @JoinColumn(name = "requester_id", nullable = false)
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Student requester;
+  @JoinColumn(name = "requester_id", nullable = false)
+  @ManyToOne(fetch = FetchType.LAZY)
+  private Student requester;
 
-    @JoinColumn(name = "target_id", nullable = false)
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Student target;
+  @JoinColumn(name = "target_id", nullable = false)
+  @ManyToOne(fetch = FetchType.LAZY)
+  private Student target;
 
-    private String message;
+  private String message;
 
-    @Enumerated(EnumType.STRING)
-    private RequestStatus status = RequestStatus.PENDING;
+  @Enumerated(EnumType.STRING)
+  private RequestStatus status = RequestStatus.PENDING;
 
-    @Builder
-    FriendshipRequest(UUID id, Student requester, Student target, String message) {
-        super(id);
-        this.requester = requester;
-        this.target = target;
-        this.message = message;
+  @Builder
+  FriendshipRequest(UUID id, Student requester, Student target, String message) {
+    super(id);
+    this.requester = requester;
+    this.target = target;
+    this.message = message;
+  }
+
+  public void accept() {
+    status = RequestStatus.ACCEPTED;
+    requester.addFriendship(target);
+    target.addFriendship(requester);
+  }
+
+  public void reject() {
+    status = RequestStatus.REJECTED;
+  }
+
+  public void validRequesterOwner(Member user) {
+    if (user.isAdmin()) {
+      return;
     }
-
-    public void accept() {
-        status = RequestStatus.ACCEPTED;
-        requester.addFriendship(target);
-        target.addFriendship(requester);
+    if (requester.getId().equals(user.getId())) {
+      throw new NotOwnerException();
     }
+  }
 
-    public void reject() {
-        status = RequestStatus.REJECTED;
+  public void validTargetOwner(Member user) {
+    if (user.isAdmin()) {
+      return;
     }
-
-    public void validRequesterOwner(Member user) {
-        if (user.isAdmin()) {
-            return;
-        }
-        if (requester.getId().equals(user.getId())) {
-            throw new NotOwnerException();
-        }
+    if (target.getId().equals(user.getId())) {
+      throw new NotOwnerException();
     }
-
-    public void validTargetOwner(Member user) {
-        if (user.isAdmin()) {
-            return;
-        }
-        if (target.getId().equals(user.getId())) {
-            throw new NotOwnerException();
-        }
-    }
+  }
 }

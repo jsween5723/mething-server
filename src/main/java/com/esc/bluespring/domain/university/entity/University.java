@@ -6,11 +6,11 @@ import com.esc.bluespring.domain.university.major.entity.Major;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -22,10 +22,11 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "universities")
+@Table(name = "universities", indexes = @Index(name = "name_index", columnList = "name"))
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class University extends InformationEntity implements Serializable {
+public class University extends InformationEntity {
+
   private String name;
   private String campus;
   private String type;
@@ -38,16 +39,18 @@ public class University extends InformationEntity implements Serializable {
 
   @Builder
   public University(Long id, String name, String campus, String type,
-      LocationDistrict locationDistrict) {
+                    LocationDistrict locationDistrict) {
     super(id);
     this.name = name;
     this.campus = campus;
     this.type = type;
     this.locationDistrict = locationDistrict;
   }
+
   public University(Long id) {
     super(id);
   }
+
   public void changeLocation(LocationDistrict locationDistrict) {
     this.locationDistrict = locationDistrict;
   }
@@ -64,9 +67,8 @@ public class University extends InformationEntity implements Serializable {
 //      return false;
 //    }
     University that = (University) o;
-    return Objects.equals(name, that.name) && Objects.equals(campus,
-        that.campus) && Objects.equals(type, that.type) && Objects.equals(
-        locationDistrict.getId(), that.locationDistrict.getId());
+    return Objects.equals(name, that.name) && Objects.equals(campus, that.campus) && Objects.equals(
+        type, that.type) && Objects.equals(locationDistrict.getId(), that.locationDistrict.getId());
   }
 
   @Override

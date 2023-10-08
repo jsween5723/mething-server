@@ -1,7 +1,6 @@
 package com.esc.bluespring.common.entity;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.PrePersist;
@@ -10,14 +9,14 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Objects;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
 @MappedSuperclass
-@EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class InformationEntity {
   @Id
   private Long id;
@@ -34,12 +33,6 @@ public abstract class InformationEntity {
   public void prePersist() {
     updatedAt = LocalDateTime.now(ZoneOffset.UTC);
     createdAt = LocalDateTime.now(ZoneOffset.UTC);
-  }
-
-  public InformationEntity(Long id, LocalDateTime createdAt, LocalDateTime updatedAt) {
-    this.id = id;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
   }
 
   protected InformationEntity(Long id) {

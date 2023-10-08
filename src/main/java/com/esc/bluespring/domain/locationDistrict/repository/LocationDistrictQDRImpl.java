@@ -1,5 +1,6 @@
 package com.esc.bluespring.domain.locationDistrict.repository;
 
+
 import static com.esc.bluespring.domain.locationDistrict.entity.QLocationDistrict.locationDistrict;
 
 import com.esc.bluespring.common.utils.querydsl.RepositorySlicer;
@@ -47,7 +48,8 @@ public class LocationDistrictQDRImpl implements LocationDistrictQDR {
         return builder;
     }
 
-    public ConstructorExpression<MainPageListElement> toMainPageListElement(QLocationDistrict locationDistrict) {
+    public ConstructorExpression<MainPageListElement> toMainPageListElement(
+        QLocationDistrict locationDistrict) {
         return Projections.constructor(MainPageListElement.class, locationDistrict.id, locationDistrict.name);
     }
 }

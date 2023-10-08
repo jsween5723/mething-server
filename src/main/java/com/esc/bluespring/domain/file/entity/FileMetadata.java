@@ -2,11 +2,11 @@ package com.esc.bluespring.domain.file.entity;
 
 import com.esc.bluespring.common.entity.BaseEntity;
 import jakarta.persistence.Column;
+import jakarta.persistence.DiscriminatorColumn;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -14,10 +14,11 @@ import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 @Entity
-@Table(name = "files", uniqueConstraints = {@UniqueConstraint(name = "url", columnNames = "url")})
+@Table(name = "files")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn
 public abstract class FileMetadata extends BaseEntity {
 
   private static final String SEPARATOR = "/";
@@ -27,6 +28,7 @@ public abstract class FileMetadata extends BaseEntity {
   private String originalName;
   private String fileName;
   private long bytes;
+
   FileMetadata(MultipartFile file, String url) {
     originalName = file.getOriginalFilename();
     fileName = createFileName();

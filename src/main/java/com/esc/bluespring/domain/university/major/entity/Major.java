@@ -4,6 +4,7 @@ import com.esc.bluespring.common.entity.InformationEntity;
 import com.esc.bluespring.domain.university.entity.University;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -16,7 +17,7 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "majors")
+@Table(name = "majors", indexes = {@Index(name = "name_index", columnList = "name")})
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Major extends InformationEntity {

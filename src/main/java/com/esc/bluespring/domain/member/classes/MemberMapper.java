@@ -37,7 +37,6 @@ public interface MemberMapper {
 
     @Mapping(target = "profileImageUrl", source = "member.profileImage.url")
     Detail toDetail(Student member);
-
     @Mapping(target = "major", source = "dto.majorId")
     @Mapping(target = "studentCertificationImage", source = " studentCertificationImage")
     SchoolInformation toSchoolInformation(Join dto, Image studentCertificationImage);

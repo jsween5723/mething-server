@@ -29,7 +29,7 @@ public class TeamParticipantQDR {
     QStudent student = new QStudent("map");
     JPAQuery<TeamParticipant> dsl = query.selectFrom(teamParticipant)
         .leftJoin(teamParticipant.team, team)
-        .leftJoin(teamParticipant.member, student).fetchJoin();
+        .leftJoin(teamParticipant.participant, student).fetchJoin();
     studentQDR.fetchJoinStudent(dsl, student, "teamParticipant");
     return dsl.where(team.in(teams))
         .transform(GroupBy.groupBy(team).as(GroupBy.set(teamParticipant)));

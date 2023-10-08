@@ -1,5 +1,6 @@
 package com.esc.bluespring.domain.member.entity;
 
+import com.esc.bluespring.domain.file.entity.FileMetadata;
 import com.esc.bluespring.domain.file.entity.Image;
 import com.esc.bluespring.domain.university.major.entity.Major;
 import jakarta.persistence.CascadeType;
@@ -22,7 +23,7 @@ public class SchoolInformation {
     private Major major;
     @JoinColumn(name = "student_certification_image_url", referencedColumnName = "url")
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-    private Image studentCertificationImage;
+    private FileMetadata studentCertificationImage;
     private boolean isCertificated = false;
     @Column(nullable = false)
     private String name;

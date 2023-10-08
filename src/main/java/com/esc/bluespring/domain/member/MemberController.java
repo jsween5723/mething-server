@@ -17,6 +17,7 @@ import com.esc.bluespring.domain.member.entity.Admin;
 import com.esc.bluespring.domain.member.entity.Member;
 import com.esc.bluespring.domain.member.entity.Student;
 import com.esc.bluespring.domain.member.exception.MemberException.MemberNotFoundException;
+import com.esc.bluespring.domain.member.student.classes.StudentDto.Detail;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.servlet.http.Cookie;
@@ -26,6 +27,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -106,5 +108,11 @@ public class MemberController {
             Student source = mapper.toEntity(dto, profile, certificateImage);
             memberServiceFacade.patch(source, target);
         }
+    }
+
+    @GetMapping("/me")
+    @RolesAllowed({STUDENT})
+    public Detail getMe(Student member) {
+        return mapper.toDetail(member);
     }
 }
