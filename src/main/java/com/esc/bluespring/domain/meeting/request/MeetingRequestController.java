@@ -3,15 +3,21 @@ package com.esc.bluespring.domain.meeting.request;
 import static com.esc.bluespring.domain.member.entity.Member.ADMIN;
 import static com.esc.bluespring.domain.member.entity.Member.STUDENT;
 
+import com.esc.bluespring.common.CustomSlice;
 import com.esc.bluespring.domain.meeting.classes.MeetingRequestDto.Detail;
+import com.esc.bluespring.domain.meeting.classes.MeetingRequestDto.MyRequestListElement;
+import com.esc.bluespring.domain.meeting.classes.MeetingRequestDto.SearchCondition;
 import com.esc.bluespring.domain.meeting.entity.MeetingRequest;
 import com.esc.bluespring.domain.meeting.mapper.MeetingRequestMapper;
 import com.esc.bluespring.domain.member.entity.Member;
 import com.esc.bluespring.domain.member.entity.Student;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.security.RolesAllowed;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.mapstruct.factory.Mappers;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +34,14 @@ public class MeetingRequestController {
 
   private final MeetingRequestService requestService;
   private final MeetingRequestMapper mapper = Mappers.getMapper(MeetingRequestMapper.class);
-
+  @GetMapping("me")
+  @RolesAllowed({STUDENT})
+  @Operation(description = "내가 포함된 신청 목록 조회")
+  public CustomSlice<MyRequestListElement> searchMyRequests(SearchCondition condition, Pageable pageable, Student user) {
+    Slice<MeetingRequest> result = requestService.searchMyRequests(condition, pageable,
+        user);
+    return new CustomSlice<>(result.map(mapper::toMyRequestListElement));
+  }
   @DeleteMapping("{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   public void cancel(@PathVariable UUID id, Member member) {

@@ -2,6 +2,7 @@ package com.esc.bluespring.domain.meeting.mapper;
 
 import com.esc.bluespring.common.utils.time.TimeMapper;
 import com.esc.bluespring.domain.meeting.classes.MeetingRequestDto.Detail;
+import com.esc.bluespring.domain.meeting.classes.MeetingRequestDto.MyRequestListElement;
 import com.esc.bluespring.domain.meeting.entity.MeetingRequest;
 import com.esc.bluespring.domain.member.entity.Student;
 import org.mapstruct.Mapper;
@@ -18,4 +19,6 @@ public interface MeetingRequestMapper {
   Detail toDetail(MeetingRequest request, Student student);
   @Mapping(target = "targetMeeting", ignore = true)
   Detail toDetail(MeetingRequest request);
+
+  MyRequestListElement toMyRequestListElement(MeetingRequest request);
 }

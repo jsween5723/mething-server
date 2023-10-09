@@ -4,6 +4,7 @@ import static com.esc.bluespring.domain.meeting.entity.QMeeting.meeting;
 import static com.esc.bluespring.domain.meeting.entity.QMeetingOwnerTeam.meetingOwnerTeam;
 import static com.esc.bluespring.domain.meeting.entity.QMeetingRequest.meetingRequest;
 import static com.esc.bluespring.domain.meeting.entity.QMeetingRequesterTeam.meetingRequesterTeam;
+import static com.esc.bluespring.domain.meeting.entity.QTeamParticipant.teamParticipant;
 
 import com.esc.bluespring.common.enums.RequestStatus;
 import com.esc.bluespring.common.exception.RequestException.RequestNotFoundException;
@@ -12,6 +13,7 @@ import com.esc.bluespring.domain.meeting.classes.MeetingRequestDto.SearchConditi
 import com.esc.bluespring.domain.meeting.entity.Meeting;
 import com.esc.bluespring.domain.meeting.entity.MeetingRequest;
 import com.esc.bluespring.domain.meeting.entity.Team;
+import com.esc.bluespring.domain.member.entity.Student;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.group.GroupBy;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -60,12 +62,27 @@ public class MeetingRequestQDR {
   @Transactional(readOnly = true)
   public Slice<MeetingRequest> searchWithMeeting(Meeting targetMeeting, SearchCondition condition,
                                                  Pageable pageable) {
-    log.info("start");
     JPAQuery<MeetingRequest> dsl = query.selectFrom(meetingRequest)
         .leftJoin(meetingRequest.requesterTeam, meetingRequesterTeam).fetchJoin();
     teamQDR.fetchJoinTeam(dsl, meetingRequesterTeam, "requester");
     List<MeetingRequest> result = dsl.where(toWhereCondition(condition),
             meetingRequest.targetMeeting.eq(targetMeeting)).offset(pageable.getOffset())
+        .limit(pageable.getPageSize() + 1).fetch();
+    participantQDR.mapParticipantsTo(extractTeams(result));
+    return RepositorySlicer.toSlice(result, pageable);
+  }
+
+  @Transactional(readOnly = true)
+  public Slice<MeetingRequest> searchMyRequests(SearchCondition condition,
+                                                 Pageable pageable, Student user) {
+    JPAQuery<MeetingRequest> dsl = query.selectFrom(meetingRequest)
+        .leftJoin(meetingRequest.requesterTeam, meetingRequesterTeam)
+        .leftJoin(meetingRequesterTeam.participants, teamParticipant)
+            .leftJoin(meetingRequest.targetMeeting, meeting).fetchJoin()
+            .leftJoin(meeting.ownerTeam, meetingOwnerTeam).fetchJoin();
+    teamQDR.fetchJoinTeam(dsl, meetingOwnerTeam, "owner");
+    List<MeetingRequest> result = dsl.where(toWhereCondition(condition),
+            teamParticipant.participant.eq(user).or(meetingRequesterTeam.owner.eq(user)))
         .limit(pageable.getPageSize() + 1).fetch();
     participantQDR.mapParticipantsTo(extractTeams(result));
     return RepositorySlicer.toSlice(result, pageable);

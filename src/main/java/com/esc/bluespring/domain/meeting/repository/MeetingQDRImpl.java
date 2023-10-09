@@ -75,10 +75,10 @@ public class MeetingQDRImpl implements MeetingQDR {
   }
 
   private Set<Team> extractTeam(List<Meeting> meetings) {
-    Set<Team> teams = meetings.stream().map(Meeting::getOwnerTeam).map(team -> (Team) team)
+    Set<Team> teams = meetings.stream().map(Meeting::getOwnerTeam).map(Team.class::cast)
         .collect(Collectors.toSet());
     teams.addAll(meetings.stream().filter(meeting -> meeting.getEngagedTeam() != null)
-        .map(Meeting::getEngagedTeam).map(team -> (Team) team).collect(Collectors.toSet()));
+        .map(Meeting::getEngagedTeam).map(Team.class::cast).collect(Collectors.toSet()));
     return teams;
   }
 

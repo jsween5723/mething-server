@@ -21,6 +21,11 @@ public record MeetingDto() {
 
     }
 
+    public record MyRequestListElement(UUID id, String introduce,
+                                      TeamDto.MainPageListElement ownerTeam, Long createdAt) {
+
+    }
+
     public record Detail(Integer likeCount, Boolean isLiked, UUID id, String introduce, Integer requestCount,
                          TeamDto.MainPageListElement ownerTeam,
                          TeamDto.MainPageListElement engagedTeam, Long createdAt) {

@@ -15,4 +15,10 @@ public record MeetingRequestDto() {
                        Long createdAt) {
     
   }
+
+  public record MyRequestListElement(UUID id, String message,
+                       MeetingDto.MyRequestListElement targetMeeting, RequestStatus status,
+                       Long createdAt) {
+
+  }
 }

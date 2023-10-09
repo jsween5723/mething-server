@@ -71,7 +71,7 @@ public class MeetingController {
     return meetingMapper.toDetail(meeting, user instanceof Student student ? student : null);
   }
 
-  @GetMapping("/me")
+  @GetMapping("me")
   @RolesAllowed({STUDENT})
   @Operation(description = "내 과팅 목록", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
   public CustomSlice<MyMeetingPageListElement> search(Student student,
