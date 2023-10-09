@@ -7,7 +7,7 @@ import static com.esc.bluespring.domain.meeting.entity.QMeetingRequesterTeam.mee
 import static com.esc.bluespring.domain.meeting.entity.QTeamParticipant.teamParticipant;
 
 import com.esc.bluespring.common.utils.querydsl.RepositorySlicer;
-import com.esc.bluespring.domain.meeting.classes.MeetingDto.MainPageSearchCondition;
+import com.esc.bluespring.domain.meeting.classes.MeetingDto.SearchCondition;
 import com.esc.bluespring.domain.meeting.entity.Meeting;
 import com.esc.bluespring.domain.meeting.entity.Team;
 import com.esc.bluespring.domain.meeting.exception.MeetingException.MeetingNotFoundException;
@@ -35,7 +35,7 @@ public class MeetingQDRImpl implements MeetingQDR {
   private final TeamQDR teamQDR;
 
   @Transactional(readOnly = true)
-  public Slice<Meeting> searchMainPageList(Member user, MainPageSearchCondition condition,
+  public Slice<Meeting> searchMainPageList(Member user, SearchCondition condition,
                                            Pageable pageable) {
     JPAQuery<Meeting> dsl = query.selectFrom(meeting).leftJoin(meeting.ownerTeam, meetingOwnerTeam)
         .fetchJoin();
@@ -46,6 +46,17 @@ public class MeetingQDRImpl implements MeetingQDR {
     participantQDR.mapParticipantsTo(extractTeam(meetings));
     watchlistQDR.mapWatchlistTo(meetings);
     return RepositorySlicer.toSlice(meetings, pageable);
+  }
+
+  @Transactional(readOnly = true)
+  public List<Meeting> getList(Set<UUID> ids) {
+    JPAQuery<Meeting> dsl = query.selectFrom(meeting).leftJoin(meeting.ownerTeam, meetingOwnerTeam)
+        .fetchJoin().leftJoin(meeting.engagedTeam, meetingRequesterTeam).fetchJoin();
+    teamQDR.fetchJoinTeam(dsl, meetingOwnerTeam, "owner");
+    teamQDR.fetchJoinTeam(dsl, meetingRequesterTeam, "requester");
+    List<Meeting> meetings = dsl.where(ids != null ? meeting.id.in(ids) : null).fetch();
+    participantQDR.mapParticipantsTo(extractTeam(meetings));
+    return meetings;
   }
 
   @Transactional(readOnly = true)
@@ -101,7 +112,7 @@ public class MeetingQDRImpl implements MeetingQDR {
     return RepositorySlicer.toSlice(meetings, pageable);
   }
 
-  private BooleanBuilder toWhereCondition(MainPageSearchCondition condition, Member member) {
+  private BooleanBuilder toWhereCondition(SearchCondition condition, Member member) {
     BooleanBuilder builder = new BooleanBuilder();
     if (condition.isMyLocation() && member instanceof Student student) {
       builder.and(locationDistrict.id.eq(

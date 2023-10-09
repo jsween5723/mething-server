@@ -5,6 +5,7 @@ import com.esc.bluespring.common.entity.OwnerEntity;
 import com.esc.bluespring.common.utils.time.TimeMapper;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.Create;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.Detail;
+import com.esc.bluespring.domain.meeting.classes.MeetingDto.ListElement;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.MainPageListElement;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.MyMeetingPageListElement;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.Request;
@@ -46,6 +47,7 @@ public interface MeetingMapper extends LazyLoadingAwareMapper {
   @Mapping(target = "requestCount", source = "meeting")
   MyMeetingPageListElement toMyMeetingPageListElement(Meeting meeting);
 
+  ListElement toListElement(Meeting meeting);
   @Mapping(target = "ownerTeam", expression = "java(teamMapper.toEntity(dto,owner))")
   @Mapping(target = "watchlist", ignore = true)
   @Mapping(target = "introduce", source = "dto.introduce")

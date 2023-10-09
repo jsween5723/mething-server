@@ -1,7 +1,6 @@
 package com.esc.bluespring.domain.meeting;
 
 import static com.esc.bluespring.domain.member.entity.Member.ADMIN;
-import static com.esc.bluespring.domain.member.entity.Member.ANONYMOUS;
 import static com.esc.bluespring.domain.member.entity.Member.STUDENT;
 
 import com.esc.bluespring.common.CustomSlice;
@@ -9,11 +8,11 @@ import com.esc.bluespring.domain.auth.exception.AuthException.ForbiddenException
 import com.esc.bluespring.domain.meeting.classes.MeetingDto;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.Create;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.Detail;
+import com.esc.bluespring.domain.meeting.classes.MeetingDto.ListElement;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.MainPageListElement;
-import com.esc.bluespring.domain.meeting.classes.MeetingDto.MainPageSearchCondition;
+import com.esc.bluespring.domain.meeting.classes.MeetingDto.SearchCondition;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.MyMeetingPageListElement;
 import com.esc.bluespring.domain.meeting.classes.MeetingRequestDto;
-import com.esc.bluespring.domain.meeting.classes.MeetingRequestDto.SearchCondition;
 import com.esc.bluespring.domain.meeting.entity.Meeting;
 import com.esc.bluespring.domain.meeting.entity.MeetingRequest;
 import com.esc.bluespring.domain.meeting.entity.MeetingWatchlistItem;
@@ -26,6 +25,7 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
+import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
@@ -51,17 +51,23 @@ public class MeetingController {
   private final MeetingService meetingService;
 
   @GetMapping
-  @RolesAllowed({STUDENT, ANONYMOUS, ADMIN})
   @Operation(description = "메인 화면 과팅 목록", parameters = @Parameter(in = ParameterIn.HEADER, name = "Authorization"))
-  public CustomSlice<MainPageListElement> search(@ParameterObject MainPageSearchCondition condition,
+  public CustomSlice<MainPageListElement> search(@ParameterObject SearchCondition condition,
                                                  Member user, @ParameterObject Pageable pageable) {
-    if (!(user instanceof Student) && condition.isMyLocation()) {
+    if (!(user instanceof Student) && condition.isMyLocation() != null && condition.isMyLocation()) {
       throw new ForbiddenException();
     }
     Slice<MainPageListElement> result = meetingService.searchMainPageList(user, condition, pageable)
         .map(meeting -> meetingMapper.toMainPageListElement(meeting,
             user instanceof Student student ? student : null));
     return new CustomSlice<>(result);
+  }
+
+  @GetMapping("list")
+  @Operation(description = "id 검색")
+  public List<ListElement> getList(SearchCondition condition) {
+    List<Meeting> list = meetingService.getList(condition.ids());
+    return list.stream().map(meetingMapper::toListElement).toList();
   }
 
   @GetMapping("{id}")
@@ -104,8 +110,8 @@ public class MeetingController {
   @GetMapping("{id}/requests")
   @RolesAllowed({STUDENT, ADMIN})
   @Operation(description = "특정 과팅 신청 목록 조회", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
-  public CustomSlice<MeetingRequestDto.Detail> searchRequestsWithMeeting(@PathVariable UUID id, SearchCondition condition, Member user,
-                                                                   Pageable pageable) {
+  public CustomSlice<MeetingRequestDto.Detail> searchRequestsWithMeeting(@PathVariable UUID id, MeetingRequestDto.SearchCondition condition, Member user,
+                                                                         Pageable pageable) {
     Meeting meeting = meetingService.find(id);
 //    meeting.validOwner(user);
     Slice<MeetingRequestDto.Detail> result = meetingService.searchRequestsWithMeeting(meeting,

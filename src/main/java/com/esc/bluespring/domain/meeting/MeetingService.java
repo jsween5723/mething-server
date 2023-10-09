@@ -1,7 +1,7 @@
 package com.esc.bluespring.domain.meeting;
 
-import com.esc.bluespring.domain.meeting.classes.MeetingDto.MainPageSearchCondition;
-import com.esc.bluespring.domain.meeting.classes.MeetingRequestDto.SearchCondition;
+import com.esc.bluespring.domain.meeting.classes.MeetingDto.SearchCondition;
+import com.esc.bluespring.domain.meeting.classes.MeetingRequestDto;
 import com.esc.bluespring.domain.meeting.entity.Meeting;
 import com.esc.bluespring.domain.meeting.entity.MeetingRequest;
 import com.esc.bluespring.domain.meeting.entity.MeetingWatchlistItem;
@@ -10,6 +10,8 @@ import com.esc.bluespring.domain.meeting.repository.MeetingRequestQDR;
 import com.esc.bluespring.domain.meeting.watchlist.MeetingWatchListService;
 import com.esc.bluespring.domain.member.entity.Member;
 import com.esc.bluespring.domain.member.entity.Student;
+import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -35,9 +37,14 @@ public class MeetingService {
     return repository.find(id, requireEngagedTeam);
   }
 
-  public Slice<MeetingRequest> searchRequestsWithMeeting(Meeting meeting, SearchCondition condition,
-                                                        Pageable pageable) {
-    return requestQDR.  searchWithMeeting(meeting, condition, pageable);
+  @Transactional(readOnly = true)
+  public List<Meeting> getList(Set<UUID> ids) {
+    return repository.getList(ids);
+  }
+
+  public Slice<MeetingRequest> searchRequestsWithMeeting(Meeting meeting, MeetingRequestDto.SearchCondition condition,
+                                                         Pageable pageable) {
+    return requestQDR.searchWithMeeting(meeting, condition, pageable);
   }
 
   @Transactional(readOnly = true)
@@ -46,7 +53,7 @@ public class MeetingService {
   }
 
   @Transactional(readOnly = true)
-  public Slice<Meeting> searchMainPageList(Member student, MainPageSearchCondition condition,
+  public Slice<Meeting> searchMainPageList(Member student, SearchCondition condition,
                                            Pageable pageable) {
     return repository.searchMainPageList(student, condition, pageable);
   }
