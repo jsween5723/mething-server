@@ -2,7 +2,6 @@ package com.esc.bluespring.common.entity;
 
 import com.esc.bluespring.common.exception.RequestException.NotOwnerException;
 import com.esc.bluespring.domain.member.entity.Member;
-import com.esc.bluespring.domain.member.entity.Student;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
@@ -18,12 +17,12 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @MappedSuperclass
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EntityListeners(AuditingEntityListener.class)
-public abstract class OwnerEntity extends BaseEntity{
+public abstract class OwnerEntity<M extends Member> extends BaseEntity{
     @JoinColumn(name = "owner_id")
     @ManyToOne(fetch = FetchType.LAZY)
-    private Member owner;
+    private M owner;
 
-    public OwnerEntity(UUID id, Student owner) {
+    public OwnerEntity(UUID id, M owner) {
         super(id);
         this.owner = owner;
     }

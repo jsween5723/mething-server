@@ -27,7 +27,7 @@ import org.hibernate.annotations.BatchSize;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn
-public abstract class Team extends OwnerEntity {
+public abstract class Team extends OwnerEntity<Student> {
 
     private String title;
     private Integer maxParticipantNumber;

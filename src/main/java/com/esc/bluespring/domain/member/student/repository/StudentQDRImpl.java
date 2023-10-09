@@ -59,9 +59,12 @@ public class StudentQDRImpl implements StudentQDR {
     QMajor qMajor = new QMajor(key + "major");
     QUniversity qUniversity = new QUniversity(key + "university");
     QLocationDistrict qLocationDistrict = new QLocationDistrict(key + "locationDistrict");
+//    QImage profile = new QImage(key + "profile");
+//    QImage certification = new QImage(key + "certification");
     query.leftJoin(student.schoolInformation.major, qMajor).fetchJoin()
         .leftJoin(qMajor.university, qUniversity).fetchJoin()
         .leftJoin(qUniversity.locationDistrict, qLocationDistrict).fetchJoin()
+
     ;
   }
 }

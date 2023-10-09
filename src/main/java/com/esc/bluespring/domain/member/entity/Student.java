@@ -3,7 +3,6 @@ package com.esc.bluespring.domain.member.entity;
 import com.esc.bluespring.common.enums.Gender;
 import com.esc.bluespring.common.enums.MBTI;
 import com.esc.bluespring.domain.auth.exception.AuthException.ForbiddenException;
-import com.esc.bluespring.domain.file.entity.FileMetadata;
 import com.esc.bluespring.domain.file.entity.Image;
 import com.esc.bluespring.domain.friendship.entity.Friendship;
 import com.esc.bluespring.domain.friendship.request.entity.FriendshipRequest;
@@ -51,7 +50,9 @@ public class Student extends Member {
   private LocalDate birthday;
   @JoinColumn(name = "profile_image_url", referencedColumnName = "url")
   @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-  private FileMetadata profileImage;
+  private Image profileImage;
+  @Column(name = "profile_image_url", insertable = false, updatable = false)
+  private String profileImageUrl;
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   private Gender gender;

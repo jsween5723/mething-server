@@ -17,7 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Table(name = "files")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Inheritance(strategy = InheritanceType.JOINED)
 @DiscriminatorColumn
 public abstract class FileMetadata extends BaseEntity {
 

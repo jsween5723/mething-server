@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
     @Index(name = "created_at_index", columnList = "createdAt")})
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class MeetingWatchlistItem extends OwnerEntity {
+public class MeetingWatchlistItem extends OwnerEntity<Student> {
 
   @JoinColumn(name = "meeting_id")
   @ManyToOne(fetch = FetchType.LAZY)

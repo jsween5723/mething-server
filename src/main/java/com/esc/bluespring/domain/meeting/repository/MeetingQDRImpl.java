@@ -5,17 +5,13 @@ import static com.esc.bluespring.domain.meeting.entity.QMeeting.meeting;
 import static com.esc.bluespring.domain.meeting.entity.QMeetingOwnerTeam.meetingOwnerTeam;
 import static com.esc.bluespring.domain.meeting.entity.QMeetingRequesterTeam.meetingRequesterTeam;
 import static com.esc.bluespring.domain.meeting.entity.QTeamParticipant.teamParticipant;
-import static com.esc.bluespring.domain.member.entity.QStudent.student;
-import static com.esc.bluespring.domain.university.entity.QUniversity.university;
 
 import com.esc.bluespring.common.utils.querydsl.RepositorySlicer;
 import com.esc.bluespring.domain.meeting.classes.MeetingDto.MainPageSearchCondition;
 import com.esc.bluespring.domain.meeting.entity.Meeting;
-import com.esc.bluespring.domain.meeting.entity.QMeetingOwnerTeam;
 import com.esc.bluespring.domain.meeting.entity.Team;
 import com.esc.bluespring.domain.meeting.exception.MeetingException.MeetingNotFoundException;
 import com.esc.bluespring.domain.member.entity.Member;
-import com.esc.bluespring.domain.member.entity.QStudent;
 import com.esc.bluespring.domain.member.entity.Student;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -41,12 +37,12 @@ public class MeetingQDRImpl implements MeetingQDR {
   @Transactional(readOnly = true)
   public Slice<Meeting> searchMainPageList(Member user, MainPageSearchCondition condition,
                                            Pageable pageable) {
-    List<Meeting> meetings = query.selectFrom(meeting).leftJoin(meeting.ownerTeam, meetingOwnerTeam)
-        .fetchJoin().leftJoin(meetingOwnerTeam.owner.as(QStudent.class), student).fetchJoin()
-        .leftJoin(meetingOwnerTeam.representedUniversity, university).fetchJoin()
-        .leftJoin(university.locationDistrict, locationDistrict).fetchJoin().fetchJoin()
-        .where(meeting.engagedTeam.isNull(), toWhereCondition(condition, user))
-        .offset(pageable.getOffset()).limit(pageable.getPageSize() + 1).fetch();
+    JPAQuery<Meeting> dsl = query.selectFrom(meeting).leftJoin(meeting.ownerTeam, meetingOwnerTeam)
+        .fetchJoin();
+    teamQDR.fetchJoinTeam(dsl, meetingOwnerTeam, "owner");
+    List<Meeting> meetings = dsl.where(meeting.engagedTeam.isNull(),
+            toWhereCondition(condition, user)).offset(pageable.getOffset())
+        .limit(pageable.getPageSize() + 1).fetch();
     participantQDR.mapParticipantsTo(extractTeam(meetings));
     watchlistQDR.mapWatchlistTo(meetings);
     return RepositorySlicer.toSlice(meetings, pageable);
@@ -79,12 +75,13 @@ public class MeetingQDRImpl implements MeetingQDR {
   }
 
   private Set<Team> extractTeam(List<Meeting> meetings) {
-    Set<Team> teams =
-        meetings.stream().map(Meeting::getOwnerTeam).map(team -> (Team) team).collect(Collectors.toSet());
+    Set<Team> teams = meetings.stream().map(Meeting::getOwnerTeam).map(team -> (Team) team)
+        .collect(Collectors.toSet());
     teams.addAll(meetings.stream().filter(meeting -> meeting.getEngagedTeam() != null)
         .map(Meeting::getEngagedTeam).map(team -> (Team) team).collect(Collectors.toSet()));
     return teams;
   }
+
   private Set<Team> extractTeam(Meeting meeting) {
     return extractTeam(List.of(meeting));
   }
@@ -93,13 +90,10 @@ public class MeetingQDRImpl implements MeetingQDR {
   @Override
   @Transactional(readOnly = true)
   public Slice<Meeting> searchMyMeetingList(Student user, Pageable pageable) {
-    List<Meeting> meetings = query.selectFrom(meeting)
-        .leftJoin(meeting.ownerTeam.as(QMeetingOwnerTeam.class), meetingOwnerTeam).fetchJoin()
-        .leftJoin(meetingOwnerTeam.participants, teamParticipant)
-        .leftJoin(meetingOwnerTeam.owner.as(QStudent.class), student).fetchJoin()
-        .leftJoin(meetingOwnerTeam.representedUniversity, university).fetchJoin()
-        .leftJoin(university.locationDistrict, locationDistrict).fetchJoin()
-        .where(meeting.engagedTeam.isNull(),
+    JPAQuery<Meeting> dsl = query.selectFrom(meeting).leftJoin(meeting.ownerTeam, meetingOwnerTeam)
+        .fetchJoin().leftJoin(meetingOwnerTeam.participants, teamParticipant);
+    teamQDR.fetchJoinTeam(dsl, meetingOwnerTeam, "owner");
+    List<Meeting> meetings = dsl.where(meeting.engagedTeam.isNull(),
             meetingOwnerTeam.owner.eq(user).or(teamParticipant.participant.eq(user)))
         .offset(pageable.getOffset()).limit(pageable.getPageSize() + 1).fetch();
     participantQDR.mapParticipantsTo(extractTeam(meetings));

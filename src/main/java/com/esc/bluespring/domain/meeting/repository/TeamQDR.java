@@ -22,7 +22,7 @@ public class TeamQDR {
     QUniversity qUniversity = new QUniversity(key + "university");
     query.leftJoin(team.representedUniversity, qUniversity).fetchJoin()
         .leftJoin(qUniversity.locationDistrict).fetchJoin()
-        .leftJoin(team.owner.as(QStudent.class), owner).fetchJoin();
+        .leftJoin(team.owner, owner).fetchJoin();
     studentQDR.fetchJoinStudent(query, owner, key + "owner");
   }
 
@@ -32,7 +32,7 @@ public class TeamQDR {
     QUniversity qUniversity = new QUniversity(key + "university");
     query.leftJoin(team.representedUniversity, qUniversity).fetchJoin()
         .leftJoin(qUniversity.locationDistrict).fetchJoin()
-        .leftJoin(team.owner.as(QStudent.class), owner).fetchJoin();
+        .leftJoin(team.owner, owner).fetchJoin();
     studentQDR.fetchJoinStudent(query, owner, key + "owner");
   }
 }

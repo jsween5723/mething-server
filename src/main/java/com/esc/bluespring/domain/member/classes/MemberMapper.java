@@ -28,14 +28,12 @@ public interface MemberMapper {
     @Mapping(target = "schoolInformation", expression = "java(toSchoolInformation(dto, studentCertificationImage))")
     @Mapping(target = "id", ignore = true)
     Student toEntity(Patch dto, Image profileImage, Image studentCertificationImage);
-    @Mapping(target = "profileImageUrl", source = "student.profileImage.url")
     TeamListElement toSchoolInformationListElement(Student student);
     @Mapping(target = "id", ignore = true)
     Admin toEntity(Patch dto);
     @Mapping(target = "id", source = "id")
     Student toEntity(UUID id);
 
-    @Mapping(target = "profileImageUrl", source = "member.profileImage.url")
     Detail toDetail(Student member);
     @Mapping(target = "major", source = "dto.majorId")
     @Mapping(target = "studentCertificationImage", source = " studentCertificationImage")

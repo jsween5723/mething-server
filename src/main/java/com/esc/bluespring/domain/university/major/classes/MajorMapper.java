@@ -1,18 +1,27 @@
 package com.esc.bluespring.domain.university.major.classes;
 
+import com.esc.bluespring.common.LazyLoadingAwareMapper;
+import com.esc.bluespring.common.entity.InformationEntity;
 import com.esc.bluespring.domain.university.classes.UniversityMapper;
 import com.esc.bluespring.domain.university.entity.University;
 import com.esc.bluespring.domain.university.major.classes.MajorDto.SearchListElement;
 import com.esc.bluespring.domain.university.major.entity.Major;
 import java.util.Set;
+import org.mapstruct.Condition;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(uses = {UniversityMapper.class})
-public interface MajorMapper {
+public interface MajorMapper extends LazyLoadingAwareMapper {
     MajorMapper INSTANCE = Mappers.getMapper(MajorMapper.class);
     String PK_FIELD = "식별번호";
     String MAJOR_NAME_FIELD = "학과명";
+
+    @Condition
+    default boolean isNotLazyLoaded(InformationEntity entity) {
+        return LazyLoadingAwareMapper.super.isNotLazyLoaded(entity);
+    }
+
     String STATUS_FIELD = "학과상태명";
     Set<String> DISABLE_STATUSES = Set.of("폐과");
 
