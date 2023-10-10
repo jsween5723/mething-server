@@ -8,8 +8,9 @@ import discord4j.rest.entity.RestChannel;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -22,7 +23,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.client.HttpServerErrorException.InternalServerError;
 
 @Slf4j
 @RestControllerAdvice
@@ -61,24 +61,6 @@ public class GlobalExceptionHandler {
     return ResponseEntity.status(status).body(errorResponse);
   }
 
-  @ExceptionHandler(InternalServerError.class)
-  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-  public ErrorResponse internalException(InternalServerError exception,
-                                         HttpServletRequest request) {
-
-    StringWriter sw = new StringWriter();
-    exception.printStackTrace(new PrintWriter(sw));
-    String exceptionAsString = sw.toString();
-    channel.createMessage(
-        EmbedData.builder().title(exception.getMessage()).description(exceptionAsString)
-            .addField(EmbedFieldData.builder().name("uri").value(request.getRequestURI()).build())
-            .addField(EmbedFieldData.builder().name("authorization")
-                .value(request.getHeader("Authorization")).build()).addField(
-                EmbedFieldData.builder().name("parameters").value(request.getParameterMap().toString())
-                    .build()).timestamp(String.valueOf(Instant.now().atZone(ZoneId.of("Asia/Seoul"))))
-            .build()).block();
-    return ErrorResponse.of(exception.getMessage(), exception.getLocalizedMessage());
-  }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
   public ResponseEntity<ErrorResponse> methodArgumentNotValidException(
@@ -94,6 +76,25 @@ public class GlobalExceptionHandler {
     ErrorResponse errorResponse = ErrorResponse.of(code, message);
 
     return ResponseEntity.status(status).body(errorResponse);
+  }
+  @ExceptionHandler(Exception.class)
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  public ErrorResponse internalException(Exception exception,
+                                         HttpServletRequest request) {
+
+    StringWriter sw = new StringWriter();
+    exception.printStackTrace(new PrintWriter(sw));
+    String exceptionAsString = sw.toString();
+    channel.createMessage(
+        EmbedData.builder().title(exception.getLocalizedMessage().substring(0,250)).description(exceptionAsString.substring(0,2000))
+            .addField(EmbedFieldData.builder().name("uri").value(request.getRequestURI()).build())
+            .addField(EmbedFieldData.builder().name("authorization")
+                .value(request.getHeader("Authorization")).build()).addField(
+                EmbedFieldData.builder().name("parameters").value(request.getParameterMap().toString())
+                    .build()).timestamp(LocalDateTime.now(ZoneId.of("Asia/Seoul")).format(
+                DateTimeFormatter.ISO_LOCAL_DATE_TIME)).build())
+            .block();
+    return ErrorResponse.of(exception.getMessage(), exception.getLocalizedMessage());
   }
 
 }
