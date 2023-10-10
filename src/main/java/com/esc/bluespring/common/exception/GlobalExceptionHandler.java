@@ -2,6 +2,15 @@ package com.esc.bluespring.common.exception;
 
 import com.esc.bluespring.domain.auth.exception.AuthException.ForbiddenException;
 import com.esc.bluespring.domain.auth.exception.AuthException.LoginRequiredException;
+import discord4j.discordjson.json.EmbedData;
+import discord4j.discordjson.json.EmbedFieldData;
+import discord4j.rest.entity.RestChannel;
+import jakarta.servlet.http.HttpServletRequest;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.time.Instant;
+import java.time.ZoneId;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,12 +22,15 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpServerErrorException.InternalServerError;
 
 @Slf4j
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
 
   private static final String EXCEPTION_LOG_TEMPLATE = "code = {}, message = {}";
+  private final RestChannel channel;
 
   @ExceptionHandler(AccessDeniedException.class)
   @ResponseStatus(HttpStatus.FORBIDDEN)
@@ -46,13 +58,31 @@ public class GlobalExceptionHandler {
     log.warn(EXCEPTION_LOG_TEMPLATE, code, message);
     ErrorResponse errorResponse = ErrorResponse.of(e);
 
-    return ResponseEntity
-        .status(status)
-        .body(errorResponse);
+    return ResponseEntity.status(status).body(errorResponse);
+  }
+
+  @ExceptionHandler(InternalServerError.class)
+  @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+  public ErrorResponse internalException(InternalServerError exception,
+                                         HttpServletRequest request) {
+
+    StringWriter sw = new StringWriter();
+    exception.printStackTrace(new PrintWriter(sw));
+    String exceptionAsString = sw.toString();
+    channel.createMessage(
+        EmbedData.builder().title(exception.getMessage()).description(exceptionAsString)
+            .addField(EmbedFieldData.builder().name("uri").value(request.getRequestURI()).build())
+            .addField(EmbedFieldData.builder().name("authorization")
+                .value(request.getHeader("Authorization")).build()).addField(
+                EmbedFieldData.builder().name("parameters").value(request.getParameterMap().toString())
+                    .build()).timestamp(String.valueOf(Instant.now().atZone(ZoneId.of("Asia/Seoul"))))
+            .build()).block();
+    return ErrorResponse.of(exception.getMessage(), exception.getLocalizedMessage());
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<ErrorResponse> methodArgumentNotValidException(MethodArgumentNotValidException e) {
+  public ResponseEntity<ErrorResponse> methodArgumentNotValidException(
+      MethodArgumentNotValidException e) {
 
     String code = e.getStatusCode().toString();
     HttpStatus status = (HttpStatus) e.getStatusCode();
@@ -63,9 +93,7 @@ public class GlobalExceptionHandler {
     log.warn(EXCEPTION_LOG_TEMPLATE, code, message);
     ErrorResponse errorResponse = ErrorResponse.of(code, message);
 
-    return ResponseEntity
-        .status(status)
-        .body(errorResponse);
+    return ResponseEntity.status(status).body(errorResponse);
   }
 
 }
