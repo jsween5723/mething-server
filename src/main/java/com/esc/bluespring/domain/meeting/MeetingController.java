@@ -64,13 +64,14 @@ public class MeetingController {
   }
 
   @GetMapping("list")
-  @Operation(description = "id 검색")
+  @Operation(description = "id 검색(외부 서비스용)")
   public List<ListElement> getList(SearchCondition condition) {
     List<Meeting> list = meetingService.getList(condition.ids());
     return list.stream().map(meetingMapper::toListElement).toList();
   }
 
   @GetMapping("{id}")
+  @Operation(description = "홈 과팅 목록에서 과팅 상세보기")
   public Detail getDetail(@PathVariable UUID id, Member user,
                           @Parameter(description = "채팅 서버용 파라미터") Boolean requireEngagedTeam) {
     Meeting meeting = meetingService.find(id, requireEngagedTeam != null);
@@ -113,7 +114,7 @@ public class MeetingController {
   public CustomSlice<MeetingRequestDto.Detail> searchRequestsWithMeeting(@PathVariable UUID id, MeetingRequestDto.SearchCondition condition, Member user,
                                                                          Pageable pageable) {
     Meeting meeting = meetingService.find(id);
-//    meeting.validOwner(user);
+    meeting.validOwner(user);
     Slice<MeetingRequestDto.Detail> result = meetingService.searchRequestsWithMeeting(meeting,
         condition, pageable).map(meetingMapper.requestMapper::toDetail);
     return new CustomSlice<>(result);

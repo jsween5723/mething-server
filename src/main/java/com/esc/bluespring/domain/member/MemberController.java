@@ -48,6 +48,7 @@ public class MemberController {
 
     @PostMapping("join")
     @ResponseStatus(HttpStatus.CREATED)
+    @Operation(description = "학생 가입 API")
     public void join(Join dto) {
         Image profile = s3Service.upload(dto.profileImage());
         Image certificateImage = s3Service.upload(dto.studentCertificationImage());
@@ -63,6 +64,7 @@ public class MemberController {
     @DeleteMapping("resign")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RolesAllowed({ADMIN, STUDENT})
+    @Operation(description = "회원 탈퇴")
     public void resign(Member member) {
         if (member instanceof Student student) {
             s3Service.remove(student.getProfileImage().getUrl());
@@ -96,6 +98,7 @@ public class MemberController {
 
     @PatchMapping("/me")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(description = "회원정보 변경 API(비밀번호, 이메일 변경시 이메일 인증 필수)")
     public void patch(@RequestBody @Valid Patch dto, Member target) {
         if (target instanceof Admin) {
             Admin source = mapper.toEntity(dto);

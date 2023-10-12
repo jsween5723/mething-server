@@ -37,7 +37,7 @@ public class AuthController {
 //  }
 
   @PostMapping("email-codes/generate")
-  @Operation(summary = "요청 유저의 핸드폰 인증 문자를 생성한다. (SMS발송)")
+  @Operation(summary = "요청 유저의 인증 메일를 발송한다. ")
   @ResponseStatus(HttpStatus.CREATED)
   public void generateEmailCode(@Valid @RequestBody AuthDto.EmailCodeGenerate dto, HttpSession session) {
     emailAuthenticationService.genereate(dto.email());
@@ -45,7 +45,7 @@ public class AuthController {
   }
 
   @PostMapping("email-codes/authenticate")
-  @Operation(summary = "요청 유저의 핸드폰 인증을 완료한다. (인증 마킹)")
+  @Operation(summary = "요청 유저의 이메일 인증을 완료한다. (인증 마킹)")
   public void authenticateEmailCode(@Valid @RequestBody AuthDto.EmailCodeAuthenticate dto, HttpSession session) {
     emailAuthenticationService.authenticate((String) session.getAttribute("email"),dto.code());
     session.removeAttribute("email");

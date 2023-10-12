@@ -5,6 +5,7 @@ import com.esc.bluespring.domain.university.major.classes.MajorDto.SearchConditi
 import com.esc.bluespring.domain.university.major.classes.MajorDto.SearchListElement;
 import com.esc.bluespring.domain.university.major.classes.MajorMapper;
 import com.esc.bluespring.domain.university.major.entity.Major;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
@@ -32,6 +33,7 @@ public class MajorController {
 //    majorService.saveAllWithMajorCSV(majors);
 //  }
     @GetMapping
+    @Operation(description = "회원가입 등에서 사용되는 학과 검색 API")
     public CustomSlice<SearchListElement> search(@ParameterObject SearchCondition condition,
         @ParameterObject Pageable pageable) {
         Slice<Major> result = majorService.search(condition, pageable);

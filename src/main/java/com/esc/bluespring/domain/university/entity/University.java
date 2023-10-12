@@ -31,7 +31,7 @@ public class University extends InformationEntity {
   private String campus;
   private String type;
   @JoinColumn(name = "location_district_id")
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   private LocationDistrict locationDistrict;
 
   @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)

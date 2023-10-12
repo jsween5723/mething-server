@@ -19,7 +19,7 @@ import lombok.NoArgsConstructor;
 public class SchoolInformation {
 
   @JoinColumn(name = "major_id", nullable = false)
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne(fetch = FetchType.EAGER)
   private Major major;
   @JoinColumn(name = "student_certification_image_url", referencedColumnName = "url")
   @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

@@ -4,6 +4,7 @@ import com.esc.bluespring.common.CustomSlice;
 import com.esc.bluespring.domain.university.classes.UniversityDto.SearchCondition;
 import com.esc.bluespring.domain.university.classes.UniversityDto.SearchListElement;
 import com.esc.bluespring.domain.university.classes.UniversityMapper;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +32,7 @@ public class UniversityController {
 //    universityService.saveAllWithMajorCSV(universities);
 //  }
     @GetMapping
+    @Operation(description = "회원가입 등에서 사용되는 학교 검색 API")
     public CustomSlice<SearchListElement> search(@ParameterObject SearchCondition condition,
         @ParameterObject Pageable pageable) {
         Slice<SearchListElement> result = universityService.search(condition, pageable)

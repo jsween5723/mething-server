@@ -1,6 +1,5 @@
 package com.esc.bluespring.domain.meeting.repository;
 
-import static com.esc.bluespring.domain.locationDistrict.entity.QLocationDistrict.locationDistrict;
 import static com.esc.bluespring.domain.meeting.entity.QMeeting.meeting;
 import static com.esc.bluespring.domain.meeting.entity.QMeetingOwnerTeam.meetingOwnerTeam;
 import static com.esc.bluespring.domain.meeting.entity.QMeetingRequesterTeam.meetingRequesterTeam;
@@ -115,8 +114,8 @@ public class MeetingQDRImpl implements MeetingQDR {
   private BooleanBuilder toWhereCondition(SearchCondition condition, Member member) {
     BooleanBuilder builder = new BooleanBuilder();
     if (condition.isMyLocation() && member instanceof Student student) {
-      builder.and(locationDistrict.id.eq(
-          student.getSchoolInformation().getMajor().getUniversity().getLocationDistrict().getId()));
+      builder.and(meetingOwnerTeam.representedUniversity.locationDistrict.eq(
+          student.getSchoolInformation().getMajor().getUniversity().getLocationDistrict()));
     }
     return builder;
   }

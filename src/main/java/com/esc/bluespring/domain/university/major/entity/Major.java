@@ -25,7 +25,7 @@ public class Major extends InformationEntity {
     private String name;
 
     @JoinColumn(name = "university_id", nullable = false)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     private University university;
 
     @Builder

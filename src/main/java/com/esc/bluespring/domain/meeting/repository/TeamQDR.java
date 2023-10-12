@@ -1,5 +1,7 @@
 package com.esc.bluespring.domain.meeting.repository;
 
+import static com.esc.bluespring.domain.locationDistrict.entity.QLocationDistrict.locationDistrict;
+
 import com.esc.bluespring.domain.meeting.entity.QMeetingOwnerTeam;
 import com.esc.bluespring.domain.meeting.entity.QMeetingRequesterTeam;
 import com.esc.bluespring.domain.member.entity.QStudent;
@@ -21,7 +23,7 @@ public class TeamQDR {
     QStudent owner = new QStudent(key);
     QUniversity qUniversity = new QUniversity(key + "university");
     query.leftJoin(team.representedUniversity, qUniversity).fetchJoin()
-        .leftJoin(qUniversity.locationDistrict).fetchJoin()
+        .leftJoin(qUniversity.locationDistrict, locationDistrict).fetchJoin()
         .leftJoin(team.owner, owner).fetchJoin();
     studentQDR.fetchJoinStudent(query, owner, key + "owner");
   }

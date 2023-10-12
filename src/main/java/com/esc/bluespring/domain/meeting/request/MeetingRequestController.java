@@ -44,6 +44,7 @@ public class MeetingRequestController {
   }
   @DeleteMapping("{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
+  @Operation(description = "내가 보낸 신청에서 특정 과팅 신청 취소 (관리자, 혹은 신청자만 사용가능)")
   public void cancel(@PathVariable UUID id, Member member) {
     MeetingRequest request = requestService.find(id);
     request.validRequesterOwner(member);
@@ -52,6 +53,7 @@ public class MeetingRequestController {
 
   @GetMapping("{id}")
   @RolesAllowed({ADMIN, STUDENT})
+  @Operation(description = "특정 과팅 참여 신청 상세보기")
   public Detail getDetail(@PathVariable UUID id, Member member) {
     MeetingRequest request = requestService.find(id);
     request.validPermission(member);
@@ -60,12 +62,14 @@ public class MeetingRequestController {
 
   @PatchMapping("{id}/accept")
   @ResponseStatus(HttpStatus.NO_CONTENT)
+  @Operation(description = "우리팀에 온 신청목록에서 -> 특정 과팅 참여 신청 수락(신청 수신자, 관리자만 사용가능)")
   public void accept(@PathVariable UUID id, Member member) {
     requestService.accept(id, member);
   }
 
   @PatchMapping("{id}/reject")
   @ResponseStatus(HttpStatus.NO_CONTENT)
+  @Operation(description = "우리팀에 온 신청목록에서 -> 특정 과팅 참여 신청 거절(신청 수신자, 관리자만 사용가능)")
   public void reject(@PathVariable UUID id, Member member) {
     requestService.reject(id, member);
   }

@@ -86,7 +86,7 @@ public class GlobalExceptionHandler {
     exception.printStackTrace(new PrintWriter(sw));
     String exceptionAsString = sw.toString();
     channel.createMessage(
-        EmbedData.builder().title(exception.getLocalizedMessage().substring(0,250)).description(exceptionAsString.substring(0,2000))
+        EmbedData.builder().title(exception.getLocalizedMessage().length() > 250 ? exception.getLocalizedMessage().substring(0,250) : exception.getLocalizedMessage()).description(exceptionAsString.substring(0,2000))
             .addField(EmbedFieldData.builder().name("uri").value(request.getRequestURI()).build())
             .addField(EmbedFieldData.builder().name("authorization")
                 .value(request.getHeader("Authorization")).build()).addField(

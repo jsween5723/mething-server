@@ -30,6 +30,7 @@ public class FriendshipRequestController {
     private final FriendshipRequestService service;
 
     @GetMapping("/me")
+    @Operation(description = "내 친구 목록 검색")
     public CustomSlice<ListElement> search(Student member,
         @ParameterObject SearchCondition condition, @ParameterObject Pageable pageable) {
         condition = new SearchCondition(condition.universityName(), condition.requesterNickname(),
