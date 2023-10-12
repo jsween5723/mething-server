@@ -54,6 +54,9 @@ public abstract class AuthException extends ApplicationException {
         public LoginRequiredException(AuthenticationException e) {
             super(LOGIN_REQUIRED, e);
         }
+        public LoginRequiredException() {
+            super(LOGIN_REQUIRED);
+        }
     }
 
     public static class ForbiddenException extends AuthException {
