@@ -17,10 +17,12 @@ import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Base64;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,8 +46,8 @@ public class RSAConfiguration {
         byte[] decodedBase64PrivateKey = Base64.getDecoder().decode(privateKey);
         PublicKey aPublic = factory.generatePublic(new X509EncodedKeySpec(decodedBase64PubKey));
         PrivateKey aPrivate = factory.generatePrivate(new PKCS8EncodedKeySpec(decodedBase64PrivateKey));
-        RSAKey keys = new Builder((RSAPublicKey) aPublic).privateKey(aPrivate)
-            .keyID(UUID.randomUUID().toString())
+        RSAKey keys = new Builder((RSAPublicKey) aPublic).privateKey(aPrivate).expirationTime(Date.from(
+                Instant.now().plus(15, ChronoUnit.MINUTES)))
             .build();
         JWKSet jwkSet = new JWKSet(keys);
         return new ImmutableJWKSet<>(jwkSet);

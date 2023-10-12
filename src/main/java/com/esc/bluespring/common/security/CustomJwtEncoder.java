@@ -1,8 +1,12 @@
 package com.esc.bluespring.common.security;
 
 import com.esc.bluespring.domain.member.entity.Member;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.oauth2.jose.jws.SignatureAlgorithm;
+import org.springframework.security.oauth2.jwt.JwsHeader;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
@@ -15,8 +19,13 @@ public class CustomJwtEncoder {
     private final JwtEncoder jwtEncoder;
 
     public String generateAccessToken(Member member) {
-        JwtClaimsSet claimsSet = JwtClaimsSet.builder().claim("id", member.getId()).build();
-        return jwtEncoder.encode(JwtEncoderParameters.from(claimsSet)).getTokenValue();
+        Instant issuedAt = Instant.now().truncatedTo(ChronoUnit.SECONDS);
+        Instant expiration = issuedAt.plus(15, ChronoUnit.MINUTES);
+        JwtClaimsSet claimsSet = JwtClaimsSet.builder().claim("id", member.getId())
+            .issuedAt(issuedAt).expiresAt(expiration).build();
+        return jwtEncoder.encode(
+                JwtEncoderParameters.from(JwsHeader.with(SignatureAlgorithm.RS512).build(), claimsSet))
+            .getTokenValue();
     }
 
     public String generateRefreshToken() {
