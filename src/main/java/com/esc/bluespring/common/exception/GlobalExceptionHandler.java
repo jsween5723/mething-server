@@ -90,7 +90,7 @@ public class GlobalExceptionHandler {
             .addField(EmbedFieldData.builder().name("uri").value(request.getRequestURI()).build())
             .addField(EmbedFieldData.builder().name("authorization")
                 .value(request.getHeader("Authorization") == null ? "" :request.getHeader("Authorization")).build()).addField(
-                EmbedFieldData.builder().name("parameters").value(request.getParameterMap().toString())
+                EmbedFieldData.builder().name("parameters").value(request.getQueryString())
                     .build()).timestamp(LocalDateTime.now(ZoneId.of("Asia/Seoul")).format(
                 DateTimeFormatter.ISO_LOCAL_DATE_TIME)).build())
             .block();
