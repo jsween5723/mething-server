@@ -14,8 +14,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @RequiredArgsConstructor
 public class WebConfiguration implements WebMvcConfigurer {
   private final AuthenticationResolver authenticationResolver;
-  @Value("${cors-list:http://localhost:8080}")
-  private List<String> list;
+  @Value("${cors-list}")
+  private String[] list;
   @Override
   public void addCorsMappings(CorsRegistry registry) {
     CorsRegistration cors = registry.addMapping("/api/**")
@@ -23,7 +23,7 @@ public class WebConfiguration implements WebMvcConfigurer {
         .allowCredentials(true)
         .allowedHeaders(SwaggerConfiguration.AUTHORIZATION_HEADER)
         .maxAge(3600);
-    list.forEach(cors::allowedOrigins);
+    cors.allowedOrigins(list);
   }
 
   @Override
