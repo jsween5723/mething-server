@@ -89,7 +89,7 @@ public class GlobalExceptionHandler {
         EmbedData.builder().title(exception.getLocalizedMessage().length() > 250 ? exception.getLocalizedMessage().substring(0,250) : exception.getLocalizedMessage()).description(exceptionAsString.substring(0,2000))
             .addField(EmbedFieldData.builder().name("uri").value(request.getRequestURI()).build())
             .addField(EmbedFieldData.builder().name("authorization")
-                .value(request.getHeader("Authorization")).build()).addField(
+                .value(request.getHeader("Authorization") == null ? "" :request.getHeader("Authorization")).build()).addField(
                 EmbedFieldData.builder().name("parameters").value(request.getParameterMap().toString())
                     .build()).timestamp(LocalDateTime.now(ZoneId.of("Asia/Seoul")).format(
                 DateTimeFormatter.ISO_LOCAL_DATE_TIME)).build())
