@@ -39,14 +39,15 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable).cors(
-            httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(
-                corsConfigurationSource)).authorizeHttpRequests(
-            registry -> registry.requestMatchers("/swagger-ui/**").hasRole(Role.ADMIN.name())
-                .anyRequest().permitAll()).oauth2ResourceServer(oauth2 -> oauth2.jwt(
-                jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(converter)
-                    .decoder(jwtDecoder)).accessDeniedHandler(accessDeniedHandler)
-            .authenticationEntryPoint(restAuthenticationEntryPoint)).formLogin(
-            form -> form.permitAll().usernameParameter("email").passwordParameter("password"));
+                httpSecurityCorsConfigurer -> httpSecurityCorsConfigurer.configurationSource(
+                    corsConfigurationSource)).authorizeHttpRequests(
+                registry -> registry.requestMatchers("/swagger-ui/**").hasRole(Role.ADMIN.name())
+                    .requestMatchers("/resources").permitAll().anyRequest().permitAll())
+            .oauth2ResourceServer(oauth2 -> oauth2.jwt(
+                    jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(converter)
+                        .decoder(jwtDecoder)).accessDeniedHandler(accessDeniedHandler)
+                .authenticationEntryPoint(restAuthenticationEntryPoint)).formLogin(
+                form -> form.permitAll().usernameParameter("email").passwordParameter("password"));
         return http.build();
     }
 
