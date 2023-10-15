@@ -36,7 +36,6 @@ jobs:
       - name: Build the server
         run: |
           ./enable_environment.sh
-          ./gradlew build
 
       - name: Remove Github Actions IP From Security Group
         continue-on-error: true
