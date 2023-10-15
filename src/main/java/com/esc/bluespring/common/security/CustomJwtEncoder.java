@@ -23,8 +23,10 @@ public class CustomJwtEncoder {
         Instant expiration = issuedAt.plus(15, ChronoUnit.MINUTES);
         JwtClaimsSet claimsSet = JwtClaimsSet.builder().claim("id", member.getId())
             .issuedAt(issuedAt).expiresAt(expiration).build();
+        JwsHeader.Builder with = JwsHeader.with(SignatureAlgorithm.RS512);
+        JwsHeader jwt = with.type("jwt").build();
         return jwtEncoder.encode(
-                JwtEncoderParameters.from(JwsHeader.with(SignatureAlgorithm.RS512).build(), claimsSet))
+                JwtEncoderParameters.from(jwt, claimsSet))
             .getTokenValue();
     }
 
