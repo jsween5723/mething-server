@@ -5,5 +5,4 @@ while read -r LINE; do
     export "${ENV_VAR?}" >> ~/.profile 2> /dev/null
     export "${ENV_VAR?}" >> ~/.bashrc 2> /dev/null
   fi
-done < .env
-./gradlew build
+done
