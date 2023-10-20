@@ -1,5 +1,6 @@
 package com.esc.bluespring.domain.locationDistrict;
 
+import com.esc.bluespring.common.BaseResponse;
 import com.esc.bluespring.common.CustomSlice;
 import com.esc.bluespring.domain.locationDistrict.classes.LocationDistrictDto.SearchCondition;
 import com.esc.bluespring.domain.locationDistrict.classes.LocationDistrictDto.SearchListElement;
@@ -31,10 +32,10 @@ class LocationDistrictController {
 //  }
     @GetMapping
     @Operation(description = "[사용처 없음] 지역 검색")
-    public CustomSlice<SearchListElement> searchListElements(
+    public BaseResponse<CustomSlice<SearchListElement>> searchListElements(
         @ParameterObject SearchCondition condition, @ParameterObject Pageable pageable) {
         Slice<SearchListElement> result = locationDistrictService.search(condition, pageable)
             .map(mapper::toSearchListElement);
-        return new CustomSlice<>(result);
+        return new BaseResponse<>(new CustomSlice<>(result));
     }
 }

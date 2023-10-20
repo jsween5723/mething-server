@@ -1,5 +1,6 @@
 package com.esc.bluespring.domain.friendship;
 
+import com.esc.bluespring.common.BaseResponse;
 import com.esc.bluespring.common.CustomSlice;
 import com.esc.bluespring.domain.friendship.classes.FriendshipDto.ListElement;
 import com.esc.bluespring.domain.friendship.classes.FriendshipDto.SearchCondition;
@@ -27,16 +28,17 @@ public class FriendshipController {
     private final FriendshipMapper friendshipMapper = FriendshipMapper.INSTANCE;
     @GetMapping("/me")
     @Operation(description = "내 친구 목록 검색")
-    public CustomSlice<ListElement> searchMyFriend(@ParameterObject SearchCondition condition, Student user, @ParameterObject Pageable pageable) {
+    public BaseResponse<CustomSlice<ListElement>> searchMyFriend(@ParameterObject SearchCondition condition, Student user, @ParameterObject Pageable pageable) {
         Slice<Friendship> result = friendshipService.search(condition, pageable, user);
-        return new CustomSlice<>(result.map(friendshipMapper::toListElement));
+        return new BaseResponse<>(new CustomSlice<>(result.map(friendshipMapper::toListElement)));
     }
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(description = "친구 삭제")
-    public void deleteFriendship(@PathVariable UUID id) {
+    public BaseResponse<Boolean> deleteFriendship(@PathVariable UUID id) {
         Friendship friendship = friendshipService.find(id);
         friendshipService.deleteFriendship(friendship);
+        return new BaseResponse<>(true);
     }
 }

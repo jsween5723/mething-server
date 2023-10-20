@@ -1,5 +1,6 @@
 package com.esc.bluespring.domain.friendship.request;
 
+import com.esc.bluespring.common.BaseResponse;
 import com.esc.bluespring.common.CustomSlice;
 import com.esc.bluespring.domain.friendship.request.classes.FriendshipRequestDto.ListElement;
 import com.esc.bluespring.domain.friendship.request.classes.FriendshipRequestDto.SearchCondition;
@@ -31,33 +32,37 @@ public class FriendshipRequestController {
 
     @GetMapping("/me")
     @Operation(description = "내 친구 목록 검색")
-    public CustomSlice<ListElement> search(Student member,
-        @ParameterObject SearchCondition condition, @ParameterObject Pageable pageable) {
+    public BaseResponse<CustomSlice<ListElement>> search(Student member,
+                                                         @ParameterObject SearchCondition condition,
+                                                         @ParameterObject Pageable pageable) {
         condition = new SearchCondition(condition.universityName(), condition.requesterNickname(),
             member.getId());
         Slice<FriendshipRequest> result = service.search(condition, pageable);
-        return new CustomSlice<>(result.map(mapper::toListElement));
+        return new BaseResponse<>(new CustomSlice<>(result.map(mapper::toListElement)));
     }
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(description = "신청자가 해당 친구 신청을 철회합니다.")
-    public void remove(Student member, @PathVariable Long id) {
+    public BaseResponse<Boolean> remove(Student member, @PathVariable Long id) {
         FriendshipRequest request = service.find(id);
         service.delete(request, member);
+        return new BaseResponse<>(true);
     }
 
     @PatchMapping("{id}/accept")
     @Operation(description = "수신자가 해당 친구 신청을 수락합니다.")
-    public void accept(Student member, @PathVariable Long id) {
+    public BaseResponse<Boolean> accept(Student member, @PathVariable Long id) {
         FriendshipRequest request = service.find(id);
         service.accept(request, member);
+        return new BaseResponse<>(true);
     }
 
     @PatchMapping("{id}/reject")
     @Operation(description = "수신자가 해당 친구 신청을 거절합니다.")
-    public void reject(Student member, @PathVariable Long id) {
+    public BaseResponse<Boolean> reject(Student member, @PathVariable Long id) {
         FriendshipRequest request = service.find(id);
         service.reject(request, member);
+        return new BaseResponse<>(true);
     }
 }

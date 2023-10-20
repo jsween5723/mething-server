@@ -3,7 +3,7 @@ package com.esc.bluespring.common.exception;
 import lombok.Getter;
 
 @Getter
-class ErrorResponse {
+public class ErrorResponse {
 
   private final String code;
   private final String message;

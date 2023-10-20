@@ -3,6 +3,7 @@ package com.esc.bluespring.domain.meeting.request;
 import static com.esc.bluespring.domain.member.entity.Member.ADMIN;
 import static com.esc.bluespring.domain.member.entity.Member.STUDENT;
 
+import com.esc.bluespring.common.BaseResponse;
 import com.esc.bluespring.common.CustomSlice;
 import com.esc.bluespring.domain.meeting.classes.MeetingRequestDto.Detail;
 import com.esc.bluespring.domain.meeting.classes.MeetingRequestDto.MyRequestListElement;
@@ -32,45 +33,51 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/v1/meeting-requests")
 public class MeetingRequestController {
 
-  private final MeetingRequestService requestService;
-  private final MeetingRequestMapper mapper = Mappers.getMapper(MeetingRequestMapper.class);
-  @GetMapping("me")
-  @RolesAllowed({STUDENT})
-  @Operation(description = "내가 포함된 신청 목록 조회")
-  public CustomSlice<MyRequestListElement> searchMyRequests(SearchCondition condition, Pageable pageable, Student user) {
-    Slice<MeetingRequest> result = requestService.searchMyRequests(condition, pageable,
-        user);
-    return new CustomSlice<>(result.map(mapper::toMyRequestListElement));
-  }
-  @DeleteMapping("{id}")
-  @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(description = "내가 보낸 신청에서 특정 과팅 신청 취소 (관리자, 혹은 신청자만 사용가능)")
-  public void cancel(@PathVariable UUID id, Member member) {
-    MeetingRequest request = requestService.find(id);
-    request.validRequesterOwner(member);
-    requestService.delete(request);
-  }
+    private final MeetingRequestService requestService;
+    private final MeetingRequestMapper mapper = Mappers.getMapper(MeetingRequestMapper.class);
 
-  @GetMapping("{id}")
-  @RolesAllowed({ADMIN, STUDENT})
-  @Operation(description = "특정 과팅 참여 신청 상세보기")
-  public Detail getDetail(@PathVariable UUID id, Member member) {
-    MeetingRequest request = requestService.find(id);
-    request.validPermission(member);
-    return mapper.toDetail(request, member instanceof Student student ? student : null);
-  }
+    @GetMapping("me")
+    @RolesAllowed({STUDENT})
+    @Operation(description = "내가 포함된 신청 목록 조회")
+    public BaseResponse<CustomSlice<MyRequestListElement>> searchMyRequests(
+        SearchCondition condition, Pageable pageable, Student user) {
+        Slice<MeetingRequest> result = requestService.searchMyRequests(condition, pageable, user);
+        return new BaseResponse<>(new CustomSlice<>(result.map(mapper::toMyRequestListElement)));
+    }
 
-  @PatchMapping("{id}/accept")
-  @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(description = "우리팀에 온 신청목록에서 -> 특정 과팅 참여 신청 수락(신청 수신자, 관리자만 사용가능)")
-  public void accept(@PathVariable UUID id, Member member) {
-    requestService.accept(id, member);
-  }
+    @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(description = "내가 보낸 신청에서 특정 과팅 신청 취소 (관리자, 혹은 신청자만 사용가능)")
+    public BaseResponse<Boolean> cancel(@PathVariable UUID id, Member member) {
+        MeetingRequest request = requestService.find(id);
+        request.validRequesterOwner(member);
+        requestService.delete(request);
+        return new BaseResponse<>(true);
+    }
 
-  @PatchMapping("{id}/reject")
-  @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(description = "우리팀에 온 신청목록에서 -> 특정 과팅 참여 신청 거절(신청 수신자, 관리자만 사용가능)")
-  public void reject(@PathVariable UUID id, Member member) {
-    requestService.reject(id, member);
-  }
+    @GetMapping("{id}")
+    @RolesAllowed({ADMIN, STUDENT})
+    @Operation(description = "특정 과팅 참여 신청 상세보기")
+    public BaseResponse<Detail> getDetail(@PathVariable UUID id, Member member) {
+        MeetingRequest request = requestService.find(id);
+        request.validPermission(member);
+        return new BaseResponse<>(
+            mapper.toDetail(request, member instanceof Student student ? student : null));
+    }
+
+    @PatchMapping("{id}/accept")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(description = "우리팀에 온 신청목록에서 -> 특정 과팅 참여 신청 수락(신청 수신자, 관리자만 사용가능)")
+    public BaseResponse<Boolean> accept(@PathVariable UUID id, Member member) {
+        requestService.accept(id, member);
+        return new BaseResponse<>(true);
+    }
+
+    @PatchMapping("{id}/reject")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(description = "우리팀에 온 신청목록에서 -> 특정 과팅 참여 신청 거절(신청 수신자, 관리자만 사용가능)")
+    public BaseResponse<Boolean> reject(@PathVariable UUID id, Member member) {
+        requestService.reject(id, member);
+        return new BaseResponse<>(true);
+    }
 }

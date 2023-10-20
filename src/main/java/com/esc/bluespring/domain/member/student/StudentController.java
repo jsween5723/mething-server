@@ -3,6 +3,7 @@ package com.esc.bluespring.domain.member.student;
 import static com.esc.bluespring.domain.member.entity.Member.ADMIN;
 import static com.esc.bluespring.domain.member.entity.Member.STUDENT;
 
+import com.esc.bluespring.common.BaseResponse;
 import com.esc.bluespring.common.CustomSlice;
 import com.esc.bluespring.domain.member.classes.MemberMapper;
 import com.esc.bluespring.domain.member.entity.Student;
@@ -36,27 +37,28 @@ public class StudentController {
     @GetMapping("school-informations")
     @RolesAllowed({ADMIN})
     @Operation(description = "학생증 인증을 위한 어드민용 학생정보 조회 API입니다.")
-    public CustomSlice<TeamListElement> search(
+    public BaseResponse<CustomSlice<TeamListElement>> search(
         @ParameterObject SearchCondition condition, @ParameterObject Pageable pageable) {
         Slice<TeamListElement> result = studentService.searchForAdmin(condition,
             pageable).map(mapper::toSchoolInformationListElement);
-        return new CustomSlice<>(result);
+        return new BaseResponse<>(new CustomSlice<>(result));
     }
 
     @PatchMapping("{id}")
     @RolesAllowed({ADMIN})
     @Operation(description = " 관리자용 학생증 인증 API입니다.")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void changeCertificationStatus(@PathVariable String id,
-        @Valid @RequestBody StudentDto.ChangeCertificationState dto) {
+    public BaseResponse<Boolean> changeCertificationStatus(@PathVariable String id,
+                                                  @Valid @RequestBody StudentDto.ChangeCertificationState dto) {
         Student student = studentService.find(id);
         studentService.changeCertificationState(student, dto.certificationState());
+        return new BaseResponse<>(true);
     }
 
     @GetMapping("authenticated")
     @RolesAllowed({STUDENT})
     @Operation(description = "학생 인증여부 확인 API입니다.")
-    public Boolean isAuthenticated(Student student) {
-        return student.isCertificated();
+    public BaseResponse<Boolean> isAuthenticated(Student student) {
+        return new BaseResponse<>(student.isCertificated());
     }
 }

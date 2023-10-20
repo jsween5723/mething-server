@@ -1,5 +1,6 @@
 package com.esc.bluespring.domain.auth.controller;
 
+import com.esc.bluespring.common.BaseResponse;
 import com.esc.bluespring.domain.auth.classes.AuthDto;
 import com.esc.bluespring.domain.auth.service.emailCode.EmailAuthenticationService;
 import com.esc.bluespring.domain.auth.service.phoneCode.PhoneService;
@@ -39,15 +40,17 @@ public class AuthController {
   @PostMapping("email-codes/generate")
   @Operation(summary = "요청 유저의 인증 메일를 발송한다. ")
   @ResponseStatus(HttpStatus.CREATED)
-  public void generateEmailCode(@Valid @RequestBody AuthDto.EmailCodeGenerate dto, HttpSession session) {
+  public BaseResponse<Boolean> generateEmailCode(@Valid @RequestBody AuthDto.EmailCodeGenerate dto, HttpSession session) {
     emailAuthenticationService.genereate(dto.email());
     session.setAttribute("email", dto.email());
+    return new BaseResponse<>(true);
   }
 
   @PostMapping("email-codes/authenticate")
   @Operation(summary = "요청 유저의 이메일 인증을 완료한다. (인증 마킹)")
-  public void authenticateEmailCode(@Valid @RequestBody AuthDto.EmailCodeAuthenticate dto, HttpSession session) {
+  public BaseResponse<Boolean> authenticateEmailCode(@Valid @RequestBody AuthDto.EmailCodeAuthenticate dto, HttpSession session) {
     emailAuthenticationService.authenticate((String) session.getAttribute("email"),dto.code());
     session.removeAttribute("email");
+    return new BaseResponse<>(true);
   }
 }

@@ -1,5 +1,6 @@
 package com.esc.bluespring.domain.university;
 
+import com.esc.bluespring.common.BaseResponse;
 import com.esc.bluespring.common.CustomSlice;
 import com.esc.bluespring.domain.university.classes.UniversityDto.SearchCondition;
 import com.esc.bluespring.domain.university.classes.UniversityDto.SearchListElement;
@@ -33,10 +34,10 @@ public class UniversityController {
 //  }
     @GetMapping
     @Operation(description = "회원가입 등에서 사용되는 학교 검색 API")
-    public CustomSlice<SearchListElement> search(@ParameterObject SearchCondition condition,
-        @ParameterObject Pageable pageable) {
+    public BaseResponse<CustomSlice<SearchListElement>> search(@ParameterObject SearchCondition condition,
+                                                                  @ParameterObject Pageable pageable) {
         Slice<SearchListElement> result = universityService.search(condition, pageable)
             .map(universityMapper::toSearchListElement);
-        return new CustomSlice<>(result);
+        return new BaseResponse<>(new CustomSlice<>(result));
     }
 }

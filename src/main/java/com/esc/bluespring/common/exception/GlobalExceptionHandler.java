@@ -1,5 +1,6 @@
 package com.esc.bluespring.common.exception;
 
+import com.esc.bluespring.common.BaseResponse;
 import com.esc.bluespring.domain.auth.exception.AuthException.ForbiddenException;
 import com.esc.bluespring.domain.auth.exception.AuthException.LoginRequiredException;
 import discord4j.discordjson.json.EmbedData;
@@ -34,22 +35,22 @@ public class GlobalExceptionHandler {
 
   @ExceptionHandler(AccessDeniedException.class)
   @ResponseStatus(HttpStatus.FORBIDDEN)
-  public ErrorResponse accessDeniedException(AccessDeniedException e) {
+  public BaseResponse<ErrorResponse> accessDeniedException(AccessDeniedException e) {
     ForbiddenException exception = new ForbiddenException(e);
     log.error(exception.getCause().getMessage());
-    return ErrorResponse.of(exception);
+    return new BaseResponse<>(ErrorResponse.of(exception));
   }
 
   @ExceptionHandler(AuthenticationException.class)
   @ResponseStatus(HttpStatus.UNAUTHORIZED)
-  public ErrorResponse authenticationException(AuthenticationException e) {
+  public BaseResponse<ErrorResponse> authenticationException(AuthenticationException e) {
     LoginRequiredException loginRequiredException = new LoginRequiredException(e);
     log.error(loginRequiredException.getCause().getMessage());
-    return ErrorResponse.of(loginRequiredException);
+    return new BaseResponse<>(ErrorResponse.of(loginRequiredException));
   }
 
   @ExceptionHandler(ApplicationException.class)
-  public ResponseEntity<ErrorResponse> applicationException(ApplicationException e) {
+  public ResponseEntity<BaseResponse<ErrorResponse>> applicationException(ApplicationException e) {
 
     String code = e.getCode();
     String message = e.getMessage();
@@ -58,12 +59,12 @@ public class GlobalExceptionHandler {
     log.warn(EXCEPTION_LOG_TEMPLATE, code, message);
     ErrorResponse errorResponse = ErrorResponse.of(e);
 
-    return ResponseEntity.status(status).body(errorResponse);
+    return ResponseEntity.status(status).body(new BaseResponse<>(errorResponse));
   }
 
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<ErrorResponse> methodArgumentNotValidException(
+  public ResponseEntity<BaseResponse<ErrorResponse>> methodArgumentNotValidException(
       MethodArgumentNotValidException e) {
 
     String code = e.getStatusCode().toString();
@@ -75,11 +76,11 @@ public class GlobalExceptionHandler {
     log.warn(EXCEPTION_LOG_TEMPLATE, code, message);
     ErrorResponse errorResponse = ErrorResponse.of(code, message);
 
-    return ResponseEntity.status(status).body(errorResponse);
+    return ResponseEntity.status(status).body(new BaseResponse<>(errorResponse));
   }
   @ExceptionHandler(Exception.class)
   @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-  public ErrorResponse internalException(Exception exception,
+  public BaseResponse<ErrorResponse> internalException(Exception exception,
                                          HttpServletRequest request) {
 
     StringWriter sw = new StringWriter();
@@ -94,7 +95,7 @@ public class GlobalExceptionHandler {
                     .build()).timestamp(LocalDateTime.now(ZoneId.of("Asia/Seoul")).format(
                 DateTimeFormatter.ISO_LOCAL_DATE_TIME)).build())
             .block();
-    return ErrorResponse.of(exception.getMessage(), exception.getLocalizedMessage());
+    return new BaseResponse<>(ErrorResponse.of(exception.getMessage(), exception.getLocalizedMessage()));
   }
 
 }
