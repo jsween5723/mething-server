@@ -74,7 +74,7 @@ public class GlobalExceptionHandler {
     String message = fieldError.getDefaultMessage();
 
     log.warn(EXCEPTION_LOG_TEMPLATE, code, message);
-    ErrorResponse errorResponse = ErrorResponse.of(code, message);
+    ErrorResponse errorResponse = ErrorResponse.of(code, message, HttpStatus.BAD_REQUEST);
 
     return ResponseEntity.status(status).body(new BaseResponse<>(errorResponse));
   }
@@ -95,7 +95,7 @@ public class GlobalExceptionHandler {
                     .build()).timestamp(LocalDateTime.now(ZoneId.of("Asia/Seoul")).format(
                 DateTimeFormatter.ISO_LOCAL_DATE_TIME)).build())
             .block();
-    return new BaseResponse<>(ErrorResponse.of(exception.getMessage(), exception.getLocalizedMessage()));
+    return new BaseResponse<>(ErrorResponse.of(exception.getMessage(), exception.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR));
   }
 
 }

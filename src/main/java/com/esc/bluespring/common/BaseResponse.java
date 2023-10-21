@@ -7,19 +7,25 @@ import lombok.Getter;
 @Getter
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class BaseResponse<T> {
-    private final boolean success;
+    private final Integer status;
+    private final String successId;
     private final T data;
-    private final ErrorResponse error;
+    private final String errorId;
+    private final String message;
 
     public BaseResponse(ErrorResponse error) {
-        this.success = false;
+        this.status = error.getStatus().value();
         this.data = null;
-        this.error = error;
+        this.successId = null;
+        this.errorId = error.getCode();
+        this.message = error.getMessage();
     }
 
     public BaseResponse(T data) {
+        this.status = 200;
         this.data = data;
-        this.success = true;
-        this.error = null;
+        this.successId = "OK";
+        this.errorId = null;
+        this.message = null;
     }
 }
