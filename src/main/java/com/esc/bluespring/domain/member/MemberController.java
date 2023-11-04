@@ -120,6 +120,9 @@ public class MemberController {
     }
 
     private UUID getRefreshTokenFromCookie(HttpServletRequest request) {
+        if (request.getCookies() == null) {
+            throw new LoginRequiredException();
+        }
         List<Cookie> cookies = Arrays.stream(request.getCookies())
             .filter(cookie -> cookie.getName().equals("refreshToken")).toList();
         if (cookies.isEmpty() || cookies.get(0).getValue() == null || cookies.get(0).getValue()
