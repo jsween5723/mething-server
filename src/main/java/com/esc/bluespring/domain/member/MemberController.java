@@ -31,7 +31,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -99,23 +101,33 @@ public class MemberController {
 
     @PostMapping("login")
     @Operation(description = "로그인하면 쿠키에 리프레쉬 토큰을 저장하고 엑세스토큰을 바디로 반환합니다.")
-    public BaseResponse<JwtToken> login(@RequestBody @Valid Login dto, HttpServletResponse response) {
+    public BaseResponse<JwtToken> login(@RequestBody @Valid Login dto,
+                                        HttpServletResponse response) {
         Member userDetails = memberServiceFacade.login(dto);
         Cookie refreshToken = new Cookie("refreshToken",
             refreshTokenService.create(userDetails).toString());
-        refreshToken.isHttpOnly();
-        response.addCookie(refreshToken);
+        setCookie(response, refreshToken);
         return new BaseResponse<>(new JwtToken(customJwtEncoder.generateAccessToken(userDetails)));
+    }
+
+    private void setCookie(HttpServletResponse response, Cookie src) {
+        ResponseCookie cookie = ResponseCookie.from(src.getName(), src.getValue()) // key & value
+            .httpOnly(true).secure(false).sameSite("None")  // sameSite
+            .build();
+
+        // Response to the client
+        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 
     @GetMapping("refresh")
     @Operation(description = "새로운 엑세스 토큰을 발급받습니다. 로그인시 쿠키에 저장된 리프레쉬토큰과 서버에 저장된 정보를 대조하여 재발급합니다.")
-    public BaseResponse<JwtToken> refresh(HttpServletRequest request, HttpServletResponse response) {
+    public BaseResponse<JwtToken> refresh(HttpServletRequest request,
+                                          HttpServletResponse response) {
         RefreshToken refresh = refreshTokenService.refresh(getRefreshTokenFromCookie(request));
         Cookie refreshToken = new Cookie("refreshToken", refresh.getRefreshToken().toString());
-        refreshToken.isHttpOnly();
-        response.addCookie(refreshToken);
-        return new BaseResponse<>(new JwtToken(customJwtEncoder.generateAccessToken(refresh.getMember())));
+        setCookie(response, refreshToken);
+        return new BaseResponse<>(
+            new JwtToken(customJwtEncoder.generateAccessToken(refresh.getMember())));
     }
 
     private UUID getRefreshTokenFromCookie(HttpServletRequest request) {
@@ -136,8 +148,7 @@ public class MemberController {
     public BaseResponse<Boolean> logout(HttpServletRequest request, HttpServletResponse response) {
         refreshTokenService.delete(getRefreshTokenFromCookie(request));
         Cookie refreshToken = new Cookie("refreshToken", null);
-        refreshToken.isHttpOnly();
-        response.addCookie(refreshToken);
+        setCookie(response, refreshToken);
         return new BaseResponse<>(true);
     }
 
