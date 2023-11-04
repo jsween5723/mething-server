@@ -42,7 +42,7 @@ public class RSAConfiguration {
         PublicKey aPublic = factory.generatePublic(new X509EncodedKeySpec(decodedBase64PubKey));
         PrivateKey aPrivate = factory.generatePrivate(new PKCS8EncodedKeySpec(decodedBase64PrivateKey));
         RSAKey keys = new Builder((RSAPublicKey) aPublic).privateKey(aPrivate).expirationTime(Date.from(
-                Instant.now().plus(120, ChronoUnit.MINUTES)))
+                Instant.now().plus(1, ChronoUnit.MINUTES)))
             .build();
         JWKSet jwkSet = new JWKSet(keys);
         return new ImmutableJWKSet<>(jwkSet);
