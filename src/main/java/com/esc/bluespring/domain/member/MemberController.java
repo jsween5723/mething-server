@@ -115,7 +115,6 @@ public class MemberController {
         RefreshToken refresh = refreshTokenService.refresh(getRefreshTokenFromCookie(request));
         Cookie refreshToken = new Cookie("refreshToken", refresh.getRefreshToken().toString());
         refreshToken.isHttpOnly();
-        refreshToken.setSecure(true);
         response.addCookie(refreshToken);
         return new BaseResponse<>(new JwtToken(customJwtEncoder.generateAccessToken(refresh.getMember())));
     }
