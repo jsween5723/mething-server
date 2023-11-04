@@ -8,3 +8,5 @@ spring:
   cloud:
     config:
       name: meeting, naver-sms, aws
+    refresh:
+      extra-refreshable: com.zaxxer.hikari.HikariDataSource
