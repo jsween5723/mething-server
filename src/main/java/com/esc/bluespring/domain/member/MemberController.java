@@ -104,7 +104,6 @@ public class MemberController {
         Cookie refreshToken = new Cookie("refreshToken",
             refreshTokenService.create(userDetails).toString());
         refreshToken.isHttpOnly();
-        refreshToken.setSecure(true);
         response.addCookie(refreshToken);
         return new BaseResponse<>(new JwtToken(customJwtEncoder.generateAccessToken(userDetails)));
     }
@@ -138,7 +137,6 @@ public class MemberController {
         refreshTokenService.delete(getRefreshTokenFromCookie(request));
         Cookie refreshToken = new Cookie("refreshToken", null);
         refreshToken.isHttpOnly();
-        refreshToken.setSecure(true);
         response.addCookie(refreshToken);
         return new BaseResponse<>(true);
     }
