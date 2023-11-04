@@ -112,7 +112,7 @@ public class MemberController {
 
     private void setCookie(HttpServletResponse response, Cookie src) {
         ResponseCookie cookie = ResponseCookie.from(src.getName(), src.getValue()) // key & value
-            .httpOnly(true).secure(true)
+            .httpOnly(true).secure(true).sameSite("None")
             .build();
 
         // Response to the client
