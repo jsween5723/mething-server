@@ -4,7 +4,6 @@ import com.esc.bluespring.common.resolver.AuthenticationResolver;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.servlet.server.CookieSameSiteSupplier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -34,10 +33,5 @@ public class WebConfiguration implements WebMvcConfigurer {
   public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
     WebMvcConfigurer.super.addArgumentResolvers(resolvers);
     resolvers.add(authenticationResolver);
-  }
-
-  @Bean
-  public CookieSameSiteSupplier applicationCookieSameSiteSupplier() {
-    return CookieSameSiteSupplier.ofNone();
   }
 }
