@@ -11,7 +11,7 @@ public record FriendshipRequestDto() {
         }
     }
 
-    public record ListElement(UUID id, StudentDto.TeamListElement requester, String message) {
+    public record ListElement(UUID id, StudentDto.TeamListElement requester, String message, Long createdAt) {
 
         @Builder
         public ListElement {
