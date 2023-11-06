@@ -53,7 +53,7 @@ public class MeetingController {
 
   @GetMapping
   @Operation(description = "메인 화면 과팅 목록", parameters = @Parameter(in = ParameterIn.HEADER, name = "Authorization"))
-  public BaseResponse<CustomSlice<MainPageListElement>> search(@ParameterObject SearchCondition condition,
+  public BaseResponse<CustomSlice<MainPageListElement>> search(@ParameterObject @Valid SearchCondition condition,
                                                               Member user, @ParameterObject Pageable pageable) {
     if (!(user instanceof Student) && condition.isMyLocation() != null && condition.isMyLocation()) {
       throw new ForbiddenException();

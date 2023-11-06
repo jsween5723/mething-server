@@ -11,7 +11,7 @@ import org.hibernate.validator.constraints.Length;
 
 public record MeetingDto() {
 
-  public record SearchCondition(Boolean isMyLocation, Set<UUID> ids) {
+  public record SearchCondition(@NotNull Boolean isMyLocation, Set<UUID> ids) {
 
   }
 
