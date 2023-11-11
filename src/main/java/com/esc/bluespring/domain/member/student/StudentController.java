@@ -1,7 +1,6 @@
 package com.esc.bluespring.domain.member.student;
 
 import static com.esc.bluespring.domain.member.entity.Member.ADMIN;
-import static com.esc.bluespring.domain.member.entity.Member.ANONYMOUS;
 import static com.esc.bluespring.domain.member.entity.Member.STUDENT;
 
 import com.esc.bluespring.common.BaseResponse;
@@ -92,13 +91,12 @@ public class StudentController {
     }
 
     @GetMapping("duplicate-email")
-    @RolesAllowed({ANONYMOUS})
     public BaseResponse<Boolean> checkEmail(@Parameter String email) {
         studentService.validEmail(email);
         return new BaseResponse<>(true);
     }
+
     @GetMapping("duplicate-nickname")
-    @RolesAllowed({ANONYMOUS})
     public BaseResponse<Boolean> checkNickname(@Parameter String nickname) {
         studentService.validNickname(nickname);
         return new BaseResponse<>(true);
