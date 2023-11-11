@@ -6,7 +6,7 @@ import lombok.Builder;
 
 public record FriendshipDto() {
     public record SearchCondition(Long universityId, String universityName, String locationDistrictName, String nickname, UUID memberId) {}
-    public record ListElement(UUID id, StudentDto.TeamListElement friend, long createdAt) {
+    public record ListElement(UUID id, StudentDto.ListElement friend, long createdAt) {
         @Builder
         public ListElement {}
     }

@@ -9,7 +9,7 @@ import com.esc.bluespring.domain.member.classes.MemberDto.SchoolInformationDto;
 import com.esc.bluespring.domain.member.entity.SchoolInformation;
 import com.esc.bluespring.domain.member.entity.Student;
 import com.esc.bluespring.domain.member.entity.StudentProfile;
-import com.esc.bluespring.domain.member.student.classes.StudentDto.TeamListElement;
+import com.esc.bluespring.domain.member.student.classes.StudentDto.ListElement;
 import com.esc.bluespring.domain.university.major.classes.MajorMapper;
 import java.util.UUID;
 import org.mapstruct.Mapper;
@@ -24,7 +24,7 @@ public interface MemberMapper {
     @Mapping(target = "id", ignore = true)
     Student toEntity(JoinRequest dto);
 
-    TeamListElement toSchoolInformationListElement(Student student);
+    ListElement toSchoolInformationListElement(Student student);
 
     @Mapping(target = "id", source = "id")
     Student toEntity(UUID id);

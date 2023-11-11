@@ -4,7 +4,8 @@ import com.esc.bluespring.domain.member.entity.Student;
 import com.esc.bluespring.domain.member.exception.MemberException.DuplicateNicknameException;
 import com.esc.bluespring.domain.member.exception.MemberException.DuplicateSchoolEmailException;
 import com.esc.bluespring.domain.member.exception.MemberException.MemberNotFoundException;
-import com.esc.bluespring.domain.member.student.classes.StudentDto.SearchCondition;
+import com.esc.bluespring.domain.member.student.classes.StudentDto.StudentSearchCondition;
+import com.esc.bluespring.domain.member.student.classes.StudentDto.AdminStudentSearchCondition;
 import com.esc.bluespring.domain.member.student.repository.StudentRepository;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,11 @@ public class StudentService {
     }
 
     @Transactional(readOnly = true)
-    public Slice<Student> searchForAdmin(SearchCondition condition, Pageable pageable) {
+    public Slice<Student> search(StudentSearchCondition condition, Pageable pageable) {
+        return repository.searchByNickname(condition, pageable);
+    }
+    @Transactional(readOnly = true)
+    public Slice<Student> searchForAdmin(AdminStudentSearchCondition condition, Pageable pageable) {
         return repository.searchForAdmin(condition, pageable);
     }
 

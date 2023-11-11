@@ -8,8 +8,9 @@ import com.esc.bluespring.common.CustomSlice;
 import com.esc.bluespring.domain.member.classes.MemberMapper;
 import com.esc.bluespring.domain.member.entity.Student;
 import com.esc.bluespring.domain.member.student.classes.StudentDto;
-import com.esc.bluespring.domain.member.student.classes.StudentDto.TeamListElement;
-import com.esc.bluespring.domain.member.student.classes.StudentDto.SearchCondition;
+import com.esc.bluespring.domain.member.student.classes.StudentDto.AdminStudentSearchCondition;
+import com.esc.bluespring.domain.member.student.classes.StudentDto.ListElement;
+import com.esc.bluespring.domain.member.student.classes.StudentDto.StudentSearchCondition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.annotation.security.RolesAllowed;
@@ -37,10 +38,11 @@ public class StudentController {
     @GetMapping("school-informations")
     @RolesAllowed({ADMIN})
     @Operation(description = "학생증 인증을 위한 어드민용 학생정보 조회 API입니다.")
-    public BaseResponse<CustomSlice<TeamListElement>> search(
-        @ParameterObject SearchCondition condition, @ParameterObject Pageable pageable) {
-        Slice<TeamListElement> result = studentService.searchForAdmin(condition,
-            pageable).map(mapper::toSchoolInformationListElement);
+    public BaseResponse<CustomSlice<ListElement>> search(
+        @ParameterObject AdminStudentSearchCondition condition,
+        @ParameterObject Pageable pageable) {
+        Slice<ListElement> result = studentService.searchForAdmin(condition, pageable)
+            .map(mapper::toSchoolInformationListElement);
         return new BaseResponse<>(new CustomSlice<>(result));
     }
 
@@ -49,7 +51,7 @@ public class StudentController {
     @Operation(description = " 관리자용 학생증 인증 API입니다.")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public BaseResponse<Boolean> changeCertificationStatus(@PathVariable String id,
-                                                  @Valid @RequestBody StudentDto.ChangeCertificationState dto) {
+                                                           @Valid @RequestBody StudentDto.ChangeCertificationState dto) {
         Student student = studentService.find(id);
         studentService.changeCertificationState(student, dto.certificationState());
         return new BaseResponse<>(true);
@@ -60,5 +62,14 @@ public class StudentController {
     @Operation(description = "학생 인증여부 확인 API입니다.")
     public BaseResponse<Boolean> isAuthenticated(Student student) {
         return new BaseResponse<>(student.isCertificated());
+    }
+
+    @GetMapping
+    @RolesAllowed({STUDENT})
+    @Operation(description = "닉네임으로 검색합니다.", summary = "학생 검색 API입니다.")
+    public BaseResponse<CustomSlice<ListElement>> isAuthenticated(
+        @ParameterObject StudentSearchCondition condition, @ParameterObject Pageable pageable) {
+        return new BaseResponse<>(new CustomSlice<>(studentService.search(condition, pageable)
+            .map(mapper::toSchoolInformationListElement)));
     }
 }
