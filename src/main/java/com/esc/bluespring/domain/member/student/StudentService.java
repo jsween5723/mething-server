@@ -28,11 +28,16 @@ public class StudentService {
 
     @Transactional(readOnly = true)
     public Slice<Student> search(StudentSearchCondition condition, Pageable pageable) {
-        return repository.searchByNickname(condition, pageable);
+        return repository.search(condition, pageable);
     }
     @Transactional(readOnly = true)
     public Slice<Student> searchForAdmin(AdminStudentSearchCondition condition, Pageable pageable) {
         return repository.searchForAdmin(condition, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public Student getDetail(UUID uuid) {
+        return repository.findDetail(uuid);
     }
 
     private void validForm(Student entity) {

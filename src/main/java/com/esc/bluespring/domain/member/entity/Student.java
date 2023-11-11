@@ -22,8 +22,6 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDate;
-import java.time.ZoneId;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -84,9 +82,8 @@ public class Student extends Member {
     }
 
     @Transient
-    public Integer getAge() {
-        long between = ChronoUnit.YEARS.between(birthday, LocalDate.now(ZoneId.of("Asia/Seoul")));
-        return Math.toIntExact(between);
+    public Integer getBirthYear() {
+        return birthday.getYear();
     }
 
     @Override

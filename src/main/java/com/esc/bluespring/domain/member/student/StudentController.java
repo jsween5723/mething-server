@@ -9,12 +9,14 @@ import com.esc.bluespring.domain.member.classes.MemberMapper;
 import com.esc.bluespring.domain.member.entity.Student;
 import com.esc.bluespring.domain.member.student.classes.StudentDto;
 import com.esc.bluespring.domain.member.student.classes.StudentDto.AdminStudentSearchCondition;
+import com.esc.bluespring.domain.member.student.classes.StudentDto.DetailResponse;
 import com.esc.bluespring.domain.member.student.classes.StudentDto.ListElement;
 import com.esc.bluespring.domain.member.student.classes.StudentDto.StudentSearchCondition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Pageable;
@@ -67,9 +69,23 @@ public class StudentController {
     @GetMapping
     @RolesAllowed({STUDENT})
     @Operation(description = "닉네임으로 검색합니다.", summary = "학생 검색 API입니다.")
-    public BaseResponse<CustomSlice<ListElement>> isAuthenticated(
+    public BaseResponse<CustomSlice<ListElement>> search(
         @ParameterObject StudentSearchCondition condition, @ParameterObject Pageable pageable) {
         return new BaseResponse<>(new CustomSlice<>(studentService.search(condition, pageable)
             .map(mapper::toSchoolInformationListElement)));
+    }
+
+    @GetMapping("{id}")
+    @RolesAllowed({STUDENT})
+    @Operation(description = "상세정보를 조회합니다.", summary = "학생의 상세정보를 조회합니다.")
+    public BaseResponse<DetailResponse> getDetail(@PathVariable UUID id) {
+        return new BaseResponse<>(mapper.toDetail(studentService.getDetail(id)));
+    }
+
+    @GetMapping("me")
+    @RolesAllowed({STUDENT})
+    @Operation(description = "상세정보를 조회합니다.", summary = "로그인된 학생의 상세정보를 조회합니다.")
+    public BaseResponse<DetailResponse> getMe(Student student) {
+        return new BaseResponse<>(mapper.toDetail(studentService.getDetail(student.getId())));
     }
 }

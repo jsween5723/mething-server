@@ -5,6 +5,7 @@ import static com.esc.bluespring.domain.member.entity.QStudent.student;
 import com.esc.bluespring.common.utils.querydsl.RepositorySlicer;
 import com.esc.bluespring.domain.locationDistrict.entity.QLocationDistrict;
 import com.esc.bluespring.domain.member.entity.QStudent;
+import com.esc.bluespring.domain.member.entity.QStudentInterest;
 import com.esc.bluespring.domain.member.entity.Student;
 import com.esc.bluespring.domain.member.student.classes.StudentDto.AdminStudentSearchCondition;
 import com.esc.bluespring.domain.member.student.classes.StudentDto.StudentSearchCondition;
@@ -14,6 +15,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -33,13 +35,20 @@ public class StudentQDRImpl implements StudentQDR {
         return RepositorySlicer.toSlice(result, pageable);
     }
 
-    public Slice<Student> searchByNickname(StudentSearchCondition condition, Pageable pageable) {
+    public Slice<Student> search(StudentSearchCondition condition, Pageable pageable) {
         JPAQuery<Student> dsl = query.selectFrom(student);
         fetchJoinStudent(dsl, student, "student");
         List<Student> result = dsl.where(toWhereCondition(condition))
             .limit(pageable.getPageSize() + 1).offset(pageable.getOffset())
             .orderBy(student.schoolInformation.isCertificated.desc()).fetch();
         return RepositorySlicer.toSlice(result, pageable);
+    }
+
+    public Student findDetail(UUID id) {
+        JPAQuery<Student> dsl = query.selectFrom(student);
+        fetchJoinStudent(dsl, student, "student");
+        fetchJoinStudentInterest(dsl, student, "student");
+        return dsl.where(student.id.eq(id)).fetchOne();
     }
 
     private BooleanBuilder toWhereCondition(StudentSearchCondition condition) {
@@ -71,6 +80,11 @@ public class StudentQDRImpl implements StudentQDR {
             builder.and(student.nickname.contains(condition.nickname().trim()));
         }
         return builder;
+    }
+
+    public void fetchJoinStudentInterest(JPAQuery<?> query, QStudent student, String key) {
+        QStudentInterest qStudentInterest = new QStudentInterest(key + "student_interest");
+        query.leftJoin(student.profile.interests, qStudentInterest).fetchJoin();
     }
 
     public void fetchJoinStudent(JPAQuery<?> query, QStudent student, String key) {

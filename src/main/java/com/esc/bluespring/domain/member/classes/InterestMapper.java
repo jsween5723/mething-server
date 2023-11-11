@@ -10,4 +10,7 @@ public interface InterestMapper {
     InterestMapper INSTANCE = Mappers.getMapper(InterestMapper.class);
     Interest toEntity(String name);
     StudentInterest toMiddleEntity(Interest interest);
+    default String toString(StudentInterest studentInterest) {
+        return studentInterest.getInterest().getName();
+    };
 }
