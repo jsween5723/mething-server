@@ -29,5 +29,5 @@ public record StudentDto() {
   }
 
   public record DetailResponse(UUID id, String introduce, String profileImageUrl, SchoolInformation schoolInformation,
-                               String nickname, ProfileDto profile) {}
+                               String nickname, ProfileDto profile, Integer birthYear) {}
 }
