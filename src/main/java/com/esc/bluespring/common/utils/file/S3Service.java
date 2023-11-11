@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 @Slf4j
@@ -30,6 +31,7 @@ public class S3Service {
   private final FileRepository repository;
   private static final String AWS_DOMAIN = ".amazonaws.com/";
   private final Directory directory = S3Directory.MEMBER;
+  @Transactional
   public Image upload(MultipartFile file) {
     if (file == null) {
       return null;
@@ -38,6 +40,7 @@ public class S3Service {
     String fileName = directory.getDirName() + metadata.getFileName();
     saveFile(file, fileName);
     metadata.changeUrl(getUrl(fileName));
+    repository.save(metadata);
     return metadata;
   }
 

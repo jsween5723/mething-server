@@ -29,12 +29,15 @@ public abstract class FileMetadata extends BaseEntity {
   private String fileName;
   private long bytes;
 
-  FileMetadata(MultipartFile file, String url) {
+  FileMetadata(MultipartFile file) {
     originalName = file.getOriginalFilename();
     fileName = createFileName();
     extension = getExtension(file);
     validate(file);
     bytes = file.getSize();
+  }
+
+  public FileMetadata(String url) {
     this.url = url;
   }
 

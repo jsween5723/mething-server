@@ -1,6 +1,7 @@
 package com.esc.bluespring.domain.member.entity;
 
 import jakarta.persistence.Entity;
+import java.util.List;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -16,8 +17,8 @@ public class Admin extends Member {
     }
 
     @Override
-    public Role getRole() {
-        return Role.ADMIN;
+    public List<Role> getRole() {
+        return List.of(Role.ADMIN);
     }
 
     @Override

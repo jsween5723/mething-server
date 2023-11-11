@@ -30,7 +30,7 @@ public class MemberServiceFacade implements UserDetailsService {
         validForm(member);
         String encoded = passwordEncoder.encode(member.getPassword());
         member.changePassword(encoded);
-//        emailAuthenticationService.isAuthenticated(member.getEmail());
+        emailAuthenticationService.isAuthenticated(member.getEmail());
         if (member instanceof Student student) {
             return studentService.join(student);
         }
@@ -60,7 +60,7 @@ public class MemberServiceFacade implements UserDetailsService {
     }
 
     @Transactional
-    public void resign(Member member) {
+    public void resign(Student member) {
         repository.delete(member);
     }
 
@@ -81,18 +81,5 @@ public class MemberServiceFacade implements UserDetailsService {
         } catch (Exception e) {
             throw new LoginFailedException();
         }
-    }
-
-    @Transactional
-    public void patch(Member source, Member target) {
-        if (source.getEmail() != null) {
-            emailAuthenticationService.isAuthenticated(source.getEmail());
-        }
-        if (source.getPassword() != null) {
-            emailAuthenticationService.isAuthenticated(source.getEmail());
-            String encoded = passwordEncoder.encode(source.getPassword());
-            source.changePassword(encoded);
-        }
-        target.patch(source);
     }
 }

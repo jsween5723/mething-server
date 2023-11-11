@@ -17,13 +17,13 @@ public class Image extends FileMetadata {
 
   private static final String CONTENT_TYPE = "image";
   private static final String[] SUPPORT_EXTENSION = {"jpg", "jpeg", "png"};
-
-  public Image(MultipartFile file, String url) {
-    super(file, url);
-  }
   @Builder
   Image(MultipartFile file) {
-    super(file, null);
+    super(file);
+  }
+
+  public Image(String url) {
+    super(url);
   }
 
   protected void validate(MultipartFile multipartFile) {

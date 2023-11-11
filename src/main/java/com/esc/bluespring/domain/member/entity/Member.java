@@ -52,11 +52,11 @@ public abstract class Member extends BaseEntity implements UserDetails {
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return List.of(getRole());
+    return getRole();
   }
 
   @Transient
-  abstract public Role getRole();
+  abstract public List<Role> getRole();
 
   @Override
   public boolean isAccountNonExpired() {
@@ -103,8 +103,7 @@ public abstract class Member extends BaseEntity implements UserDetails {
   }
 
   public enum Role implements GrantedAuthority {
-    ADMIN, STUDENT, NOT_CERTIFICATED_STUDENT;
-
+    ADMIN, STUDENT, NOT_CERTIFICATED_STUDENT, CERTIFICATED_STUDENT;
     @Override
     public String getAuthority() {
       return "ROLE_" + name();

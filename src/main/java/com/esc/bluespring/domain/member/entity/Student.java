@@ -1,7 +1,6 @@
 package com.esc.bluespring.domain.member.entity;
 
 import com.esc.bluespring.common.enums.Gender;
-import com.esc.bluespring.common.enums.MBTI;
 import com.esc.bluespring.domain.auth.exception.AuthException.ForbiddenException;
 import com.esc.bluespring.domain.file.entity.Image;
 import com.esc.bluespring.domain.friendship.entity.Friendship;
@@ -43,117 +42,116 @@ import org.hibernate.annotations.BatchSize;
     @Index(name = "name_index", columnList = "name")})
 public class Student extends Member {
 
-  @Column(nullable = false, unique = true)
-  private String nickname;
-  private String introduce;
-  @Column(nullable = false)
-  private LocalDate birthday;
-  @JoinColumn(name = "profile_image_url", referencedColumnName = "url")
-  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
-  private Image profileImage;
-  @Column(name = "profile_image_url", insertable = false, updatable = false)
-  private String profileImageUrl;
-  @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
-  private Gender gender;
-  @Enumerated(EnumType.STRING)
-  private MBTI mbti;
-  @Embedded
-  private SchoolInformation schoolInformation;
-  @OneToMany(mappedBy = "owner", cascade = CascadeType.PERSIST)
-  @BatchSize(size = 50)
-  private List<MeetingWatchlistItem> watchlist = new ArrayList<>();
-  @OneToMany(mappedBy = "requester", cascade = CascadeType.ALL, orphanRemoval = true)
-  @BatchSize(size = 50)
-  private List<FriendshipRequest> friendshipRequests = new ArrayList<>();
-  @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
-  @BatchSize(size = 50)
-  private List<Friendship> friendships = new ArrayList<>();
+    @Column(nullable = false, unique = true)
+    private String nickname;
+    private String introduce;
+    @Column(nullable = false)
+    private LocalDate birthday;
+    @JoinColumn(name = "profile_image_url", referencedColumnName = "url")
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Image profileImage;
+    @Column(name = "profile_image_url", insertable = false, updatable = false)
+    private String profileImageUrl;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Gender gender;
+    @Embedded
+    private SchoolInformation schoolInformation;
+    @Embedded
+    private StudentProfile profile;
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.PERSIST)
+    @BatchSize(size = 50)
+    private List<MeetingWatchlistItem> watchlist = new ArrayList<>();
+    @OneToMany(mappedBy = "requester", cascade = CascadeType.ALL, orphanRemoval = true)
+    @BatchSize(size = 50)
+    private List<FriendshipRequest> friendshipRequests = new ArrayList<>();
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    @BatchSize(size = 50)
+    private List<Friendship> friendships = new ArrayList<>();
 
-  public Student(UUID id, String email, String password, String nickname, String introduce,
-                 LocalDate birthday, Image profileImage, Gender gender, MBTI mbti,
-                 SchoolInformation schoolInformation) {
-    super(id, email, password);
-    this.nickname = nickname;
-    this.introduce = introduce;
-    this.birthday = birthday;
-    this.profileImage = profileImage;
-    this.gender = gender;
-    this.mbti = mbti;
-    this.schoolInformation = schoolInformation;
-  }
-
-  @Transient
-  public Integer getAge() {
-    long between = ChronoUnit.YEARS.between(birthday, LocalDate.now(ZoneId.of("Asia/Seoul")));
-    return Math.toIntExact(between);
-  }
-
-  @Override
-  public Role getRole() {
-    return Role.STUDENT;
-  }
-
-  public void validCertificated() {
-    if (!schoolInformation.isCertificated()) {
-      throw new ForbiddenException();
+    public Student(UUID id, String email, String password, String nickname, String introduce,
+                   LocalDate birthday, Image profileImage, Gender gender,
+                   SchoolInformation schoolInformation, StudentProfile profile) {
+        super(id, email, password);
+        this.nickname = nickname;
+        this.introduce = introduce;
+        this.birthday = birthday;
+        this.profileImage = profileImage;
+        this.gender = gender;
+        this.schoolInformation = schoolInformation;
+        this.profile = profile;
+        profile.assignStudent(this);
     }
-  }
 
-  public void changeCertificationState(boolean state) {
-    getSchoolInformation().changeCertificationState(state);
-  }
-
-  public boolean isCertificated() {
-    return getSchoolInformation().isCertificated();
-  }
-
-  @Override
-  public void valid() {
-    if (!schoolInformation.isCertificated()) {
-      throw new StudentNotCertificatedException();
+    @Transient
+    public Integer getAge() {
+        long between = ChronoUnit.YEARS.between(birthday, LocalDate.now(ZoneId.of("Asia/Seoul")));
+        return Math.toIntExact(between);
     }
-  }
 
-  public void friendshipRequestTo(Student target, String message) {
-    FriendshipRequest request = FriendshipRequest.builder().requester(this).target(target)
-        .message(message).build();
-    friendshipRequests.add(request);
-  }
-
-  public void addFriendship(Student friend) {
-    Friendship friendship = Friendship.builder().member(this).friend(friend).build();
-    friendships.add(friendship);
-  }
-
-  @Override
-  public void patch(Member source) {
-    super.patch(source);
-    if (source.getEmail() != null) {
-      schoolInformation.changeCertificationState(false);
+    @Override
+    public List<Role> getRole() {
+        return List.of(Role.STUDENT,
+            isCertificated() ? Role.CERTIFICATED_STUDENT : Role.NOT_CERTIFICATED_STUDENT);
     }
-    if (source instanceof Student student) {
-      if (student.nickname != null) {
-        nickname = student.nickname;
-      }
-      if (student.birthday != null) {
-        birthday = student.birthday;
-      }
-      if (student.profileImage != null) {
-        profileImage = student.profileImage;
-      }
-      if (student.gender != null) {
-        gender = student.gender;
-      }
-      if (student.mbti != null) {
-        mbti = student.mbti;
-      }
-      if (student.schoolInformation != null) {
-        schoolInformation.patch(student.schoolInformation);
-      }
-      if (student.introduce != null) {
-        introduce = student.introduce;
-      }
+
+    public void validCertificated() {
+        if (!schoolInformation.isCertificated()) {
+            throw new ForbiddenException();
+        }
     }
-  }
+
+    public void changeCertificationState(boolean state) {
+        getSchoolInformation().changeCertificationState(state);
+    }
+
+    public boolean isCertificated() {
+        return getSchoolInformation().isCertificated();
+    }
+
+    @Override
+    public void valid() {
+        if (!schoolInformation.isCertificated()) {
+            throw new StudentNotCertificatedException();
+        }
+    }
+
+    public void friendshipRequestTo(Student target, String message) {
+        FriendshipRequest request = FriendshipRequest.builder().requester(this).target(target)
+            .message(message).build();
+        friendshipRequests.add(request);
+    }
+
+    public void addFriendship(Student friend) {
+        Friendship friendship = Friendship.builder().member(this).friend(friend).build();
+        friendships.add(friendship);
+    }
+
+    @Override
+    public void patch(Member source) {
+        super.patch(source);
+        if (source.getEmail() != null) {
+            schoolInformation.changeCertificationState(false);
+        }
+        if (source instanceof Student student) {
+            if (student.nickname != null) {
+                nickname = student.nickname;
+            }
+            if (student.birthday != null) {
+                birthday = student.birthday;
+            }
+            if (student.profileImage != null) {
+                profileImage = student.profileImage;
+            }
+            if (student.gender != null) {
+                gender = student.gender;
+            }
+            if (student.schoolInformation != null) {
+                schoolInformation.patch(student.schoolInformation);
+            }
+            if (student.introduce != null) {
+                introduce = student.introduce;
+            }
+        }
+    }
 }

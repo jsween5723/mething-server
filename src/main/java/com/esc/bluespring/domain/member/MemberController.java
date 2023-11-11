@@ -1,26 +1,20 @@
 package com.esc.bluespring.domain.member;
 
-import static com.esc.bluespring.domain.member.entity.Member.ADMIN;
 import static com.esc.bluespring.domain.member.entity.Member.STUDENT;
 
 import com.esc.bluespring.common.BaseResponse;
 import com.esc.bluespring.common.security.CustomJwtEncoder;
 import com.esc.bluespring.common.utils.file.S3Service;
 import com.esc.bluespring.domain.auth.exception.AuthException.LoginRequiredException;
-import com.esc.bluespring.domain.file.entity.Image;
-import com.esc.bluespring.domain.member.classes.MemberDto.AdminJoin;
-import com.esc.bluespring.domain.member.classes.MemberDto.Join;
+import com.esc.bluespring.domain.member.classes.MemberDto.JoinRequest;
 import com.esc.bluespring.domain.member.classes.MemberDto.JwtToken;
 import com.esc.bluespring.domain.member.classes.MemberDto.Login;
-import com.esc.bluespring.domain.member.classes.MemberDto.Patch;
 import com.esc.bluespring.domain.member.classes.MemberDto.SendFriendShipRequest;
 import com.esc.bluespring.domain.member.classes.MemberMapper;
-import com.esc.bluespring.domain.member.entity.Admin;
 import com.esc.bluespring.domain.member.entity.Member;
 import com.esc.bluespring.domain.member.entity.RefreshToken;
 import com.esc.bluespring.domain.member.entity.Student;
 import com.esc.bluespring.domain.member.exception.MemberException.MemberNotFoundException;
-import com.esc.bluespring.domain.member.student.classes.StudentDto.Detail;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.servlet.http.Cookie;
@@ -36,7 +30,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -58,29 +51,18 @@ public class MemberController {
     @PostMapping("join")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(description = "학생 가입 API")
-    public BaseResponse<Boolean> join(Join dto) {
-        Image profile = s3Service.upload(dto.profileImage());
-        Image certificateImage = s3Service.upload(dto.studentCertificationImage());
-        memberServiceFacade.join(mapper.toEntity(dto, profile, certificateImage));
-        return new BaseResponse<>(true);
-    }
-
-    @PostMapping("admin-join")
-    @ResponseStatus(HttpStatus.CREATED)
-    public BaseResponse<Boolean> join(@RequestBody AdminJoin dto) {
+    public BaseResponse<Boolean> join(JoinRequest dto) {
         memberServiceFacade.join(mapper.toEntity(dto));
         return new BaseResponse<>(true);
     }
 
     @DeleteMapping("resign")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @RolesAllowed({ADMIN, STUDENT})
+    @RolesAllowed({STUDENT})
     @Operation(description = "회원 탈퇴")
-    public BaseResponse<Boolean> resign(Member member) {
-        if (member instanceof Student student) {
-            s3Service.remove(student.getProfileImage().getUrl());
-        }
-        memberServiceFacade.resign(member);
+    public BaseResponse<Boolean> resign(Student student) {
+        s3Service.remove(student.getProfileImage().getUrl());
+        memberServiceFacade.resign(student);
         return new BaseResponse<>(true);
     }
 
@@ -150,28 +132,5 @@ public class MemberController {
         Cookie refreshToken = new Cookie("refreshToken", null);
         setCookie(response, refreshToken);
         return new BaseResponse<>(true);
-    }
-
-    @PatchMapping("/me")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(description = "회원정보 변경 API(비밀번호, 이메일 변경시 이메일 인증 필수)")
-    public BaseResponse<Boolean> patch(@RequestBody @Valid Patch dto, Member target) {
-        if (target instanceof Admin) {
-            Admin source = mapper.toEntity(dto);
-            memberServiceFacade.patch(source, target);
-        }
-        if (target instanceof Student) {
-            Image profile = s3Service.upload(dto.profileImage());
-            Image certificateImage = s3Service.upload(dto.studentCertificationImage());
-            Student source = mapper.toEntity(dto, profile, certificateImage);
-            memberServiceFacade.patch(source, target);
-        }
-        return new BaseResponse<>(true);
-    }
-
-    @GetMapping("/me")
-    @RolesAllowed({STUDENT})
-    public BaseResponse<Detail> getMe(Student member) {
-        return new BaseResponse<>(mapper.toDetail(member));
     }
 }
