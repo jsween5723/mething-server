@@ -17,7 +17,7 @@ public record StudentDto() {
   }
 
   public record ListElement(UUID id, String introduce, String profileImageUrl, SchoolInformation schoolInformation,
-                            String nickname) { }
+                            String nickname, Integer birthYear) { }
 
   public record SchoolInformation(String name, MajorDto.SearchListElement major,
                                   boolean isCertificated) {
