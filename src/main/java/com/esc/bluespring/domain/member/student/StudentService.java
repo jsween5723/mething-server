@@ -41,14 +41,19 @@ public class StudentService {
     }
 
     private void validForm(Student entity) {
-        if (repository.existsByEmail(entity.getEmail())) {
+        validEmail(entity.getEmail());
+        validNickname(entity.getNickname());
+    }
+    public void validEmail(String email) {
+        if (repository.existsByEmail(email)) {
             throw new DuplicateSchoolEmailException();
         }
-        if (repository.existsByNickname(entity.getNickname())) {
+    }
+    public void validNickname(String nickname) {
+        if (repository.existsByNickname(nickname)) {
             throw new DuplicateNicknameException();
         }
     }
-
     @Transactional(readOnly = true)
     public Student find(String email) {
         return repository.findByEmail(email).orElseThrow(MemberNotFoundException::new);
