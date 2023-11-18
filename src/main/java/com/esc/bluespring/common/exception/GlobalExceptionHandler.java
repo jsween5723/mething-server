@@ -3,15 +3,8 @@ package com.esc.bluespring.common.exception;
 import com.esc.bluespring.common.BaseResponse;
 import com.esc.bluespring.domain.auth.exception.AuthException.ForbiddenException;
 import com.esc.bluespring.domain.auth.exception.AuthException.LoginRequiredException;
-import discord4j.discordjson.json.EmbedData;
-import discord4j.discordjson.json.EmbedFieldData;
 import discord4j.rest.entity.RestChannel;
 import jakarta.servlet.http.HttpServletRequest;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -83,18 +76,18 @@ public class GlobalExceptionHandler {
   public BaseResponse<ErrorResponse> internalException(Exception exception,
                                          HttpServletRequest request) {
 
-    StringWriter sw = new StringWriter();
-    exception.printStackTrace(new PrintWriter(sw));
-    String exceptionAsString = sw.toString();
-    channel.createMessage(
-        EmbedData.builder().title(exception.getLocalizedMessage().length() > 250 ? exception.getLocalizedMessage().substring(0,250) : exception.getLocalizedMessage()).description(exceptionAsString.substring(0,2000))
-            .addField(EmbedFieldData.builder().name("uri").value(request.getRequestURI()).build())
-            .addField(EmbedFieldData.builder().name("authorization")
-                .value(request.getHeader("Authorization") == null ? "" :request.getHeader("Authorization")).build()).addField(
-                EmbedFieldData.builder().name("parameters").value(request.getQueryString())
-                    .build()).timestamp(LocalDateTime.now(ZoneId.of("Asia/Seoul")).format(
-                DateTimeFormatter.ISO_LOCAL_DATE_TIME)).build())
-            .block();
+//    StringWriter sw = new StringWriter();
+//    exception.printStackTrace(new PrintWriter(sw));
+//    String exceptionAsString = sw.toString();
+//    channel.createMessage(
+//        EmbedData.builder().title(exception.getLocalizedMessage().length() > 250 ? exception.getLocalizedMessage().substring(0,250) : exception.getLocalizedMessage()).description(exceptionAsString.substring(0,2000))
+//            .addField(EmbedFieldData.builder().name("uri").value(request.getRequestURI()).build())
+//            .addField(EmbedFieldData.builder().name("authorization")
+//                .value(request.getHeader("Authorization") == null ? "" :request.getHeader("Authorization")).build()).addField(
+//                EmbedFieldData.builder().name("parameters").value(request.getQueryString())
+//                    .build()).timestamp(LocalDateTime.now(ZoneId.of("Asia/Seoul")).format(
+//                DateTimeFormatter.ISO_LOCAL_DATE_TIME)).build())
+//            .block();
     return new BaseResponse<>(ErrorResponse.of(exception.getMessage(), exception.getLocalizedMessage(), HttpStatus.INTERNAL_SERVER_ERROR));
   }
 
