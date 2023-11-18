@@ -2,6 +2,7 @@ package com.esc.bluespring.domain.auth.controller;
 
 import com.esc.bluespring.common.BaseResponse;
 import com.esc.bluespring.domain.auth.classes.AuthDto;
+import com.esc.bluespring.domain.auth.exception.AuthException.SessionHasNotEmailException;
 import com.esc.bluespring.domain.auth.service.emailCode.EmailAuthenticationService;
 import com.esc.bluespring.domain.auth.service.phoneCode.PhoneService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -49,6 +50,9 @@ public class AuthController {
   @PostMapping("email-codes/authenticate")
   @Operation(summary = "요청 유저의 이메일 인증을 완료한다. (인증 마킹)")
   public BaseResponse<Boolean> authenticateEmailCode(@Valid @RequestBody AuthDto.EmailCodeAuthenticate dto, HttpSession session) {
+    if(session.getAttribute("email") == null) {
+      throw new SessionHasNotEmailException();
+    }
     emailAuthenticationService.authenticate((String) session.getAttribute("email"),dto.code());
     session.removeAttribute("email");
     return new BaseResponse<>(true);
