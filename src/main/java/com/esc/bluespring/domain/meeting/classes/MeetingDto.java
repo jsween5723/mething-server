@@ -39,7 +39,7 @@ public record MeetingDto() {
   }
 
   public record MyMeetingPageListElement(UUID id, TeamDto.MainPageListElement myTeam,
-                                         Integer requestCount, Long createdAt) {
+                                         Integer requestCount, Long createdAt, String introduce) {
 
   }
 
