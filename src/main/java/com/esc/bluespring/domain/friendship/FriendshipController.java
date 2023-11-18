@@ -7,6 +7,8 @@ import com.esc.bluespring.domain.friendship.classes.FriendshipDto.SearchConditio
 import com.esc.bluespring.domain.friendship.entity.Friendship;
 import com.esc.bluespring.domain.member.entity.Student;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
@@ -27,7 +29,7 @@ public class FriendshipController {
     private final FriendshipService friendshipService;
     private final FriendshipMapper friendshipMapper = FriendshipMapper.INSTANCE;
     @GetMapping("/me")
-    @Operation(description = "내 친구 목록 검색")
+    @Operation(description = "내 친구 목록 검색", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public BaseResponse<CustomSlice<ListElement>> searchMyFriend(@ParameterObject SearchCondition condition, Student user, @ParameterObject Pageable pageable) {
         Slice<Friendship> result = friendshipService.search(condition, pageable, user);
         return new BaseResponse<>(new CustomSlice<>(result.map(friendshipMapper::toListElement)));
@@ -35,7 +37,7 @@ public class FriendshipController {
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(description = "친구 삭제")
+    @Operation(description = "친구 삭제", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public BaseResponse<Boolean> deleteFriendship(@PathVariable UUID id) {
         Friendship friendship = friendshipService.find(id);
         friendshipService.deleteFriendship(friendship);

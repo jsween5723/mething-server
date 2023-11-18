@@ -13,6 +13,8 @@ import com.esc.bluespring.domain.meeting.mapper.MeetingRequestMapper;
 import com.esc.bluespring.domain.member.entity.Member;
 import com.esc.bluespring.domain.member.entity.Student;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import jakarta.annotation.security.RolesAllowed;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -38,7 +40,7 @@ public class MeetingRequestController {
 
     @GetMapping("me")
     @RolesAllowed({STUDENT})
-    @Operation(description = "내가 포함된 신청 목록 조회")
+    @Operation(description = "내가 포함된 신청 목록 조회", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public BaseResponse<CustomSlice<MyRequestListElement>> searchMyRequests(
         SearchCondition condition, Pageable pageable, Student user) {
         Slice<MeetingRequest> result = requestService.searchMyRequests(condition, pageable, user);
@@ -47,7 +49,7 @@ public class MeetingRequestController {
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(description = "내가 보낸 신청에서 특정 과팅 신청 취소 (관리자, 혹은 신청자만 사용가능)")
+    @Operation(description = "내가 보낸 신청에서 특정 과팅 신청 취소 (관리자, 혹은 신청자만 사용가능)", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public BaseResponse<Boolean> cancel(@PathVariable UUID id, Member member) {
         MeetingRequest request = requestService.find(id);
         request.validRequesterOwner(member);
@@ -57,7 +59,7 @@ public class MeetingRequestController {
 
     @GetMapping("{id}")
     @RolesAllowed({ADMIN, STUDENT})
-    @Operation(description = "특정 과팅 참여 신청 상세보기")
+    @Operation(description = "특정 과팅 참여 신청 상세보기", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public BaseResponse<Detail> getDetail(@PathVariable UUID id, Member member) {
         MeetingRequest request = requestService.find(id);
         request.validPermission(member);
@@ -67,7 +69,7 @@ public class MeetingRequestController {
 
     @PatchMapping("{id}/accept")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(description = "우리팀에 온 신청목록에서 -> 특정 과팅 참여 신청 수락(신청 수신자, 관리자만 사용가능)")
+    @Operation(description = "우리팀에 온 신청목록에서 -> 특정 과팅 참여 신청 수락(신청 수신자, 관리자만 사용가능)", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public BaseResponse<Boolean> accept(@PathVariable UUID id, Member member) {
         requestService.accept(id, member);
         return new BaseResponse<>(true);
@@ -75,7 +77,7 @@ public class MeetingRequestController {
 
     @PatchMapping("{id}/reject")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(description = "우리팀에 온 신청목록에서 -> 특정 과팅 참여 신청 거절(신청 수신자, 관리자만 사용가능)")
+    @Operation(description = "우리팀에 온 신청목록에서 -> 특정 과팅 참여 신청 거절(신청 수신자, 관리자만 사용가능)", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public BaseResponse<Boolean> reject(@PathVariable UUID id, Member member) {
         requestService.reject(id, member);
         return new BaseResponse<>(true);

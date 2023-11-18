@@ -7,6 +7,8 @@ import com.esc.bluespring.domain.friendship.request.classes.FriendshipRequestDto
 import com.esc.bluespring.domain.friendship.request.entity.FriendshipRequest;
 import com.esc.bluespring.domain.member.entity.Student;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
@@ -31,7 +33,7 @@ public class FriendshipRequestController {
     private final FriendshipRequestService service;
 
     @GetMapping("/me")
-    @Operation(description = "내 친구 목록 검색")
+    @Operation(description = "내 친구 목록 검색", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public BaseResponse<CustomSlice<ListElement>> search(Student member,
                                                          @ParameterObject SearchCondition condition,
                                                          @ParameterObject Pageable pageable) {
@@ -43,7 +45,7 @@ public class FriendshipRequestController {
 
     @DeleteMapping("{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @Operation(description = "신청자가 해당 친구 신청을 철회합니다.")
+    @Operation(description = "신청자가 해당 친구 신청을 철회합니다.", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public BaseResponse<Boolean> remove(Student member, @PathVariable Long id) {
         FriendshipRequest request = service.find(id);
         service.delete(request, member);
@@ -51,7 +53,7 @@ public class FriendshipRequestController {
     }
 
     @PatchMapping("{id}/accept")
-    @Operation(description = "수신자가 해당 친구 신청을 수락합니다.")
+    @Operation(description = "수신자가 해당 친구 신청을 수락합니다.", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public BaseResponse<Boolean> accept(Student member, @PathVariable Long id) {
         FriendshipRequest request = service.find(id);
         service.accept(request, member);
@@ -59,7 +61,7 @@ public class FriendshipRequestController {
     }
 
     @PatchMapping("{id}/reject")
-    @Operation(description = "수신자가 해당 친구 신청을 거절합니다.")
+    @Operation(description = "수신자가 해당 친구 신청을 거절합니다.", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public BaseResponse<Boolean> reject(Student member, @PathVariable Long id) {
         FriendshipRequest request = service.find(id);
         service.reject(request, member);

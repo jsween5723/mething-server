@@ -30,7 +30,7 @@ public class SwaggerConfiguration {
             .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication")).components(
                 new Components().addSecuritySchemes("Bearer Authentication", createAPIKeyScheme()))
             .info(new Info().title("미띵 API")
-                .description("채팅 도메인 제외 모든 API입니다.")
+                .description("채팅 도메인 제외 모든 API입니다. Authorization 헤더가 파라미터에 없으면 싣지 말아주세요.")
                 .version("1.0").contact(new Contact().name("조현창")
                     .email( "meething.me").url("esc.team.com@gmail.com")));
     }

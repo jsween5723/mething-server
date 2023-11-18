@@ -14,6 +14,7 @@ import com.esc.bluespring.domain.member.student.classes.StudentDto.ListElement;
 import com.esc.bluespring.domain.member.student.classes.StudentDto.StudentSearchCondition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
@@ -40,7 +41,7 @@ public class StudentController {
 
     @GetMapping("school-informations")
     @RolesAllowed({ADMIN})
-    @Operation(description = "학생증 인증을 위한 어드민용 학생정보 조회 API입니다.")
+    @Operation(description = "학생증 인증을 위한 어드민용 학생정보 조회 API입니다.", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public BaseResponse<CustomSlice<ListElement>> search(
         @ParameterObject AdminStudentSearchCondition condition,
         @ParameterObject Pageable pageable) {
@@ -51,7 +52,7 @@ public class StudentController {
 
     @PatchMapping("{id}")
     @RolesAllowed({ADMIN})
-    @Operation(description = " 관리자용 학생증 인증 API입니다.")
+    @Operation(description = " 관리자용 학생증 인증 API입니다.", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public BaseResponse<Boolean> changeCertificationStatus(@PathVariable String id,
                                                            @Valid @RequestBody StudentDto.ChangeCertificationState dto) {
@@ -62,14 +63,14 @@ public class StudentController {
 
     @GetMapping("authenticated")
     @RolesAllowed({STUDENT})
-    @Operation(description = "학생 인증여부 확인 API입니다.")
+    @Operation(description = "학생 인증여부 확인 API입니다.", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public BaseResponse<Boolean> isAuthenticated(Student student) {
         return new BaseResponse<>(student.isCertificated());
     }
 
     @GetMapping
     @RolesAllowed({STUDENT})
-    @Operation(description = "닉네임으로 검색합니다.", summary = "학생 검색 API입니다.")
+    @Operation(description = "닉네임으로 검색합니다.", summary = "학생 검색 API입니다.", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public BaseResponse<CustomSlice<ListElement>> search(
         @ParameterObject StudentSearchCondition condition, @ParameterObject Pageable pageable) {
         return new BaseResponse<>(new CustomSlice<>(studentService.search(condition, pageable)
@@ -78,14 +79,14 @@ public class StudentController {
 
     @GetMapping("{id}")
     @RolesAllowed({STUDENT})
-    @Operation(description = "상세정보를 조회합니다.", summary = "학생의 상세정보를 조회합니다.")
+    @Operation(description = "상세정보를 조회합니다.", summary = "학생의 상세정보를 조회합니다.", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public BaseResponse<DetailResponse> getDetail(@PathVariable UUID id) {
         return new BaseResponse<>(mapper.toDetail(studentService.getDetail(id)));
     }
 
     @GetMapping("me")
     @RolesAllowed({STUDENT})
-    @Operation(description = "상세정보를 조회합니다.", summary = "로그인된 학생의 상세정보를 조회합니다.")
+    @Operation(description = "상세정보를 조회합니다.", summary = "로그인된 학생의 상세정보를 조회합니다.", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public BaseResponse<DetailResponse> getMe(Student student) {
         return new BaseResponse<>(mapper.toDetail(studentService.getDetail(student.getId())));
     }

@@ -16,6 +16,8 @@ import com.esc.bluespring.domain.member.entity.RefreshToken;
 import com.esc.bluespring.domain.member.entity.Student;
 import com.esc.bluespring.domain.member.exception.MemberException.MemberNotFoundException;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -59,7 +61,7 @@ public class MemberController {
     @DeleteMapping("resign")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @RolesAllowed({STUDENT})
-    @Operation(description = "회원 탈퇴")
+    @Operation(description = "회원 탈퇴", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public BaseResponse<Boolean> resign(Student student) {
         s3Service.remove(student.getProfileImage().getUrl());
         memberServiceFacade.resign(student);
@@ -69,7 +71,7 @@ public class MemberController {
     @PostMapping("{id}/friendship-requests")
     @ResponseStatus(HttpStatus.CREATED)
     @RolesAllowed({STUDENT})
-    @Operation(description = "친구신청을 합니다.")
+    @Operation(description = "친구신청을 합니다.", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public BaseResponse<Boolean> requestFriendship(Student user, @PathVariable UUID id,
                                                    @RequestBody SendFriendShipRequest dto) {
         try {
@@ -94,8 +96,7 @@ public class MemberController {
 
     private void setCookie(HttpServletResponse response, Cookie src) {
         ResponseCookie cookie = ResponseCookie.from(src.getName(), src.getValue()) // key & value
-            .httpOnly(true).secure(true).sameSite("None")
-            .build();
+            .httpOnly(true).secure(true).sameSite("None").build();
 
         // Response to the client
         response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
