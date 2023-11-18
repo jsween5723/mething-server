@@ -1,6 +1,5 @@
 package com.esc.bluespring.common.configuration;
 
-import com.esc.bluespring.common.security.AllowInvalidTokenFilter;
 import com.esc.bluespring.common.security.AuthenticationEntryPointImpl;
 import com.esc.bluespring.common.security.JwtAuthenticationConverter;
 import com.esc.bluespring.domain.member.entity.Member.Role;
@@ -18,7 +17,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -36,7 +34,6 @@ public class SecurityConfiguration {
     private final AccessDeniedHandler accessDeniedHandler;
     private final AuthenticationEntryPointImpl restAuthenticationEntryPoint;
     private final CorsConfigurationSource corsConfigurationSource;
-    private final AllowInvalidTokenFilter allowInvalidTokenFilter;
 
 
     @Bean
@@ -51,8 +48,7 @@ public class SecurityConfiguration {
                     jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(converter)
                         .decoder(jwtDecoder)).accessDeniedHandler(accessDeniedHandler)
                 .authenticationEntryPoint(restAuthenticationEntryPoint)).formLogin(
-                form -> form.permitAll().usernameParameter("email").passwordParameter("password"))
-            .addFilterBefore(allowInvalidTokenFilter, BearerTokenAuthenticationFilter.class);
+                form -> form.permitAll().usernameParameter("email").passwordParameter("password"));
         return http.build();
     }
 
