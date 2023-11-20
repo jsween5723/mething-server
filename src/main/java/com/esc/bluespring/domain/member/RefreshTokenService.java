@@ -1,6 +1,6 @@
 package com.esc.bluespring.domain.member;
 
-import com.esc.bluespring.domain.auth.exception.AuthException.LoginRequiredException;
+import com.esc.bluespring.domain.auth.exception.AuthException.GoToLoginException;
 import com.esc.bluespring.domain.member.entity.Member;
 import com.esc.bluespring.domain.member.entity.RefreshToken;
 import java.util.UUID;
@@ -23,7 +23,7 @@ public class RefreshTokenService {
     @Transactional
     public RefreshToken refresh(UUID refreshToken) {
         RefreshToken previous = repository.findById(refreshToken)
-            .orElseThrow(LoginRequiredException::new);
+            .orElseThrow(GoToLoginException::new);
         RefreshToken saved = repository.save(new RefreshToken(previous.getMember()));
         repository.delete(previous);
         return saved;

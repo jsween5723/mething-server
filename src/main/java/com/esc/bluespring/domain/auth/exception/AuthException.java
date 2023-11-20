@@ -2,6 +2,7 @@ package com.esc.bluespring.domain.auth.exception;
 
 import static com.esc.bluespring.domain.auth.exception.AuthExceptionCode.EMAIL_CODE_NOT_FOUND;
 import static com.esc.bluespring.domain.auth.exception.AuthExceptionCode.FORBIDDEN;
+import static com.esc.bluespring.domain.auth.exception.AuthExceptionCode.GO_TO_LOGIN;
 import static com.esc.bluespring.domain.auth.exception.AuthExceptionCode.LOGIN_FAILED;
 import static com.esc.bluespring.domain.auth.exception.AuthExceptionCode.LOGIN_REQUIRED;
 import static com.esc.bluespring.domain.auth.exception.AuthExceptionCode.PHONE_CODE_NOT_FOUND;
@@ -56,7 +57,12 @@ public abstract class AuthException extends ApplicationException {
             super(LOGIN_FAILED);
         }
     }
+    public static class GoToLoginException extends AuthException{
 
+        public GoToLoginException() {
+            super(GO_TO_LOGIN);
+        }
+    }
     public static class LoginRequiredException extends AuthException {
 
         public LoginRequiredException(AuthenticationException e) {
