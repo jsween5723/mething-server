@@ -28,7 +28,7 @@ public abstract class OwnerEntity<M extends Member> extends BaseEntity{
     }
 
     public void validOwner(Member member) {
-        if (isOwner(member)) {
+        if (!isOwner(member)) {
             throw new NotOwnerException();
         }
     }
