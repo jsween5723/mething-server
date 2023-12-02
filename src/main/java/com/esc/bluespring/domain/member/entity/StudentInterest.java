@@ -34,10 +34,12 @@ public class StudentInterest {
     public StudentInterest(Student student, Interest interest) {
         this.student = student;
         this.interest = interest;
+        pk = new StudentInterestPK(interest.getName(), student != null ? student.getId() : null);
     }
 
     void assignStudent(Student student) {
         this.student = student;
+        pk = new StudentInterestPK(interest.getName(), student.getId());
     }
 
     @Getter
