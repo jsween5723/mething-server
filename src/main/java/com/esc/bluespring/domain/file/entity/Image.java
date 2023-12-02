@@ -7,7 +7,6 @@ import jakarta.persistence.Entity;
 import java.util.Arrays;
 import java.util.Objects;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,14 +16,13 @@ public class Image extends FileMetadata {
 
   private static final String CONTENT_TYPE = "image";
   private static final String[] SUPPORT_EXTENSION = {"jpg", "jpeg", "png"};
-  @Builder
+  public Image(String url) {
+    super(url);
+  }
   Image(MultipartFile file) {
     super(file);
   }
 
-  public Image(String url) {
-    super(url);
-  }
 
   protected void validate(MultipartFile multipartFile) {
     if (multipartFile == null || multipartFile.isEmpty()) {

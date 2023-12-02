@@ -18,7 +18,7 @@ import org.springframework.format.annotation.DateTimeFormat.ISO;
 
 public record MemberDto() {
 
-    public record JoinRequest(@NotNull String profileImage,
+    public record JoinRequest(String profileImage,
                               @NotBlank @Length(min = 2, max = 10, message = "닉네임은 2~10 글자입니다.") @NotNull String nickname,
                               @NotNull String introduce, @NotNull @NotBlank String password,
                               @NotNull @DateTimeFormat(iso = ISO.DATE) LocalDate birthday,
@@ -35,7 +35,7 @@ public record MemberDto() {
     }
 
     public record SchoolInformationDto(@NotNull @NotBlank String name,
-                                       @NotNull String studentCertificationImage,
+                                       String studentCertificationImage,
                                        @NotNull Long major) {
 
     }

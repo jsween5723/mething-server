@@ -1,13 +1,13 @@
-package com.esc.bluespring.common.utils.file;
+package com.esc.bluespring.domain.file.entity;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.esc.bluespring.common.utils.file.Directory;
+import com.esc.bluespring.common.utils.file.S3Directory;
 import com.esc.bluespring.common.utils.file.exception.FileException.S3DeleteFailException;
 import com.esc.bluespring.common.utils.file.exception.FileException.S3FetchFailException;
 import com.esc.bluespring.common.utils.file.exception.FileException.S3UploadFailException;
 import com.esc.bluespring.domain.file.FileRepository;
-import com.esc.bluespring.domain.file.entity.FileMetadata;
-import com.esc.bluespring.domain.file.entity.Image;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -36,7 +36,7 @@ public class S3Service {
     if (file == null) {
       return null;
     }
-    Image metadata = Image.builder().file(file).build();
+    Image metadata = new Image(file);
     String fileName = directory.getDirName() + metadata.getFileName();
     saveFile(file, fileName);
     metadata.changeUrl(getUrl(fileName));
@@ -71,7 +71,7 @@ public class S3Service {
     return resultUrl.toString();
   }
 
-  protected void deleteFile(String url) {
+  public void deleteFile(String url) {
     String[] fileURL = url.split(AWS_DOMAIN);
     String key = fileURL[fileURL.length - 1];
     if (!amazonS3Client.doesObjectExist(bucket, key)) {

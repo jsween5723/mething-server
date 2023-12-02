@@ -1,7 +1,7 @@
 package com.esc.bluespring.domain.file;
 
 import com.esc.bluespring.common.BaseResponse;
-import com.esc.bluespring.common.utils.file.S3Service;
+import com.esc.bluespring.domain.file.entity.S3Service;
 import com.esc.bluespring.domain.file.entity.Image;
 import com.esc.bluespring.domain.file.model.FileDto.FileUrlResponse;
 import jakarta.validation.constraints.NotNull;
