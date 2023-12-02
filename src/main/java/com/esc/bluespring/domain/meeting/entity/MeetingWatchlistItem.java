@@ -48,9 +48,6 @@ public class MeetingWatchlistItem extends OwnerEntity<Student> {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    if (!super.equals(o)) {
-      return false;
-    }
     MeetingWatchlistItem that = (MeetingWatchlistItem) o;
     return Objects.equals(meeting, that.meeting);
   }
