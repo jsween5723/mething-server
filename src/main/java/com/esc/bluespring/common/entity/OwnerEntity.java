@@ -58,6 +58,6 @@ public abstract class OwnerEntity<M extends Member> extends BaseEntity{
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), owner);
+        return Objects.hash(owner);
     }
 }
