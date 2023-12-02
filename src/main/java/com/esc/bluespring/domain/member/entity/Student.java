@@ -77,8 +77,8 @@ public class Student extends Member {
         this.profileImage = profileImage;
         this.gender = gender;
         this.schoolInformation = schoolInformation;
-        this.profile = profile;
         profile.assignStudent(this);
+        this.profile = profile;
     }
 
     @Transient

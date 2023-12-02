@@ -30,7 +30,7 @@ public class MemberServiceFacade implements UserDetailsService {
         validForm(member);
         String encoded = passwordEncoder.encode(member.getPassword());
         member.changePassword(encoded);
-        emailAuthenticationService.isAuthenticated(member.getEmail());
+//        emailAuthenticationService.isAuthenticated(member.getEmail());
         if (member instanceof Student student) {
             return studentService.join(student);
         }
