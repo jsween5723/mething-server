@@ -9,6 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import java.util.Objects;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -37,5 +38,25 @@ public class MeetingWatchlistItem extends OwnerEntity<Student> {
 
   void declareMeeting(Meeting source) {
     meeting = source;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    if (!super.equals(o)) {
+      return false;
+    }
+    MeetingWatchlistItem that = (MeetingWatchlistItem) o;
+    return Objects.equals(meeting, that.meeting);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), meeting);
   }
 }
