@@ -53,7 +53,7 @@ public class MemberController {
     @PostMapping("join")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(description = "학생 가입 API")
-    public BaseResponse<Boolean> join(JoinRequest dto) {
+    public BaseResponse<Boolean> join(@RequestBody JoinRequest dto) {
         memberServiceFacade.join(mapper.toEntity(dto));
         return new BaseResponse<>(true);
     }
