@@ -46,7 +46,7 @@ public class Student extends Member {
     @Column(nullable = false)
     private LocalDate birthday;
     @JoinColumn(name = "profile_image_url", referencedColumnName = "url")
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY, orphanRemoval = true)
     private Image profileImage;
     @Column(name = "profile_image_url", insertable = false, updatable = false)
     private String profileImageUrl;
