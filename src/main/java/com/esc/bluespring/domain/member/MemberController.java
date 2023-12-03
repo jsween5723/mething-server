@@ -4,8 +4,8 @@ import static com.esc.bluespring.domain.member.entity.Member.STUDENT;
 
 import com.esc.bluespring.common.BaseResponse;
 import com.esc.bluespring.common.security.CustomJwtEncoder;
+import com.esc.bluespring.domain.auth.exception.AuthException.GoToLoginException;
 import com.esc.bluespring.domain.file.entity.S3Service;
-import com.esc.bluespring.domain.auth.exception.AuthException.LoginRequiredException;
 import com.esc.bluespring.domain.member.classes.MemberDto.JoinRequest;
 import com.esc.bluespring.domain.member.classes.MemberDto.JwtToken;
 import com.esc.bluespring.domain.member.classes.MemberDto.Login;
@@ -115,13 +115,13 @@ public class MemberController {
 
     private UUID getRefreshTokenFromCookie(HttpServletRequest request) {
         if (request.getCookies() == null) {
-            throw new LoginRequiredException();
+            throw new GoToLoginException();
         }
         List<Cookie> cookies = Arrays.stream(request.getCookies())
             .filter(cookie -> cookie.getName().equals("refreshToken")).toList();
         if (cookies.isEmpty() || cookies.get(0).getValue() == null || cookies.get(0).getValue()
             .isBlank()) {
-            throw new LoginRequiredException();
+            throw new GoToLoginException();
         }
         return UUID.fromString(cookies.get(0).getValue());
     }
