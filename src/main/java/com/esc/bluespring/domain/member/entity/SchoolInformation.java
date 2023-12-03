@@ -29,7 +29,9 @@ public class SchoolInformation {
   private boolean isCertificated = false;
   @Column(nullable = false)
   private String name;
-
+  void reassignCertificationImage(Image image) {
+    this.studentCertificationImage = image;
+  }
   public SchoolInformation(Major major, Image studentCertificationImage, Boolean isCertificated,
                            String name) {
     this.name = name;

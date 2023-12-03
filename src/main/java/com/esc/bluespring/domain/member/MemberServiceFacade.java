@@ -2,6 +2,7 @@ package com.esc.bluespring.domain.member;
 
 import com.esc.bluespring.domain.auth.exception.AuthException.LoginFailedException;
 import com.esc.bluespring.domain.auth.service.emailCode.EmailAuthenticationService;
+import com.esc.bluespring.domain.file.FileService;
 import com.esc.bluespring.domain.member.classes.MemberDto.Login;
 import com.esc.bluespring.domain.member.entity.Member;
 import com.esc.bluespring.domain.member.entity.Student;
@@ -24,6 +25,7 @@ public class MemberServiceFacade implements UserDetailsService {
     private final MemberRepository repository;
     private final StudentService studentService;
     private final PasswordEncoder passwordEncoder;
+    private final FileService fileService;
 
     @Transactional
     public Member join(Member member) {
@@ -32,6 +34,9 @@ public class MemberServiceFacade implements UserDetailsService {
         member.changePassword(encoded);
 //        emailAuthenticationService.isAuthenticated(member.getEmail());
         if (member instanceof Student student) {
+            student.reassignProfileImage(fileService.findByUrl(student.getProfileImage().getUrl()));
+            student.reassignCertificationImage(fileService.findByUrl(
+                student.getSchoolInformation().getStudentCertificationImageUrl()));
             return studentService.join(student);
         }
         return repository.save(member);

@@ -1,17 +1,13 @@
 package com.esc.bluespring.domain.member.entity;
 
+import com.esc.bluespring.common.entity.BaseEntity;
 import com.esc.bluespring.domain.member.entity.profile.Interest;
-import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
-import java.io.Serializable;
-import java.util.UUID;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -19,35 +15,21 @@ import lombok.NoArgsConstructor;
 @Table(name = "student_interests")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class StudentInterest {
+public class StudentInterest extends BaseEntity {
 
-    @EmbeddedId
-    private StudentInterestPK pk;
-
-    @MapsId("student_id")
+    @JoinColumn
     @ManyToOne(fetch = FetchType.LAZY)
     Student student;
-    @MapsId("interest_name")
+    @JoinColumn
     @ManyToOne(fetch = FetchType.LAZY)
     Interest interest;
 
     public StudentInterest(Student student, Interest interest) {
         this.student = student;
         this.interest = interest;
-        pk = new StudentInterestPK(interest.getName(), student != null ? student.getId() : null);
     }
 
     void assignStudent(Student student) {
         this.student = student;
-        pk = new StudentInterestPK(interest.getName(), student.getId());
-    }
-
-    @Getter
-    @AllArgsConstructor
-    public static class StudentInterestPK implements Serializable {
-        @Column(name = "interest_name")
-        private String interestName;
-        @Column(name = "student_id")
-        private UUID studentId;
     }
 }

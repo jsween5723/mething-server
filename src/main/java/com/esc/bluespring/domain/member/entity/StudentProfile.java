@@ -32,7 +32,7 @@ public class StudentProfile {
     @Enumerated(EnumType.STRING)
     private MBTI mbti;
     private Double stature;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "student", cascade = CascadeType.PERSIST)
     private Set<StudentInterest> interests = new LinkedHashSet<>();
 
     public StudentProfile(Drink drink, Smoke smoke, Sport sport, BioPattern bioPattern, MBTI mbti,

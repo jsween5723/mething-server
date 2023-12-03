@@ -81,6 +81,14 @@ public class Student extends Member {
         this.profile = profile;
     }
 
+    public void reassignProfileImage(Image image) {
+        this.profileImage = image;
+    }
+
+    public void reassignCertificationImage(Image image) {
+        this.schoolInformation.reassignCertificationImage(image);
+    }
+
     @Transient
     public Integer getBirthYear() {
         return birthday.getYear();
