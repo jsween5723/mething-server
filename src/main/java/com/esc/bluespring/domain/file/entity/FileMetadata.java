@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 import jakarta.persistence.Table;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -38,7 +40,7 @@ public abstract class FileMetadata extends BaseEntity {
   }
 
   public FileMetadata(String url) {
-    this.url = url;
+      this.url = URLEncoder.encode(url, StandardCharsets.UTF_8);
   }
 
   public void changeUrl(String url) {
