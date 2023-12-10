@@ -5,5 +5,5 @@ import java.util.UUID;
 
 public record TeamParticipantDto() {
     public record MainPageListElement(UUID id, String introduce, String profileImageUrl, SchoolInformation schoolInformation,
-                                      String nickname, boolean isOwner, int age) {}
+                                      String nickname, boolean isOwner, Integer birthYear) {}
 }
