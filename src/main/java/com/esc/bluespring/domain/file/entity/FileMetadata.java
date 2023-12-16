@@ -34,7 +34,7 @@ public abstract class FileMetadata extends BaseEntity {
   FileMetadata(MultipartFile file) {
     originalName = file.getOriginalFilename();
     extension = getExtension(file);
-    fileName = UUID.randomUUID() +extension;
+    fileName = UUID.randomUUID() + "."+extension;
     validate(file);
     bytes = file.getSize();
   }
