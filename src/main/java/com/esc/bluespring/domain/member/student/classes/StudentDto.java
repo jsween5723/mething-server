@@ -28,6 +28,8 @@ public record StudentDto() {
 
   }
 
+  public record GetCertification(Boolean certificationState, String certificationImageUrl) {}
+
   public record ChangeCertificationImage(@NotNull String certificationImageUrl) {
 
   }

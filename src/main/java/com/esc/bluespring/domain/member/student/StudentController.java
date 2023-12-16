@@ -11,6 +11,7 @@ import com.esc.bluespring.domain.member.student.classes.StudentDto;
 import com.esc.bluespring.domain.member.student.classes.StudentDto.AdminStudentSearchCondition;
 import com.esc.bluespring.domain.member.student.classes.StudentDto.ChangeCertificationImage;
 import com.esc.bluespring.domain.member.student.classes.StudentDto.DetailResponse;
+import com.esc.bluespring.domain.member.student.classes.StudentDto.GetCertification;
 import com.esc.bluespring.domain.member.student.classes.StudentDto.ListElement;
 import com.esc.bluespring.domain.member.student.classes.StudentDto.StudentSearchCondition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -110,5 +111,13 @@ public class StudentController {
         @RequestBody @Valid ChangeCertificationImage dto, Student student) {
         studentService.changeCertificationImage(student, dto.certificationImageUrl());
         return new BaseResponse<>(true);
+    }
+
+    @GetMapping("certification")
+    @Operation(description = "학생증 사진을 조회하고 인증여부를 조회합니다.", summary = "학생증 사진 및 인증여부 조회.", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
+    public BaseResponse<GetCertification> getCertification(Student student) {
+        return new BaseResponse<>(
+            new GetCertification(student.getSchoolInformation().isCertificated(),
+                student.getSchoolInformation().getStudentCertificationImageUrl()));
     }
 }

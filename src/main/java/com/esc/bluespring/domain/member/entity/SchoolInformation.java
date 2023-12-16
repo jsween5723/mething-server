@@ -31,6 +31,7 @@ public class SchoolInformation {
   private String name;
   void reassignCertificationImage(Image image) {
     this.studentCertificationImage = image;
+    isCertificated = false;
   }
   public SchoolInformation(Major major, Image studentCertificationImage, Boolean isCertificated,
                            String name) {
