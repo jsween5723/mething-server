@@ -26,7 +26,9 @@ public class SwaggerConfiguration {
     public OpenAPI customOpenAPI() {
         Server server = new Server();
         server.setUrl("https://api.meething.me");
-        return new OpenAPI().servers(List.of(server))
+        Server server1 = new Server();
+        server1.setUrl("http://localhost:8080");
+        return new OpenAPI().servers(List.of(server, server1))
             .addSecurityItem(new SecurityRequirement().addList("Bearer Authentication")).components(
                 new Components().addSecuritySchemes("Bearer Authentication", createAPIKeyScheme()))
             .info(new Info().title("미띵 API")
