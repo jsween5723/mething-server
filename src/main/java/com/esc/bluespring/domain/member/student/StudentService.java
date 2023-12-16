@@ -73,5 +73,6 @@ public class StudentService {
     @Transactional
     public void changeCertificationImage(Student student, String imageUrl) {
         student.reassignCertificationImage(new Image(imageUrl));
+        repository.save(student);
     }
 }
