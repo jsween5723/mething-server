@@ -2,6 +2,7 @@ package com.esc.bluespring.common.resolver;
 
 import static com.esc.bluespring.domain.member.entity.Member.ANONYMOUS;
 
+import com.esc.bluespring.domain.auth.exception.AuthException.ForbiddenException;
 import com.esc.bluespring.domain.member.entity.Admin;
 import com.esc.bluespring.domain.member.entity.Member;
 import com.esc.bluespring.domain.member.entity.Student;
@@ -33,7 +34,7 @@ public class AuthenticationResolver implements HandlerMethodArgumentResolver {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList()
             .contains("ROLE_"+ANONYMOUS)) {
-            return null;
+            throw new ForbiddenException();
         }
         Member principal = authentication.getDetails() instanceof Member member ? member : null;
         if (parameter.getParameterType().equals(Member.class)) {
