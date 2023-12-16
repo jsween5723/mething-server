@@ -36,7 +36,7 @@ public class MemberServiceFacade implements UserDetailsService {
         if (member instanceof Student student) {
             student.reassignProfileImage(fileService.findByUrl(student.getProfileImage().getUrl()));
             student.reassignCertificationImage(fileService.findByUrl(
-                student.getSchoolInformation().getStudentCertificationImageUrl()));
+                student.getSchoolInformation().getStudentCertificationImage().getUrl()));
             return studentService.join(student);
         }
         return repository.save(member);
