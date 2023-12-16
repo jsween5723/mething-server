@@ -1,5 +1,6 @@
 package com.esc.bluespring.domain.member.student;
 
+import com.esc.bluespring.domain.file.entity.Image;
 import com.esc.bluespring.domain.member.entity.Student;
 import com.esc.bluespring.domain.member.exception.MemberException.DuplicateNicknameException;
 import com.esc.bluespring.domain.member.exception.MemberException.DuplicateSchoolEmailException;
@@ -67,5 +68,10 @@ public class StudentService {
     @Transactional
     public void changeCertificationState(Student target, boolean state) {
         target.changeCertificationState(state);
+    }
+
+    @Transactional
+    public void changeCertificationImage(Student student, String imageUrl) {
+        student.reassignCertificationImage(new Image(imageUrl));
     }
 }

@@ -9,13 +9,13 @@ import com.esc.bluespring.domain.member.classes.MemberMapper;
 import com.esc.bluespring.domain.member.entity.Student;
 import com.esc.bluespring.domain.member.student.classes.StudentDto;
 import com.esc.bluespring.domain.member.student.classes.StudentDto.AdminStudentSearchCondition;
+import com.esc.bluespring.domain.member.student.classes.StudentDto.ChangeCertificationImage;
 import com.esc.bluespring.domain.member.student.classes.StudentDto.DetailResponse;
 import com.esc.bluespring.domain.member.student.classes.StudentDto.ListElement;
 import com.esc.bluespring.domain.member.student.classes.StudentDto.StudentSearchCondition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import java.util.UUID;
@@ -27,6 +27,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -103,4 +104,11 @@ public class StudentController {
         return new BaseResponse<>(true);
     }
 
+    @PatchMapping("certification")
+    @Operation(description = "학생증 사진을 변경합니다.", summary = "학생증 사진을 변경합니다.", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
+    public BaseResponse<Boolean> changeCertificationImage(
+        @RequestBody @Valid ChangeCertificationImage dto, Student student) {
+        studentService.changeCertificationImage(student, dto.certificationImageUrl());
+        return new BaseResponse<>(true);
+    }
 }

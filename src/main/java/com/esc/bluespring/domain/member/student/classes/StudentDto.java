@@ -28,6 +28,10 @@ public record StudentDto() {
 
   }
 
+  public record ChangeCertificationImage(@NotNull String certificationImageUrl) {
+
+  }
+
   public record DetailResponse(UUID id, String introduce, String profileImageUrl, SchoolInformation schoolInformation,
                                String nickname, ProfileDto profile, Integer birthYear) {}
 }
