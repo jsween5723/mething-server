@@ -78,7 +78,7 @@ public class MemberServiceFacade implements UserDetailsService {
     @Transactional(readOnly = true)
     public Member login(Login dto) {
         try {
-            Member userDetails = loadUserByUsername(dto.email());
+            Student userDetails = studentService.find(dto.email());
             if (!passwordEncoder.matches(dto.password(), userDetails.getPassword())) {
                 throw new LoginException();
             }
