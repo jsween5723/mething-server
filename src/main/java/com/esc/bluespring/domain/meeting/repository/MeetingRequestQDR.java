@@ -106,6 +106,23 @@ public class MeetingRequestQDR {
     return result;
   }
 
+  @Transactional(readOnly = true)
+  public MeetingRequest findNoRelation(UUID id) {
+    log.info("start");
+    JPAQuery<MeetingRequest> dsl = query.selectFrom(meetingRequest)
+        .leftJoin(meetingRequest.requesterTeam, meetingRequesterTeam).fetchJoin()
+        .leftJoin(meetingRequest.targetMeeting, meeting).fetchJoin()
+        .leftJoin(meeting.ownerTeam, meetingOwnerTeam).fetchJoin();
+    teamQDR.fetchJoinTeam(dsl, meetingRequesterTeam, "requester");
+    teamQDR.fetchJoinTeam(dsl, meetingOwnerTeam, "owner");
+    MeetingRequest result = dsl.where(meetingRequest.id.eq(id)).fetchFirst();
+    if (result == null) {
+      throw new RequestNotFoundException();
+    }
+    participantQDR.mapParticipantsTo(extractTeams(result));
+    return result;
+  }
+
   private BooleanBuilder toWhereCondition(SearchCondition condition) {
     BooleanBuilder builder = new BooleanBuilder();
     if (condition.statuses() != null) {

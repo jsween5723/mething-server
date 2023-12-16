@@ -25,7 +25,7 @@ public interface MeetingMapper extends LazyLoadingAwareMapper {
   TeamMapper teamMapper = Mappers.getMapper(TeamMapper.class);
   MeetingRequestMapper requestMapper = Mappers.getMapper(MeetingRequestMapper.class);
 
-  @Mapping(target = "likeCount", expression = "java(meeting.getWatchlist().getLikeCount())")
+  @Mapping(target = "likeCount", expression = "java(meeting.getLikeCount())")
   @Mapping(target = "isLiked", expression = "java(toIsLiked(meeting, member))")
   @Mapping(target = "id", source = "meeting.id")
   @Mapping(target = "createdAt", source = "meeting.createdAt")
@@ -33,7 +33,7 @@ public interface MeetingMapper extends LazyLoadingAwareMapper {
   @Mapping(target = "introduce", source = "meeting.introduce")
   MainPageListElement toMainPageListElement(Meeting meeting, Student member);
 
-  @Mapping(target = "likeCount", expression = "java(meeting.getWatchlist().getLikeCount())")
+  @Mapping(target = "likeCount", expression = "java(meeting.getLikeCount())")
   @Mapping(target = "isLiked", expression = "java(toIsLiked(meeting, member))")
   @Mapping(target = "id", source = "meeting.id")
   @Mapping(target = "createdAt", source = "meeting.createdAt")
@@ -67,7 +67,7 @@ public interface MeetingMapper extends LazyLoadingAwareMapper {
   }
 
   default boolean toIsLiked(Meeting meeting, Student student) {
-    return meeting.getWatchlist().isMembersWatchlist(student);
+    return meeting.isMembersWatchlist(student);
   }
 
   @Condition

@@ -30,7 +30,7 @@ public class MeetingRequestService {
 
     @Transactional
     public void accept(UUID requestId, Member member) {
-        MeetingRequest request = find(requestId);
+        MeetingRequest request = requestQDR.findNoRelation(requestId);
         request.validTargetOwner(member);
         repository.rejectRemainRequestsOfMeeting(request.getTargetMeeting());
         request.accept();
