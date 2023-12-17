@@ -1,12 +1,12 @@
 package com.esc.bluespring.domain.member.student;
 
-import com.esc.bluespring.domain.file.entity.Image;
+import com.esc.bluespring.domain.file.FileService;
 import com.esc.bluespring.domain.member.entity.Student;
 import com.esc.bluespring.domain.member.exception.MemberException.DuplicateNicknameException;
 import com.esc.bluespring.domain.member.exception.MemberException.DuplicateSchoolEmailException;
 import com.esc.bluespring.domain.member.exception.MemberException.MemberNotFoundException;
-import com.esc.bluespring.domain.member.student.classes.StudentDto.StudentSearchCondition;
 import com.esc.bluespring.domain.member.student.classes.StudentDto.AdminStudentSearchCondition;
+import com.esc.bluespring.domain.member.student.classes.StudentDto.StudentSearchCondition;
 import com.esc.bluespring.domain.member.student.repository.StudentRepository;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class StudentService {
 
     private final StudentRepository repository;
+    private final FileService fileService;
 
     @Transactional
     public Student join(Student entity) {
@@ -72,7 +73,7 @@ public class StudentService {
 
     @Transactional
     public void changeCertificationImage(Student student, String imageUrl) {
-        student.reassignCertificationImage(new Image(imageUrl));
+        student.reassignCertificationImage(fileService.findByUrl(imageUrl));
         repository.save(student);
     }
 }
