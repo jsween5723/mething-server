@@ -1,13 +1,14 @@
 package com.esc.bluespring.domain.member.student.classes;
 
 import com.esc.bluespring.domain.member.classes.MemberDto.ProfileDto;
+import com.esc.bluespring.domain.member.entity.profile.CertificateStatus;
 import com.esc.bluespring.domain.university.major.classes.MajorDto;
 import jakarta.validation.constraints.NotNull;
 import java.util.UUID;
 
 public record StudentDto() {
 
-  public record AdminStudentSearchCondition(Boolean isCertificated, String name, Long majorId,
+  public record AdminStudentSearchCondition(CertificateStatus isCertificated, String name, Long majorId,
                                             Long universityId, String nickname, String email) {
 
   }
@@ -24,11 +25,11 @@ public record StudentDto() {
 
   }
 
-  public record ChangeCertificationState(@NotNull Boolean certificationState) {
+  public record ChangeCertificationState(@NotNull CertificateStatus certificationState) {
 
   }
 
-  public record GetCertification(Boolean certificationState, String certificationImageUrl) {}
+  public record GetCertification(CertificateStatus certificationState, String certificationImageUrl) {}
 
   public record ChangeCertificationImage(@NotNull String certificationImageUrl) {
 

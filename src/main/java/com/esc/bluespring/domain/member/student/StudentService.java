@@ -3,6 +3,7 @@ package com.esc.bluespring.domain.member.student;
 import com.esc.bluespring.domain.file.FileService;
 import com.esc.bluespring.domain.member.entity.Student;
 import com.esc.bluespring.domain.member.entity.UserPolicytermAgreement;
+import com.esc.bluespring.domain.member.entity.profile.CertificateStatus;
 import com.esc.bluespring.domain.member.exception.MemberException.DuplicateNicknameException;
 import com.esc.bluespring.domain.member.exception.MemberException.DuplicateSchoolEmailException;
 import com.esc.bluespring.domain.member.exception.MemberException.MemberNotFoundException;
@@ -87,7 +88,7 @@ public class StudentService {
     }
 
     @Transactional
-    public void changeCertificationState(Student target, boolean state) {
+    public void changeCertificationState(Student target, CertificateStatus state) {
         target.changeCertificationState(state);
     }
 

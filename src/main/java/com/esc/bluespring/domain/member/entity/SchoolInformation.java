@@ -1,10 +1,13 @@
 package com.esc.bluespring.domain.member.entity;
 
 import com.esc.bluespring.domain.file.entity.Image;
+import com.esc.bluespring.domain.member.entity.profile.CertificateStatus;
 import com.esc.bluespring.domain.university.major.entity.Major;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -26,19 +29,21 @@ public class SchoolInformation {
   private Image studentCertificationImage;
   @Column(name = "student_certification_image_url", insertable = false, updatable = false)
   private String studentCertificationImageUrl;
-  private boolean isCertificated = false;
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private CertificateStatus certificateStatus = CertificateStatus.NOT_ASSIGNED;
   @Column(nullable = false)
   private String name;
   void reassignCertificationImage(Image image) {
     this.studentCertificationImage = image;
-    isCertificated = false;
+    certificateStatus = CertificateStatus.PENDING;
   }
-  public SchoolInformation(Major major, Image studentCertificationImage, Boolean isCertificated,
+  public SchoolInformation(Major major, Image studentCertificationImage, CertificateStatus certificateStatus,
                            String name) {
     this.name = name;
     this.major = major;
     this.studentCertificationImage = studentCertificationImage;
-    this.isCertificated = isCertificated != null && isCertificated;
+    this.certificateStatus = certificateStatus != null ? certificateStatus : CertificateStatus.NOT_ASSIGNED;
   }
 
   void patch(SchoolInformation source) {
@@ -54,10 +59,10 @@ public class SchoolInformation {
     if (source.studentCertificationImage != null) {
       studentCertificationImage = source.studentCertificationImage;
     }
-    changeCertificationState(false);
+    changeCertificationState(studentCertificationImage != null ? CertificateStatus.PENDING : CertificateStatus.NOT_ASSIGNED);
   }
 
-  public void changeCertificationState(boolean state) {
-    isCertificated = state;
+  public void changeCertificationState(CertificateStatus state) {
+    certificateStatus = state;
   }
 }

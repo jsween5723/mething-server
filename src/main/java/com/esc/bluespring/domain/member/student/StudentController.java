@@ -117,7 +117,7 @@ public class StudentController {
     @Operation(description = "학생증 사진을 조회하고 인증여부를 조회합니다.", summary = "학생증 사진 및 인증여부 조회.", parameters = @Parameter(required = true, in = ParameterIn.HEADER, name = "Authorization"))
     public BaseResponse<GetCertification> getCertification(Student student) {
         return new BaseResponse<>(
-            new GetCertification(student.getSchoolInformation().isCertificated(),
+            new GetCertification(student.getSchoolInformation().getCertificateStatus(),
                 student.getSchoolInformation().getStudentCertificationImageUrl()));
     }
 }

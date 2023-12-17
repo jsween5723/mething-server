@@ -6,6 +6,7 @@ import com.esc.bluespring.domain.file.entity.Image;
 import com.esc.bluespring.domain.friendship.entity.Friendship;
 import com.esc.bluespring.domain.friendship.request.entity.FriendshipRequest;
 import com.esc.bluespring.domain.meeting.entity.MeetingWatchlistItem;
+import com.esc.bluespring.domain.member.entity.profile.CertificateStatus;
 import com.esc.bluespring.domain.member.exception.MemberException.StudentNotCertificatedException;
 import com.esc.bluespring.domain.policyterm.entity.UserPolicyterm;
 import jakarta.persistence.CascadeType;
@@ -113,22 +114,22 @@ public class Student extends Member {
     }
 
     public void validCertificated() {
-        if (!schoolInformation.isCertificated()) {
+        if (!isCertificated()) {
             throw new ForbiddenException();
         }
     }
 
-    public void changeCertificationState(boolean state) {
+    public void changeCertificationState(CertificateStatus state) {
         getSchoolInformation().changeCertificationState(state);
     }
 
     public boolean isCertificated() {
-        return getSchoolInformation().isCertificated();
+        return getSchoolInformation().getCertificateStatus() == CertificateStatus.ACCEPTED;
     }
 
     @Override
     public void valid() {
-        if (!schoolInformation.isCertificated()) {
+        if (!isCertificated()) {
             throw new StudentNotCertificatedException();
         }
     }
@@ -148,7 +149,7 @@ public class Student extends Member {
     public void patch(Member source) {
         super.patch(source);
         if (source.getEmail() != null) {
-            schoolInformation.changeCertificationState(false);
+            schoolInformation.patch(new SchoolInformation());
         }
         if (source instanceof Student student) {
             if (student.nickname != null) {

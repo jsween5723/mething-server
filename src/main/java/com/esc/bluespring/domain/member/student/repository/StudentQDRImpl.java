@@ -31,7 +31,7 @@ public class StudentQDRImpl implements StudentQDR {
         fetchJoinStudent(dsl, student, "student");
         List<Student> result = dsl.where(toAdminWhereCondition(condition))
             .limit(pageable.getPageSize() + 1).offset(pageable.getOffset())
-            .orderBy(student.schoolInformation.isCertificated.desc()).fetch();
+            .orderBy(student.schoolInformation.certificateStatus.desc()).fetch();
         return RepositorySlicer.toSlice(result, pageable);
     }
 
@@ -40,7 +40,7 @@ public class StudentQDRImpl implements StudentQDR {
         fetchJoinStudent(dsl, student, "student");
         List<Student> result = dsl.where(toWhereCondition(condition))
             .limit(pageable.getPageSize() + 1).offset(pageable.getOffset())
-            .orderBy(student.schoolInformation.isCertificated.desc()).fetch();
+            .orderBy(student.nickname.desc()).fetch();
         return RepositorySlicer.toSlice(result, pageable);
     }
 
@@ -62,7 +62,7 @@ public class StudentQDRImpl implements StudentQDR {
     private BooleanBuilder toAdminWhereCondition(AdminStudentSearchCondition condition) {
         BooleanBuilder builder = new BooleanBuilder();
         if (condition.isCertificated() != null) {
-            builder.and(student.schoolInformation.isCertificated.eq(condition.isCertificated()));
+            builder.and(student.schoolInformation.certificateStatus.eq(condition.isCertificated()));
         }
         if (condition.email() != null) {
             builder.and(student.email.contains(condition.email().trim()));
