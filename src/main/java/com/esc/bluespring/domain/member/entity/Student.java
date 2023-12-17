@@ -7,6 +7,7 @@ import com.esc.bluespring.domain.friendship.entity.Friendship;
 import com.esc.bluespring.domain.friendship.request.entity.FriendshipRequest;
 import com.esc.bluespring.domain.meeting.entity.MeetingWatchlistItem;
 import com.esc.bluespring.domain.member.exception.MemberException.StudentNotCertificatedException;
+import com.esc.bluespring.domain.policyterm.entity.UserPolicyterm;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -23,8 +24,11 @@ import jakarta.persistence.Transient;
 import jakarta.persistence.UniqueConstraint;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -66,10 +70,14 @@ public class Student extends Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     @BatchSize(size = 50)
     private List<Friendship> friendships = new ArrayList<>();
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    @BatchSize(size = 10)
+    private Set<UserPolicytermAgreement> policytermAgreements = new LinkedHashSet<>();
 
     public Student(UUID id, String email, String password, String nickname, String introduce,
                    LocalDate birthday, Image profileImage, Gender gender,
-                   SchoolInformation schoolInformation, StudentProfile profile) {
+                   SchoolInformation schoolInformation, StudentProfile profile,
+                   Set<UserPolicyterm> policyterms) {
         super(id, email, password);
         this.nickname = nickname;
         this.introduce = introduce;
@@ -79,6 +87,10 @@ public class Student extends Member {
         this.schoolInformation = schoolInformation;
         profile.assignStudent(this);
         this.profile = profile;
+        Set<UserPolicytermAgreement> agreements = policyterms.stream()
+            .map(agreement -> new UserPolicytermAgreement(this, agreement))
+            .collect(Collectors.toSet());
+        policytermAgreements.addAll(agreements);
     }
 
     public void reassignProfileImage(Image image) {

@@ -7,11 +7,13 @@ import com.esc.bluespring.domain.member.entity.profile.Drink;
 import com.esc.bluespring.domain.member.entity.profile.Smoke;
 import com.esc.bluespring.domain.member.entity.profile.Sport;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.Set;
+import java.util.UUID;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.format.annotation.DateTimeFormat.ISO;
@@ -24,7 +26,8 @@ public record MemberDto() {
                               @NotNull @DateTimeFormat(iso = ISO.DATE) LocalDate birthday,
                               @NotNull @Email String email, @NotNull Gender gender,
                               ProfileDto profile,
-                              @NotNull SchoolInformationDto schoolInformation) {
+                              @NotNull SchoolInformationDto schoolInformation,
+                              @NotNull @Valid @Length(min = 3) @Schema(description = "약관 pk 리스트", example = "[asdsadsa213,asdasdssad12313]") Set<UUID> policyterms) {
 
     }
 

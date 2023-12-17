@@ -4,6 +4,7 @@ import static com.esc.bluespring.domain.member.exception.MemberExceptionCode.DUP
 import static com.esc.bluespring.domain.member.exception.MemberExceptionCode.DUPLICATED_NICKNAME;
 import static com.esc.bluespring.domain.member.exception.MemberExceptionCode.DUPLICATED_SCHOOL_EMAIL;
 import static com.esc.bluespring.domain.member.exception.MemberExceptionCode.MEMBER_NOT_FOUND;
+import static com.esc.bluespring.domain.member.exception.MemberExceptionCode.REQUIRED_POLICYTERM_IGNORED;
 import static com.esc.bluespring.domain.member.exception.MemberExceptionCode.STUDENT_NOT_CERTIFICATED;
 
 import com.esc.bluespring.common.exception.ApplicationException;
@@ -42,6 +43,12 @@ public abstract class MemberException extends ApplicationException {
 
     public DuplicateSchoolEmailException() {
       super(DUPLICATED_SCHOOL_EMAIL);
+    }
+  }
+  static public class RequiredPolicytermIgnoredException extends MemberException {
+
+    public RequiredPolicytermIgnoredException() {
+      super(REQUIRED_POLICYTERM_IGNORED);
     }
   }
 

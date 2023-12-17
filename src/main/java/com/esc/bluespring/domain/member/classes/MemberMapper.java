@@ -11,7 +11,9 @@ import com.esc.bluespring.domain.member.entity.Student;
 import com.esc.bluespring.domain.member.entity.StudentProfile;
 import com.esc.bluespring.domain.member.student.classes.StudentDto.DetailResponse;
 import com.esc.bluespring.domain.member.student.classes.StudentDto.ListElement;
+import com.esc.bluespring.domain.policyterm.entity.UserPolicyterm;
 import com.esc.bluespring.domain.university.major.classes.MajorMapper;
+import java.util.Set;
 import java.util.UUID;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -24,6 +26,8 @@ public interface MemberMapper {
 
     @Mapping(target = "id", ignore = true)
     Student toEntity(JoinRequest dto);
+    Set<UserPolicyterm> toPolicytermEntity(Set<UUID> policyterms);
+    UserPolicyterm toPolicytermEntity(UUID id);
     ListElement toSchoolInformationListElement(Student student);
     @Mapping(target = "id", source = "id")
     Student toEntity(UUID id);

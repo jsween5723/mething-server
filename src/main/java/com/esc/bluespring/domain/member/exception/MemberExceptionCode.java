@@ -13,6 +13,7 @@ public enum MemberExceptionCode implements ExceptionCode {
   DUPLICATED_NICKNAME(HttpStatus.CONFLICT, "중복된 닉네임입니다."),
   DUPLICATED_EMAIL(HttpStatus.CONFLICT, "중복된 로그인 이메일입니다."),
   DUPLICATED_SCHOOL_EMAIL(HttpStatus.CONFLICT, "중복된 학교 이메일입니다."),
+  REQUIRED_POLICYTERM_IGNORED(HttpStatus.BAD_REQUEST, "필수 약관을 동의해주세요."),
   MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "존재하지 않는 사용자입니다."),
   STUDENT_NOT_CERTIFICATED(HttpStatus.NOT_FOUND, "학교인증이 안된 사용자입니다.");
   private final HttpStatus httpStatus;

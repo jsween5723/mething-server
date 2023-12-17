@@ -9,6 +9,7 @@ import com.esc.bluespring.domain.member.entity.Student;
 import com.esc.bluespring.domain.member.exception.MemberException.DuplicateEmailException;
 import com.esc.bluespring.domain.member.exception.MemberException.MemberNotFoundException;
 import com.esc.bluespring.domain.member.student.StudentService;
+import com.esc.bluespring.domain.policyterm.UserPolicytermService;
 import java.util.UUID;
 import javax.security.auth.login.LoginException;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class MemberServiceFacade implements UserDetailsService {
     private final StudentService studentService;
     private final PasswordEncoder passwordEncoder;
     private final FileService fileService;
+    private final UserPolicytermService policytermService;
 
     @Transactional
     public Member join(Member member) {
