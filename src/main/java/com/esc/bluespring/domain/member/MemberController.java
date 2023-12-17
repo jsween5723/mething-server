@@ -113,6 +113,21 @@ public class MemberController {
             new JwtToken(customJwtEncoder.generateAccessToken(refresh.getMember())));
     }
 
+    @GetMapping("validate")
+    @Operation(description = "리프레쉬 토큰을 기준으로 현재 로그인한 상태인지 확인합니다.", summary = "현재 로그인한 상태인지 확인합니다.")
+    public BaseResponse<Boolean> validate(HttpServletRequest request,
+                                          HttpServletResponse response) {
+        try {
+            RefreshToken refresh = refreshTokenService.refresh(getRefreshTokenFromCookie(request));
+            Cookie refreshToken = new Cookie("refreshToken", refresh.getRefreshToken().toString());
+            setCookie(response, refreshToken);
+            return new BaseResponse<>(true);
+        } catch (Exception e) {
+            return new BaseResponse<>(false);
+        }
+
+    }
+
     private UUID getRefreshTokenFromCookie(HttpServletRequest request) {
         if (request.getCookies() == null) {
             throw new GoToLoginException();
