@@ -6,7 +6,8 @@ import org.mapstruct.Mapper;
 
 @Mapper
 public interface TimeMapper {
+
     default long toEpochSecond(LocalDateTime localDateTime) {
-        return localDateTime.atZone(ZoneId.of("Asia/Seoul")).toEpochSecond();
+        return localDateTime.atZone(ZoneId.of("Asia/Seoul")).toInstant().toEpochMilli();
     }
 }
